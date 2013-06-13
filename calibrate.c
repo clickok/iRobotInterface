@@ -28,6 +28,7 @@ int main(int argc, char * argv[])
 	int i,ret;
 	int sensors[10];
 	char line[BUFFER_LENGTH];
+	char cmd[8];
 	char * p;
 	/* Commence awesome, manually-entered explanation! */
 	printf("******************** iRobot Sensor Calibration **********************\n");
@@ -48,12 +49,6 @@ int main(int argc, char * argv[])
 	printf("\nSTEP 1)\n"); /* Cut a hole in a box */
 	fd = connectDevice(argv[1]);
 	if (fd > -1) printf("Connected to device with file descriptor: %d\n",fd);
-//	char cmd[8];
-//	cmd[0] =135;
-//	for(i =0; i < 1; i++)
-//	{
-//		write(fd,cmd+i,1);
-//	}
 	printf("STEP 2)\n");
 	printf("Place Robot in region one.\n");
 	for(i=0;i<NUM_SAMPLES;++i)
@@ -75,8 +70,12 @@ int main(int argc, char * argv[])
 	}
 
 	printf("STEP 4)\n");
+	cmd[0] = 150;
+	cmd[1] = 0;
+	//write(fd,cmd,2);
 
 	disconnectDevice(fd);
+	printf("Disconnected from device. File descriptor is now: %d\n",fd);
 	return 0;
 }
 
@@ -104,7 +103,7 @@ int connectDevice(char * device)
     cfsetospeed(&tty, B57600);
     tcsetattr(fd, TCSANOW, &tty);
     /* Flush I/O buffers */
-    tcflush(fd, TCIOFLUSH);
+    //tcflush(fd, TCIOFLUSH);
     return fd;
 }
 
@@ -127,27 +126,26 @@ int disconnectDevice(int fd)
 int askForSensors(int fd, int * array)
 {
 	int i;
-	int res;
-	unsigned char buf = 131;
+	int res,e;
+	unsigned char buf;
 	unsigned char cmd[8];
-//	cmd[0]=149;
+	int count = 0;
+//	cmd[0]=148;
 //	cmd[1]=4;
 //	cmd[2]=28;
 //	cmd[3]=29;
 //	cmd[4]=30;
 //	cmd[5]=31;
-	cmd[0] = 131;
-	cmd[1] = 139;
-	cmd[2] = 8;
-	cmd[3] = 0;
-	cmd[4] = 128;
-	res = (write(fd, &buf , 1) == 1 ? 0 : -1);
-	usleep(10000);
-	printf("res = %d\n",res);
-	for (i = 0; i < 5; ++i)
+	cmd[count++] = 131;
+	cmd[count++] = 139;
+	cmd[count++] = 10;
+	cmd[count++] = 0;
+	cmd[count++] = 0;
+	for (i = 0; i < count; ++i)
 	{
-		res = (write(fd, cmd + i, 1) == 1 ? 0 : -1);
-		usleep(1000);
+		res = write(fd, cmd + i, 1);
+		//e = tcdrain(fd);
+		usleep(10000);
 		printf("res = %d\n",res);
 	}
 	for (i = 0; i < 9; i++)
