@@ -6,6 +6,11 @@
       code for functional and stylistic reasons. The code is subject
       to change according to the needs of the project.
 
+      The goal for this version is that it run flawlessly on a small
+      linux system (likely a Raspberry Pi) which can be attached to
+      the robot for increased portability. It may work with other
+      environments, but that is not guaranteed.
+
       Rich and Rupam are responsible for canonical version.
   *******************************************************************
 
@@ -227,14 +232,18 @@
 #include <errno.h>
 #include <float.h>
 
+/******************************************************************************
+ *                                 Defines
+ *****************************************************************************/
+
 #define FALSE 0
 #define TRUE 1
 
 typedef unsigned char ubyte;
 
-/* ------------------------------------------------------------------
------------------         Create Opcodes         --------------------
------------------------------------------------------------------- */
+/******************************************************************************
+ *                             Create Opcodes
+ *****************************************************************************/
 
 #define CREATE_START         128
 #define CREATE_SAFE          131
@@ -262,10 +271,13 @@ typedef unsigned char ubyte;
 #define SENSOR_CLIFF_FRONT_RIGHT  30
 #define SENSOR_CLIFF_RIGHT        31
 
-//------------------------------------------------------------------
-// ---------          Global Names and Variables           ---------
-//------------------------------------------------------------------
+#define SENSOR_START_BYTE         19
 
+/******************************************************************************
+ *                       Global Names and Variables
+ *****************************************************************************/
+
+//TODO: Determine whether to add modifiers (i.e., 'volatile') to variables
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
@@ -346,7 +358,10 @@ void ensureTransmitted() {
 }
 
 
-
+/* void driveWheels()
+ * Sends commands to the Create instructing it to drive its wheels with the
+ * specified velocity (with a maximum of 500 mm/s and a minimum of -500 mm/s
+ */
 void driveWheels(int left, int right) {
   ubyte bytes[5];
   left = MIN(500, left);
@@ -361,6 +376,15 @@ void driveWheels(int left, int right) {
   sendBytesToRobot(bytes, 5);
 }
 
+/* void setupSerialPort()
+ * Connects to the serial port associated with the Create (as specified by
+ * the argument, e.g., "/dev/tty.usbserial"), and associating the global file
+ * descriptor fd with the serial port connection.
+ * It then puts the robot in  "Full" mode, and requests a data stream of the
+ * robot's sensors.
+ * It also sets up a "song" the Create can play (perhaps when getting rewarded)
+ */
+//TODO: Consider decoupling the set up of the serial port with that of the Create
 void setupSerialPort(char serialPortName[]) {
   struct termios options;
   ubyte byte;
@@ -407,7 +431,18 @@ void setupSerialPort(char serialPortName[]) {
   ensureTransmitted();
 }
 
-// expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
+/* int checkPacket()
+ * Performs a check to ensure the data stored in packet[] is properly formed
+ * and therefore valid.
+ * First it verifies that the packet begins with the start byte (19) and then
+ * proceeds through the rest of the packet to ensure that the number of bytes
+ * sent is valid, and all the packet IDs are as expected. Then it calculates
+ * the checksum of the entire packet.
+ * If the packet is valid, it returns 1, else 0.
+ * expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
+ */
+// TODO: Replace instances of magic numbers with defined macros
+// TODO: Try to make this code more general in case we wish to vary the sensors
 int checkPacket() {
   int i, sum;
   if (packet[0]==19 &&
@@ -417,7 +452,8 @@ int checkPacket() {
       packet[8]==SENSOR_CLIFF_FRONT_RIGHT &&
       packet[11]==SENSOR_CLIFF_RIGHT &&
       packet[14]==SENSOR_DISTANCE &&
-      packet[17]==SENSOR_IRBYTE) {
+      packet[17]==SENSOR_IRBYTE)
+  {
     sum = 0;
     for (i = 0; i < B; i++) sum += packet[i];
     if ((sum & 0xFF) == 0) return 1;
@@ -425,6 +461,14 @@ int checkPacket() {
   return 0;
 }
 
+/* void extractPacket()
+ * Performs the extraction on the packet's data. This can be complicated by
+ * the fact that some sensors require more than one byte to represent their
+ * information, so some bit shifting is required.
+ * After this is done, it also gets the time value
+ */
+//TODO: Improve time extraction (instead of using gettimeofday)
+//TODO: Make more general, so that we can use different sensors/combinations
 void extractPacket() {
   struct timeval currentTime;
   int p = pktNum%M;
@@ -445,9 +489,39 @@ void extractPacket() {
   lastPktTime = currentTime;
 }
 
-void reflexes();
 
-void* csp3(void *arg) {
+//void reflexes();
+/* void reflexes()
+ * Takes actions at a faster rate to ensure the Create doesn't endanger itself
+ * (by falling off a table, for example)
+ */
+void reflexes() {
+  int a;
+  int p = pktNum%M;
+  pthread_mutex_lock( &lastActionMutex );
+  a = lastAction;
+  pthread_mutex_unlock( &lastActionMutex );
+  if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
+      (a==3 && (sCliffLB[p] || sCliffRB[p]))) {   // attempt to go backward over cliff
+    driveWheels(0, 0);                            // then interrupt motion
+  }
+
+  ubyte bytes[2];
+  ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
+  ubyte ledbits = (sCliffLB[p] << 2) | (frontbit << 1) | sCliffRB[p];
+  bytes[0] = CREATE_DIGITAL_OUTS;
+  bytes[1] = ledbits;
+  sendBytesToRobot(bytes, 2);
+}
+
+/* void * csp3()
+ * A packet processing function, which calls various helper functions in order
+ * to get data from the robot, parse it, and place it into the appropriate
+ * data structures to be used by the rest of the program.
+ */
+//TODO: Try using poll() over select()
+void * csp3(void *arg)
+{
   int errorCode, numBytesRead, i, j;
   ubyte bytes[B];
   int numBytesPreviouslyRead = 0;
@@ -494,24 +568,7 @@ void* csp3(void *arg) {
   return NULL;
 }
 
-void reflexes() {
-  int a;
-  int p = pktNum%M;
-  pthread_mutex_lock( &lastActionMutex );
-  a = lastAction;
-  pthread_mutex_unlock( &lastActionMutex );
-  if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
-      (a==3 && (sCliffLB[p] || sCliffRB[p]))) {   // attempt to go backward over cliff
-    driveWheels(0, 0);                            // then interrupt motion
-  }
 
-  ubyte bytes[2];
-  ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
-  ubyte ledbits = (sCliffLB[p] << 2) | (frontbit << 1) | sCliffRB[p];
-  bytes[0] = CREATE_DIGITAL_OUTS;
-  bytes[1] = ledbits;
-  sendBytesToRobot(bytes, 2);
-}
 
 #define SPEED 300
 
