@@ -1,8 +1,15 @@
 /******************************************************************************
  * calibrate.c
  * Created on: Jun 10, 2013
- * Author:
+ * Author: BB
+ *
+ * A currently NON-FUNCTIONAL calibration program for the iRobot Create's
+ * sensors, in order to ensure that the robot can distingush between the
+ * different regions it might be placed in.
  * 
+ * The "call-and-response" code isn't working, and it isn't clear why this is
+ * the case. A similar program by Rich (using the "stream" mode) does work,
+ * so this code is only kept for reference.
  * 
  *****************************************************************************/
 
