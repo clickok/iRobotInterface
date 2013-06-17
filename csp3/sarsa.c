@@ -1,6 +1,14 @@
 /* 
   Sarsa demo of the Create serial-port packet processor" (aka csp3).
 
+  *******************************************************************
+  NB: This version is non-canonical-- I am making alterations to the
+      code for functional and stylistic reasons. The code is subject
+      to change according to the needs of the project.
+
+      Rich and Rupam are responsible for canonical version.
+  *******************************************************************
+
   This file is a self-contained demonstration of the use of the
   "Create serial-port packet processor", a small program for managing
   the real-time interaction of a serial-port connection to an iRobot
@@ -224,9 +232,9 @@
 
 typedef unsigned char ubyte;
 
-//------------------------------------------------------------------
-// ---------------          Create codes           -----------------
-//------------------------------------------------------------------
+/* ------------------------------------------------------------------
+-----------------         Create Opcodes         --------------------
+------------------------------------------------------------------ */
 
 #define CREATE_START         128
 #define CREATE_SAFE          131
@@ -267,9 +275,9 @@ int fd = 0;                   // file descriptor for serial port
 ubyte packet[B];              // packet is constructed here
 
 //sensory arrays:
-#define M 1000
-unsigned short  sCliffL[M], sCliffR[M], sCliffFL[M], sCliffFR[M]; // small pos integers
-ubyte  sCliffLB[M], sCliffRB[M], sCliffFLB[M], sCliffFRB[M];      // binary 1/0
+#define M 1000                /* The ring buffer size */
+unsigned short  sCliffL[M], sCliffR[M], sCliffFL[M], sCliffFR[M]; // cliff sensors (small positive integers)
+ubyte  sCliffLB[M], sCliffRB[M], sCliffFLB[M], sCliffFRB[M];      // (binary 1/0)
 short  sDistance[M];          // wheel rotation counts (small integers, pos/neg)
 double sDeltaT[M];            // in milliseconds
 ubyte sIRbyte[M];             // Infrared byte e.g. remote
@@ -278,6 +286,23 @@ int cliffThresholds[4];       // left, front left, front right, right
 int cliffHighValue;           // binary value taken if threshold exceeded
 //------------------------------------------------------------------
 
+
+/*****************************************************************************
+ *                                Macros
+ *****************************************************************************/
+
+#define MAX(a,b) (a > b?a:b)
+#define MIN(a,b) (a < b?a:b)
+
+/*****************************************************************************
+ *                           Helper Functions
+ *****************************************************************************/
+
+/* void loadCliffThresholds()
+ * Opens a file in the local directory named cliffThresholds.dat
+ * which contains thresholds for the infrared cliff sensors, in
+ * order to differentiate between the "inside" and "outside" regions.
+ */
 void loadCliffThresholds() {
   FILE *fd;
   if ((fd = fopen("cliffThresholds.dat", "r"))==NULL) {
@@ -290,6 +315,12 @@ void loadCliffThresholds() {
   fclose(fd);
 }
 
+/* void sendBytesToRobot()
+ * Sends a series of bytes (passed as an array) to the robot. The number of
+ * bytes sent must be specified (with the usual caveats about buffer overruns).
+ * It locks the serialMutex while writing, and if the write() fails it returns
+ * an error.
+ */
 void sendBytesToRobot(ubyte* bytes, int numBytes) {
   int ret;
   pthread_mutex_lock( &serialMutex );
@@ -300,6 +331,10 @@ void sendBytesToRobot(ubyte* bytes, int numBytes) {
   pthread_mutex_unlock( &serialMutex );
 }
 
+/* void ensureTransmitted()
+ * Locks the serialMutex and then calls tcdrain() to ensure that the output
+ * buffer is properly written to the serial port.
+ */
 void ensureTransmitted() {
   int ret;
   pthread_mutex_lock( &serialMutex );
@@ -310,8 +345,7 @@ void ensureTransmitted() {
   pthread_mutex_unlock( &serialMutex );
 }
 
-#define MAX(a,b) (a > b?a:b)
-#define MIN(a,b) (a < b?a:b)
+
 
 void driveWheels(int left, int right) {
   ubyte bytes[5];
