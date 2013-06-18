@@ -233,13 +233,35 @@
 #include <float.h>
 
 /******************************************************************************
- *                                 Defines
+ *                          Overall To Do List
+ *****************************************************************************/
+//TODO: Benchmark with minor optimizations (using volatile, using poll())
+//TODO: Run code through a profiler once it is stable
+//TODO: Look for a better way of displaying real time information than printf()
+//TODO: Standardize data output to make it more machine friendly
+//TODO: Try to decouple multipurpose functions, if it makes sense
+//TODO: Consider separating agent thread from main() function.
+//TODO: Add return codes to some of these void functions, if appropriate
+//TODO: Set up state-action array to make it more easily modified
+//TODO: Check all modular arithmetic statements
+//TODO: Figure out rationale for having both myPktNum and pktNum
+
+/******************************************************************************
+ *                           Defines and Typedefs
  *****************************************************************************/
 
 #define FALSE 0
 #define TRUE 1
 
+/* The Create communiates using 4-bit data bytes, the same size as an
+ * (unsigned) char.  The ubyte data type is exactly equivalent, but should
+ * lead to less confusion.
+ */
 typedef unsigned char ubyte;
+//TODO: Ensure this behaves properly across various systems
+
+/* The speed at which the Create drives its wheels */
+#define SPEED 300
 
 /******************************************************************************
  *                             Create Opcodes
@@ -278,7 +300,7 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 //TODO: Determine whether to add modifiers (i.e., 'volatile') to variables
-unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
+volatile unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
 struct timeval lastPktTime;   // time of last packet
@@ -568,10 +590,9 @@ void * csp3(void *arg)
   return NULL;
 }
 
-
-
-#define SPEED 300
-
+/* int getPktNum()
+ * Sets the global variable myPktNum to the same value as the global pktNum.
+ */
 int getPktNum() {
   int myPktNum;
   pthread_mutex_lock( &pktNumMutex );
@@ -580,6 +601,10 @@ int getPktNum() {
   return myPktNum;  
 }
 
+/* void takeAction()
+ * Performs an action (currently using driveWheels to drive forward, backward,
+ * or turn) depending on the argument.
+ */
 void takeAction(int action) {
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
@@ -590,6 +615,11 @@ void takeAction(int action) {
     }
 }
 
+/* int epsilonGreedy()
+ * Takes an array representing state-action values, a state, and an epsilon and
+ * chooses an action. It will choose randomly with probability epsilon, but
+ * greedily otherwise.
+ */
 int epsilonGreedy(double Q[16][4], int s, int epsilon)
 {
   int max, i;
@@ -597,22 +627,40 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
   int firstAction, lastAction;
 
   myPktNum = getPktNum();
+  //TODO: Better modular arithmetic
   p = (myPktNum - 1) % M;
   firstAction = sCliffFLB[p] || sCliffFRB[p];
-  if (sCliffLB[p] || sCliffRB[p]) lastAction = 2;
+  if (sCliffLB[p] || sCliffRB[p])
+  {
+	  lastAction = 2;
+  }
   else lastAction = 3;
-  if (rand()/((double)RAND_MAX+1) < epsilon) {
+  if (rand()/((double)RAND_MAX+1) < epsilon)
+  {
     printf("random action\n\n");
     return firstAction + rand()%(lastAction + 1 - firstAction);
-  } else {
+  }
+  else
+  {
     max = lastAction;
     for (i = firstAction; i < lastAction; i++)
+    {
       if (Q[s][i] > Q[s][max])
+      {
         max = i;
+      }
+    }
     return max;
   }
 }
 
+/* main()
+ * The main function. Takes command line arguments specifying the (serial)
+ * port that the robot is connected to, and uses the above helper functions to
+ * set up the port and communicate with the robot.
+ * It spawns an additional thread which handles the data sent by the robot, but
+ * controls the robot (using the SARSA algorithm) itself.
+ */
 int main(int argc, char *argv[]) {
   pthread_t tid;
   int t_err;
