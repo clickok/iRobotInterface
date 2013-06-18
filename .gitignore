@@ -15,3 +15,8 @@
 *.exe
 *.out
 *.app
+
+# System files
+.cproject
+.project
+.DS_Store
