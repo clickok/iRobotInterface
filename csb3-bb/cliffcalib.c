@@ -28,42 +28,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include "createcodes.h"
 
 #define FALSE 0
 #define TRUE 1
 
 typedef unsigned char ubyte;
-
-//------------------------------------------------------------------
-// ---------------          Create codes           -----------------
-//------------------------------------------------------------------
-
-#define CREATE_START         128
-#define CREATE_SAFE          131
-#define CREATE_FULL          132
-#define CREATE_SPOT          134
-#define CREATE_DRIVE         137
-#define CREATE_SONG          140
-#define CREATE_PLAY          141
-#define CREATE_SENSORS       142
-#define CREATE_DRIVE_DIRECT  145
-#define CREATE_DIGITAL_OUTS  147
-#define CREATE_STREAM        148
-#define CREATE_STREAM_PAUSE  150
-
-#define SENSOR_ALL_SENSORS        6
-#define SENSOR_WHEEL_DROP         7
-#define SENSOR_IRBYTE             17
-#define SENSOR_DISTANCE           19
-#define SENSOR_ROTATION           20
-#define SENSOR_BAT_VOLTAGE        22
-#define SENSOR_BAT_CURRENT        23
-#define SENSOR_BAT_TEMP           24
-#define SENSOR_BAT_CHARGE         25
-#define SENSOR_CLIFF_LEFT         28
-#define SENSOR_CLIFF_FRONT_LEFT   29
-#define SENSOR_CLIFF_FRONT_RIGHT  30
-#define SENSOR_CLIFF_RIGHT        31
 
 //------------------------------------------------------------------
 // ---------          Global Names and variables           ---------
@@ -124,7 +94,6 @@ void setupSerialPort(char serialPortName[]) {
 	   serialPortName, strerror(errno));
     exit(EXIT_FAILURE);
   }
-  tcflush (fd, TCIOFLUSH);
   tcgetattr(fd, &options);
   options.c_iflag = IGNBRK | IGNPAR;
   options.c_lflag = 0;
@@ -241,7 +210,6 @@ int main(int argc, char *argv[]) {
   unsigned int myPktNum;
   int p, min, max, value;
   int i;
-  ubyte bytes[2];
 
   if (argc != 2) {
     fprintf(stderr, "Portname argument required -- something like /dev/tty.usbserial\n");
@@ -272,7 +240,7 @@ int main(int argc, char *argv[]) {
 
   min = 5000;
   max = 0;
-  for (p = 100; p < myPktNum; p++) {
+  for (p = 0; p < myPktNum; p++) {
     value = sCliffL[p];
     if (value > max) max = value;
     if (value < min) min = value;
@@ -281,7 +249,7 @@ int main(int argc, char *argv[]) {
 
   min = 5000;
   max = 0;
-  for (p = 100; p < myPktNum; p++) {
+  for (p = 0; p < myPktNum; p++) {
     value = sCliffFL[p];
     if (value > max) max = value;
     if (value < min) min = value;
@@ -290,7 +258,7 @@ int main(int argc, char *argv[]) {
 
   min = 5000;
   max = 0;
-  for (p = 100; p < myPktNum; p++) {
+  for (p = 0; p < myPktNum; p++) {
     value = sCliffFR[p];
     if (value > max) max = value;
     if (value < min) min = value;
@@ -299,14 +267,10 @@ int main(int argc, char *argv[]) {
 
   min = 5000;
   max = 0;
-  for (p = 100; p < myPktNum; p++) {
+  for (p = 0; p < myPktNum; p++) {
     value = sCliffR[p];
     if (value > max) max = value;
     if (value < min) min = value;
   }
   printf("%d %d\n", min, max);
-  // pause streaming
-  bytes[0] = CREATE_STREAM_PAUSE;
-  bytes[1] = 0;
-  sendBytesToRobot(bytes, 2, TRUE);
 }

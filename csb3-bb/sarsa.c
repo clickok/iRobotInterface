@@ -1,6 +1,19 @@
 /* 
   Sarsa demo of the Create serial-port packet processor" (aka csp3).
 
+  *******************************************************************
+  NB: This version is non-canonical-- I am making alterations to the
+      code for functional and stylistic reasons. The code is subject
+      to change according to the needs of the project.
+
+      The goal for this version is that it run flawlessly on a small
+      linux system (likely a Raspberry Pi) which can be attached to
+      the robot for increased portability. It may work with other
+      environments, but that is not guaranteed.
+
+      Rich and Rupam are responsible for canonical version.
+  *******************************************************************
+
   This file is a self-contained demonstration of the use of the
   "Create serial-port packet processor", a small program for managing
   the real-time interaction of a serial-port connection to an iRobot
@@ -219,14 +232,40 @@
 #include <errno.h>
 #include <float.h>
 
+/******************************************************************************
+ *                          Overall To Do List
+ *****************************************************************************/
+//TODO: Benchmark with minor optimizations (using volatile, using poll())
+//TODO: Run code through a profiler once it is stable
+//TODO: Look for a better way of displaying real time information than printf()
+//TODO: Standardize data output to make it more machine friendly
+//TODO: Try to decouple multipurpose functions, if it makes sense
+//TODO: Consider separating agent thread from main() function.
+//TODO: Add return codes to some of these void functions, if appropriate
+//TODO: Set up state-action array to make it more easily modified
+//TODO: Check all modular arithmetic statements
+//TODO: Figure out rationale for having both myPktNum and pktNum
+
+/******************************************************************************
+ *                           Defines and Typedefs
+ *****************************************************************************/
+
 #define FALSE 0
 #define TRUE 1
 
+/* The Create communiates using 4-bit data bytes, the same size as an
+ * (unsigned) char.  The ubyte data type is exactly equivalent, but should
+ * lead to less confusion.
+ */
 typedef unsigned char ubyte;
+//TODO: Ensure this behaves properly across various systems
 
-//------------------------------------------------------------------
-// ---------------          Create codes           -----------------
-//------------------------------------------------------------------
+/* The speed at which the Create drives its wheels */
+#define SPEED 300
+
+/******************************************************************************
+ *                             Create Opcodes
+ *****************************************************************************/
 
 #define CREATE_START         128
 #define CREATE_SAFE          131
@@ -239,7 +278,6 @@ typedef unsigned char ubyte;
 #define CREATE_DRIVE_DIRECT  145
 #define CREATE_DIGITAL_OUTS  147
 #define CREATE_STREAM        148
-#define CREATE_STREAM_PAUSE  150
 
 #define SENSOR_ALL_SENSORS        6
 #define SENSOR_WHEEL_DROP         7
@@ -255,11 +293,14 @@ typedef unsigned char ubyte;
 #define SENSOR_CLIFF_FRONT_RIGHT  30
 #define SENSOR_CLIFF_RIGHT        31
 
-//------------------------------------------------------------------
-// ---------          Global Names and Variables           ---------
-//------------------------------------------------------------------
+#define SENSOR_START_BYTE         19
 
-unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
+/******************************************************************************
+ *                       Global Names and Variables
+ *****************************************************************************/
+
+//TODO: Determine whether to add modifiers (i.e., 'volatile') to variables
+volatile unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
 struct timeval lastPktTime;   // time of last packet
@@ -268,9 +309,9 @@ int fd = 0;                   // file descriptor for serial port
 ubyte packet[B];              // packet is constructed here
 
 //sensory arrays:
-#define M 1000
-unsigned short  sCliffL[M], sCliffR[M], sCliffFL[M], sCliffFR[M]; // small pos integers
-ubyte  sCliffLB[M], sCliffRB[M], sCliffFLB[M], sCliffFRB[M];      // binary 1/0
+#define M 1000                /* The ring buffer size */
+unsigned short  sCliffL[M], sCliffR[M], sCliffFL[M], sCliffFR[M]; // cliff sensors (small positive integers)
+ubyte  sCliffLB[M], sCliffRB[M], sCliffFLB[M], sCliffFRB[M];      // (binary 1/0)
 short  sDistance[M];          // wheel rotation counts (small integers, pos/neg)
 double sDeltaT[M];            // in milliseconds
 ubyte sIRbyte[M];             // Infrared byte e.g. remote
@@ -279,6 +320,23 @@ int cliffThresholds[4];       // left, front left, front right, right
 int cliffHighValue;           // binary value taken if threshold exceeded
 //------------------------------------------------------------------
 
+
+/*****************************************************************************
+ *                                Macros
+ *****************************************************************************/
+
+#define MAX(a,b) (a > b?a:b)
+#define MIN(a,b) (a < b?a:b)
+
+/*****************************************************************************
+ *                           Helper Functions
+ *****************************************************************************/
+
+/* void loadCliffThresholds()
+ * Opens a file in the local directory named cliffThresholds.dat
+ * which contains thresholds for the infrared cliff sensors, in
+ * order to differentiate between the "inside" and "outside" regions.
+ */
 void loadCliffThresholds() {
   FILE *fd;
   if ((fd = fopen("cliffThresholds.dat", "r"))==NULL) {
@@ -291,6 +349,12 @@ void loadCliffThresholds() {
   fclose(fd);
 }
 
+/* void sendBytesToRobot()
+ * Sends a series of bytes (passed as an array) to the robot. The number of
+ * bytes sent must be specified (with the usual caveats about buffer overruns).
+ * It locks the serialMutex while writing, and if the write() fails it returns
+ * an error.
+ */
 void sendBytesToRobot(ubyte* bytes, int numBytes) {
   int ret;
   pthread_mutex_lock( &serialMutex );
@@ -301,6 +365,10 @@ void sendBytesToRobot(ubyte* bytes, int numBytes) {
   pthread_mutex_unlock( &serialMutex );
 }
 
+/* void ensureTransmitted()
+ * Locks the serialMutex and then calls tcdrain() to ensure that the output
+ * buffer is properly written to the serial port.
+ */
 void ensureTransmitted() {
   int ret;
   pthread_mutex_lock( &serialMutex );
@@ -311,9 +379,11 @@ void ensureTransmitted() {
   pthread_mutex_unlock( &serialMutex );
 }
 
-#define MAX(a,b) (a > b?a:b)
-#define MIN(a,b) (a < b?a:b)
 
+/* void driveWheels()
+ * Sends commands to the Create instructing it to drive its wheels with the
+ * specified velocity (with a maximum of 500 mm/s and a minimum of -500 mm/s
+ */
 void driveWheels(int left, int right) {
   ubyte bytes[5];
   left = MIN(500, left);
@@ -328,6 +398,15 @@ void driveWheels(int left, int right) {
   sendBytesToRobot(bytes, 5);
 }
 
+/* void setupSerialPort()
+ * Connects to the serial port associated with the Create (as specified by
+ * the argument, e.g., "/dev/tty.usbserial"), and associating the global file
+ * descriptor fd with the serial port connection.
+ * It then puts the robot in  "Full" mode, and requests a data stream of the
+ * robot's sensors.
+ * It also sets up a "song" the Create can play (perhaps when getting rewarded)
+ */
+//TODO: Consider decoupling the set up of the serial port with that of the Create
 void setupSerialPort(char serialPortName[]) {
   struct termios options;
   ubyte byte;
@@ -374,7 +453,18 @@ void setupSerialPort(char serialPortName[]) {
   ensureTransmitted();
 }
 
-// expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
+/* int checkPacket()
+ * Performs a check to ensure the data stored in packet[] is properly formed
+ * and therefore valid.
+ * First it verifies that the packet begins with the start byte (19) and then
+ * proceeds through the rest of the packet to ensure that the number of bytes
+ * sent is valid, and all the packet IDs are as expected. Then it calculates
+ * the checksum of the entire packet.
+ * If the packet is valid, it returns 1, else 0.
+ * expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
+ */
+// TODO: Replace instances of magic numbers with defined macros
+// TODO: Try to make this code more general in case we wish to vary the sensors
 int checkPacket() {
   int i, sum;
   if (packet[0]==19 &&
@@ -384,7 +474,8 @@ int checkPacket() {
       packet[8]==SENSOR_CLIFF_FRONT_RIGHT &&
       packet[11]==SENSOR_CLIFF_RIGHT &&
       packet[14]==SENSOR_DISTANCE &&
-      packet[17]==SENSOR_IRBYTE) {
+      packet[17]==SENSOR_IRBYTE)
+  {
     sum = 0;
     for (i = 0; i < B; i++) sum += packet[i];
     if ((sum & 0xFF) == 0) return 1;
@@ -392,6 +483,14 @@ int checkPacket() {
   return 0;
 }
 
+/* void extractPacket()
+ * Performs the extraction on the packet's data. This can be complicated by
+ * the fact that some sensors require more than one byte to represent their
+ * information, so some bit shifting is required.
+ * After this is done, it also gets the time value
+ */
+//TODO: Improve time extraction (instead of using gettimeofday)
+//TODO: Make more general, so that we can use different sensors/combinations
 void extractPacket() {
   struct timeval currentTime;
   int p = pktNum%M;
@@ -412,9 +511,39 @@ void extractPacket() {
   lastPktTime = currentTime;
 }
 
-void reflexes();
 
-void* csp3(void *arg) {
+//void reflexes();
+/* void reflexes()
+ * Takes actions at a faster rate to ensure the Create doesn't endanger itself
+ * (by falling off a table, for example)
+ */
+void reflexes() {
+  int a;
+  int p = pktNum%M;
+  pthread_mutex_lock( &lastActionMutex );
+  a = lastAction;
+  pthread_mutex_unlock( &lastActionMutex );
+  if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
+      (a==3 && (sCliffLB[p] || sCliffRB[p]))) {   // attempt to go backward over cliff
+    driveWheels(0, 0);                            // then interrupt motion
+  }
+
+  ubyte bytes[2];
+  ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
+  ubyte ledbits = (sCliffLB[p] << 2) | (frontbit << 1) | sCliffRB[p];
+  bytes[0] = CREATE_DIGITAL_OUTS;
+  bytes[1] = ledbits;
+  sendBytesToRobot(bytes, 2);
+}
+
+/* void * csp3()
+ * A packet processing function, which calls various helper functions in order
+ * to get data from the robot, parse it, and place it into the appropriate
+ * data structures to be used by the rest of the program.
+ */
+//TODO: Try using poll() over select()
+void * csp3(void *arg)
+{
   int errorCode, numBytesRead, i, j;
   ubyte bytes[B];
   int numBytesPreviouslyRead = 0;
@@ -461,27 +590,9 @@ void* csp3(void *arg) {
   return NULL;
 }
 
-void reflexes() {
-  int a;
-  int p = pktNum%M;
-  pthread_mutex_lock( &lastActionMutex );
-  a = lastAction;
-  pthread_mutex_unlock( &lastActionMutex );
-  if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
-      (a==3 && (sCliffLB[p] || sCliffRB[p]))) {   // attempt to go backward over cliff
-    driveWheels(0, 0);                            // then interrupt motion
-  }
-
-  ubyte bytes[2];
-  ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
-  ubyte ledbits = (sCliffLB[p] << 2) | (frontbit << 1) | sCliffRB[p];
-  bytes[0] = CREATE_DIGITAL_OUTS;
-  bytes[1] = ledbits;
-  sendBytesToRobot(bytes, 2);
-}
-
-#define SPEED 300
-
+/* int getPktNum()
+ * Sets the global variable myPktNum to the same value as the global pktNum.
+ */
 int getPktNum() {
   int myPktNum;
   pthread_mutex_lock( &pktNumMutex );
@@ -490,6 +601,10 @@ int getPktNum() {
   return myPktNum;  
 }
 
+/* void takeAction()
+ * Performs an action (currently using driveWheels to drive forward, backward,
+ * or turn) depending on the argument.
+ */
 void takeAction(int action) {
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
@@ -500,6 +615,11 @@ void takeAction(int action) {
     }
 }
 
+/* int epsilonGreedy()
+ * Takes an array representing state-action values, a state, and an epsilon and
+ * chooses an action. It will choose randomly with probability epsilon, but
+ * greedily otherwise.
+ */
 int epsilonGreedy(double Q[16][4], int s, int epsilon)
 {
   int max, i;
@@ -507,22 +627,40 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
   int firstAction, lastAction;
 
   myPktNum = getPktNum();
+  //TODO: Better modular arithmetic
   p = (myPktNum - 1) % M;
   firstAction = sCliffFLB[p] || sCliffFRB[p];
-  if (sCliffLB[p] || sCliffRB[p]) lastAction = 2;
+  if (sCliffLB[p] || sCliffRB[p])
+  {
+	  lastAction = 2;
+  }
   else lastAction = 3;
-  if (rand()/((double)RAND_MAX+1) < epsilon) {
+  if (rand()/((double)RAND_MAX+1) < epsilon)
+  {
     printf("random action\n\n");
     return firstAction + rand()%(lastAction + 1 - firstAction);
-  } else {
+  }
+  else
+  {
     max = lastAction;
     for (i = firstAction; i < lastAction; i++)
+    {
       if (Q[s][i] > Q[s][max])
+      {
         max = i;
+      }
+    }
     return max;
   }
 }
 
+/* main()
+ * The main function. Takes command line arguments specifying the (serial)
+ * port that the robot is connected to, and uses the above helper functions to
+ * set up the port and communicate with the robot.
+ * It spawns an additional thread which handles the data sent by the robot, but
+ * controls the robot (using the SARSA algorithm) itself.
+ */
 int main(int argc, char *argv[]) {
   pthread_t tid;
   int t_err;
@@ -598,10 +736,6 @@ int main(int argc, char *argv[]) {
 	     (short) sDistance[p%M]);
       if (sIRbyte[p%M]==137) {
         driveWheels(0, 0);
-	// pause streaming
-	bytes[0] = CREATE_STREAM_PAUSE;
-	bytes[1] = 0;
-	sendBytesToRobot(bytes, 2);
         tcdrain(fd);
         return 0;  // quit on remote pause
       }
