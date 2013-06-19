@@ -278,6 +278,7 @@ typedef unsigned char ubyte;
 #define CREATE_DRIVE_DIRECT  145
 #define CREATE_DIGITAL_OUTS  147
 #define CREATE_STREAM        148
+#define CREATE_STREAM_PAUSE  150
 
 #define SENSOR_ALL_SENSORS        6
 #define SENSOR_WHEEL_DROP         7
