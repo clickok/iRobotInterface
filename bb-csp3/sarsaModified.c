@@ -320,7 +320,7 @@ ubyte packet[B];              // packet is constructed here
 #define M 1000                /* The ring buffer size */
 unsigned short  sCliffL[M], sCliffR[M], sCliffFL[M], sCliffFR[M]; // cliff sensors (small positive integers)
 ubyte  sCliffLB[M], sCliffRB[M], sCliffFLB[M], sCliffFRB[M];      // (binary 1/0)
-int  sDistance[M];          // wheel rotation counts (small integers, pos/neg)
+short sDistance[M];           // wheel rotation counts (small integers, pos/neg)
 double sDeltaT[M];            // in milliseconds
 ubyte sIRbyte[M];             // Infrared byte e.g. remote
 
