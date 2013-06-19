@@ -222,6 +222,7 @@
 #include <errno.h>
 #include <float.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <signal.h>
@@ -721,7 +722,6 @@ void endProgram()
 int main(int argc, char *argv[])
 {
 	/* Initialize variables */
-	//pthread_t tid;                  	   	// Reader thread
 	unsigned int myPktNum;                  // Packet number variable
 	unsigned int prevPktNum;				// Previous packet number
 	int p;									// Byte tracking variable
@@ -740,7 +740,8 @@ int main(int argc, char *argv[])
 	int rewardReport;						// Reward tracking (for song)
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
-
+	char * logName = NULL;                  // Name of log file
+	char * portName = NULL;                 // Name of serial port
 
 	/* Install signal handler */
 	struct sigaction act;
@@ -750,16 +751,36 @@ int main(int argc, char *argv[])
 	act.sa_flags = 0;
 	sigaction(SIGINT, &act, &oldact);
 
-	/* Command line arguments */
-	if (argc < 2)
+	/* Parse command line arguments */
+	while (1)
 	{
-		fprintf(stderr, "Portname argument required -- something like /dev/tty.usbserial\n");
-		exit(EXIT_FAILURE);
-	}
-	else if (argc > 2)
-	{
-		log = fopen(argc[2],"w");
-	}
+		static struct option long_options[] =
+		{
+			{"Port/device to communicate with",    required_argument,   0, 'p'},
+			{"Name of log file to (over)write to", required_argument,   0, 'f'},
+			{0, 0, 0, 0}
+		};
+		int c;
+		int option_index = 0;
+
+		c = getopt_long(argc, argv, "p:f:",long_options, &option_index);
+		/* Detect end of options */
+		if (c == -1) break;
+
+		/* Set options based on command line arguments */
+		switch(c)
+		{
+		case 'p':
+			portName = optarg;
+			break;
+		case 'f':
+			logName = optarg;
+			break;
+		case '?':
+			fprintf(stderr,"ERROR: Unknown command line argument\n");
+			exit(EXIT_FAILURE);
+			}
+		}
 
 	loadCliffThresholds();
 	srand(0);
@@ -767,8 +788,9 @@ int main(int argc, char *argv[])
 	pthread_mutex_init(&serialMutex, NULL);
 	pthread_mutex_init(&lastActionMutex, NULL);
 
-	setupSerialPort(argv[1]);
+	setupSerialPort(portName);
 	usleep(20000); // wait for at least one packet to have arrived
+
 	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
 		perror("Cannot create thread\n");
