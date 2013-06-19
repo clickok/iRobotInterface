@@ -551,8 +551,6 @@ void * csp3(void *arg)
 	ubyte bytes[B];
 	int numBytesPreviouslyRead = 0;
 	struct timeval timeout;
-	timeout.tv_sec = 2;
-	timeout.tv_usec = 0;
 	fd_set readfs;
 
 	gettimeofday(&lastPktTime, NULL);
@@ -560,6 +558,8 @@ void * csp3(void *arg)
 
 	while (TRUE)
 	{
+		timeout.tv_sec = 2;
+		timeout.tv_usec = 0;
 		errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
 		if (errorCode==0)
 		{
