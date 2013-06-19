@@ -689,15 +689,21 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
  */
 void endProgram()
 {
-	int val;
+	int val, count=0;
+	ubyte bytes[10];
 	sem_post(&should_terminate);
 	sem_getvalue(&should_terminate,&val);
 	printf("[DEBUG] should_terminate value: %d\n",val);
 	pthread_join(tid, NULL);
 	printf("[DEBUG] thread join completed\n");
 	driveWheels(0, 0);
-	tcdrain(fd);
+	ensureTransmitted();
 	printf("[DEBUG] driveWheels() stop successfully sent\n");
+//	bytes[count++] = 150;
+//	bytes[count++] = 0;
+//	bytes[count++] = 128;
+//	sendBytesToRobot(bytes,count);
+//	ensureTransmitted();
 	exit(0);
 }
 
@@ -812,7 +818,7 @@ int main(int argc, char *argv[])
 					(short) sDistance[p%M]);
 			if (sIRbyte[p%M]==137)
 			{
-				endProgram(tid);
+				endProgram();
 				return 0;
 			}
 		}
