@@ -24,6 +24,7 @@ all: $(EXECS)
 %.out: %.c
 	$(CC) -o $@ $^ $(LIBS) $(CFLAGS)
 	
+# Utilities for working with other computers
 clean:
 	rm -f $(EXECS)
 	
