@@ -301,6 +301,7 @@ typedef unsigned char ubyte;
  *                       Global Names and Variables
  *****************************************************************************/
 
+pthread_t tid;        		  // csp3() thread
 sem_t should_terminate;       // A semaphore for csp3() termination
 
 volatile unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
@@ -686,7 +687,7 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
  * Ensures that the csp3() thread is terminated, stops the Create and sets it
  * to "passive" mode, then disconnects from the serial port.
  */
-void endProgram(pthread_t tid)
+void endProgram()
 {
 	int val;
 	sem_post(&should_terminate);
@@ -707,7 +708,7 @@ void endProgram(pthread_t tid)
 int main(int argc, char *argv[])
 {
 	/* Initialize variables */
-	pthread_t tid;                  	   	// Reader thread
+	//pthread_t tid;                  	   	// Reader thread
 	unsigned int myPktNum;                  // Packet number variable
 	unsigned int prevPktNum;				// Previous packet number
 	int p;									// Byte tracking variable
