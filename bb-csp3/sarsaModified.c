@@ -736,7 +736,7 @@ int main(int argc, char *argv[])
 	int i, j;								// Iterator variables
 	double delta;							// Update
 	ubyte bytes[2];         				// Robot command array
-	int rewardReport;						// Reward tracking (for song)
+	int rewardReport = 0;					// Reward tracking (for song)
 	int songThreshold = 100;                // Reward needed to sing
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
@@ -799,7 +799,7 @@ int main(int argc, char *argv[])
 	pthread_mutex_init(&serialMutex, NULL);
 	pthread_mutex_init(&lastActionMutex, NULL);
 
-	setupSerialPort(portName);
+	if (portName != NULL) setupSerialPort(portName);
 	usleep(20000); // wait for at least one packet to have arrived
 
 	if (logName != NULL)
@@ -824,6 +824,7 @@ int main(int argc, char *argv[])
 	prevPktNum = 0;
 
 	/* Initialize state-action values and eligibility trace */
+	//TODO: Initialize more optimistically?
 	for (i = 0; i < 16; i++)
 	{
 		for (j = 0; j < 4; j++)
@@ -833,15 +834,16 @@ int main(int argc, char *argv[])
 		}
 	}
 
+
+	/* Get first state-action pair */
 	gettimeofday(&timeStart, NULL);
 	myPktNum = getPktNum();
-	p = (myPktNum - 1) % M;
+	p = (myPktNum + M - 1) % M;
 	s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 	a = epsilonGreedy(Q, s, epsilon);
 	takeAction(a);
 	ensureTransmitted();
 	prevPktNum = myPktNum;
-	rewardReport = 0;
 
 	/* ************************************************************************
 	 * Control loop
@@ -850,7 +852,7 @@ int main(int argc, char *argv[])
 	{
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
-		+ (timeEnd.tv_usec-timeStart.tv_usec);
+						+ (timeEnd.tv_usec-timeStart.tv_usec);
 		fprintf(logFile,"<iteration_time_microseconds> %6ld </iteration_time_microseconds>\n", computationTime);
 		//printf("Time for iteration (in microseconds): %ld\n", computationTime);
 		usleep(100000 - computationTime);
@@ -863,7 +865,7 @@ int main(int argc, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 		reward = 0;
-		for (p = prevPktNum; p < myPktNum; p++)
+		for (p = prevPktNum; p < myPktNum; ++p)
 		{
 			reward += sDistance[p%M];
 //			printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
