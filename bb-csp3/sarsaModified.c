@@ -246,6 +246,7 @@
 //TODO: Set up state-action array to make it more easily modified
 //TODO: Check modular arithmetic statements
 //TODO: Update documentation for new command line argument structure
+//TODO: Look for "magic" opcodes and replace them with macros
 
 /******************************************************************************
  *                           Defines and Typedefs
@@ -726,6 +727,7 @@ int main(int argc, char *argv[])
 	double Q[16][4];						// State-Action value array
 	double e[16][4];						// Eligibility trace array
 	double alpha = 0.1;						// Stepsize (alpha) parameter
+	double alphaR = 0.01;                   // Average Reward Stepsize
 	double lambda = 0.9;					// Trace decay parameter
 	double gamma = 0.98;                    // Discount parameter
 	double epsilon = 0.01;                  // Exploration parameter
@@ -868,11 +870,6 @@ int main(int argc, char *argv[])
 		for (p = prevPktNum; p < myPktNum; ++p)
 		{
 			reward += sDistance[p%M];
-//			printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
-//				     sDeltaT[p%M],
-//				     sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
-//				     sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
-//				     (short) sDistance[p%M]);
 			/* sensor report form: <deltaT> <cliff_left IR reading> <binary_of_cliff_left> ... <distance_travelled> */
 			fprintf(logFile,"<sensor_report>"
 							"<delta_t> %6.6f </delta_t> "
@@ -884,15 +881,17 @@ int main(int argc, char *argv[])
 							sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
 							sDistance[p%M]);
 			fflush(logFile);
+			/* End program on remote pause */
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
 				return 0;
 			}
 		}
-		rewardReport += reward;
+
 
 		/* Sing a song upon accumulating enough reward */
+		rewardReport += reward;
 		if (rewardReport>songThreshold)
 		{
 			bytes[0] = 141;
@@ -900,12 +899,13 @@ int main(int argc, char *argv[])
 			sendBytesToRobot(bytes, 2);
 			rewardReport = 0;
 		}
-		p = (myPktNum - 1) % M;
+		/* Get next state-action pair, update Q and e */
+		p = (myPktNum + M - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 		aprime = epsilonGreedy(Q, sprime, epsilon);
 		takeAction(aprime);
 		ensureTransmitted();
-		delta = reward + gamma*Q[sprime][aprime] - Q[s][a];
+		delta = reward - avgReward + Q[sprime][aprime] - Q[s][a];
 		for (j = 0; j < 4; j++)
 		{
 			e[s][j] = 0;
@@ -913,6 +913,8 @@ int main(int argc, char *argv[])
 		e[s][a] = 1;
 		//printf("s a r s' a':%d %d %d %d %d\n", s, a, reward, sprime, aprime);
 		fprintf(logFile,"<sarsa_values>%d %d %d %d %d</sarsa_values>\n", s, a, reward, sprime, aprime);
+		fprintf(logFile,"<avg_reward> %f </avg_reward>\n",avgReward);
+		fprintf(logFile,"<delta> %f </delta>\n",delta);
 		for (i = 0; i < 16; i++)
 		{
 			//printf("Action values for state %d: %f %f %f %f\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
@@ -923,6 +925,7 @@ int main(int argc, char *argv[])
 			{
 				Q[i][j] = Q[i][j] + alpha*delta*e[i][j];
 				e[i][j] = gamma*lambda*e[i][j];
+				avgReward += alphaR * delta;
 			}
 		}
 		s = sprime;
