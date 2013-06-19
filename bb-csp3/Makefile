@@ -9,7 +9,7 @@
 
 # Set compiler options
 CC := gcc
-CFLAGS := -std=c99 -Wall -I.
+CFLAGS := -Wall -I.
 
 # Set libraries to use
 LIBS = -lpthread
