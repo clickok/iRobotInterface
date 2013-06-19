@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
     fprintf(fd, "1\n");
-    for (i = 0; i < 4; i++) fprintf(fd, "%d\n", (outsideMin[i]-insideMax[i])/2);
+    for (i = 0; i < 4; i++) fprintf(fd, "%d\n", (outsideMin[i]+insideMax[i])/2);
     fclose(fd);
     printf("Success! Margin is %d (inside is darker/lower)\n", minMargin);
     return 0;
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
     fprintf(fd, "0\n");
-    for (i = 0; i < 4; i++) fprintf(fd, "%d\n", (insideMin[i]-outsideMax[i])/2);
+    for (i = 0; i < 4; i++) fprintf(fd, "%d\n", (insideMin[i]+outsideMax[i])/2);
     printf("Success! Margin is %d (inside is lighter/higher)\n", minMargin);
     fclose(fd);
     return 0;
@@ -100,6 +100,4 @@ int main(int argc, char *argv[]) {
     printf("Margin %d too small; needs to be %d\n", minMargin, REQUIRED_MARGIN);
   else
     printf("Bounds overlap by %d\n", -minMargin);
-  // TODO: Improve program termination
-  return 0;
 }
