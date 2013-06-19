@@ -320,7 +320,7 @@ ubyte packet[B];              // packet is constructed here
 #define M 1000                /* The ring buffer size */
 unsigned short  sCliffL[M], sCliffR[M], sCliffFL[M], sCliffFR[M]; // cliff sensors (small positive integers)
 ubyte  sCliffLB[M], sCliffRB[M], sCliffFLB[M], sCliffFRB[M];      // (binary 1/0)
-short  sDistance[M];          // wheel rotation counts (small integers, pos/neg)
+int  sDistance[M];          // wheel rotation counts (small integers, pos/neg)
 double sDeltaT[M];            // in milliseconds
 ubyte sIRbyte[M];             // Infrared byte e.g. remote
 
@@ -853,14 +853,24 @@ int main(int argc, char *argv[])
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
 			reward += sDistance[p%M];
-			// sensor report form: <deltaT> <cliff_left IR reading> <binary_of_cliff_left> ... <distance_travelled>
-			printf("<sensor_report>"
-					"%6.6f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd"
-					"</sensor_report>\n",
-					sDeltaT[p%M],
-					sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
-					sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
-					(short) sDistance[p%M]);
+			/* sensor report form: <deltaT> <cliff_left IR reading> <binary_of_cliff_left> ... <distance_travelled> */
+//			fprintf(logFile,"<sensor_report>"
+//					"%6.6f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd"
+//					"</sensor_report>\n",
+//					sDeltaT[p%M],
+//					sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
+//					sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
+//					(short) sDistance[p%M]);
+			fprintf(logFile,"<sensor_report>"
+							"<delta_t> %6.6f </delta_t> "
+							"<cliff_sensors> %5u (%2u) %6u (%2u) %6u (%2u) %6u (%2u) </cliff_sensors> "
+							"<distance_sensor> %6d </distance_sensor>"
+							"</sensor_report>\n",
+							sDeltaT[p%M],
+							sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
+							sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
+							sDistance[p%M]);
+			fflush(logFile);
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
