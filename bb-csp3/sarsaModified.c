@@ -219,19 +219,19 @@
   Rich Sutton (rich@richsutton.com) in June, 2013.
  */
 
-#include <stdio.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include <stdlib.h>
-#include <termios.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <string.h>
-#include <unistd.h>
 #include <errno.h>
 #include <float.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <termios.h>
+#include <unistd.h>
 
 /******************************************************************************
  *                          Overall To Do List
@@ -696,6 +696,7 @@ void endProgram(pthread_t tid)
 	printf("[DEBUG] thread join completed\n");
 }
 
+
 /* main()
  * The main function. Takes command line arguments specifying the (serial)
  * port that the robot is connected to, and uses the above helper functions to
@@ -725,6 +726,15 @@ int main(int argc, char *argv[])
 	int rewardReport;						// Reward tracking (for song)
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
+
+	/* Install signal handler */
+	struct sigaction act;
+	struct sigaction oldact;
+	act.sa_handler = endProgram;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+	//sigaction(SIGINT, &act, &oldact);
+
 
 	if (argc < 2)
 	{
