@@ -893,7 +893,7 @@ int main(int argc, char *argv[])
 			bytes[0] = 141;
 			bytes[1] = 0;
 			sendBytesToRobot(bytes, 2);
-			rewardReport -= 0;
+			rewardReport = 0;
 		}
 		p = (myPktNum - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
