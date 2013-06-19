@@ -793,10 +793,13 @@ int main(int argc, char *argv[])
 	setupSerialPort(portName);
 	usleep(20000); // wait for at least one packet to have arrived
 
-	logFile = fopen(logName,"w"); // Open log file
-	if (logFile == NULL)
+	if (logName != NULL)
 	{
-		perror("Failed to open log file");
+		logFile = fopen(logName,"w"); // Open log file
+		if (logFile == NULL)          // Ensure log file opened properly
+		{
+			perror("Failed to open log file");
+		}
 	}
 	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
@@ -828,13 +831,15 @@ int main(int argc, char *argv[])
 	prevPktNum = myPktNum;
 	rewardReport = 0;
 
-	/* Control loop */
+	/* ************************************************************************
+	 * Control loop
+	 * ***********************************************************************/
 	while (TRUE)
 	{
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 		+ (timeEnd.tv_usec-timeStart.tv_usec);
-		printf("<iteration_time_microseconds> %6ld </iteration_time_microseconds>\n", computationTime);
+		fprintf(logFile,"<iteration_time_microseconds> %6ld </iteration_time_microseconds>\n", computationTime);
 		usleep(100000 - computationTime);
 		timeStart = timeEnd;
 		gettimeofday(&timeStart, NULL);
