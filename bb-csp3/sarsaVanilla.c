@@ -822,6 +822,7 @@ int main(int argc, char *argv[])
 	{
 		sem_init(&should_terminate, 0, FALSE);
 	}
+
 	prevPktNum = 0;
 
 	/* Initialize state-action values and eligibility trace */
