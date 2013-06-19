@@ -545,9 +545,10 @@ void reflexes() {
  * data structures to be used by the rest of the program.
  */
 //TODO: Try using poll() over select()
-void * csp3(void *arg)
+void csp3(void *arg)
 {
 	int errorCode, numBytesRead, i;
+	int stopFlag = 0;
 	ubyte bytes[B];
 	int numBytesPreviouslyRead = 0;
 	struct timeval timeout;
@@ -558,6 +559,7 @@ void * csp3(void *arg)
 
 	while (TRUE)
 	{
+		sem_getvalue(&should_terminate,&stopFlag);
 		timeout.tv_sec = 2;
 		timeout.tv_usec = 0;
 		errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
@@ -607,8 +609,6 @@ void * csp3(void *arg)
 			}
 		}
 	}
-	//TODO: Necessary to return NULL?
-	return NULL;
 }
 
 /* int getPktNum()
