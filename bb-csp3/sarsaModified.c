@@ -746,12 +746,12 @@ int main(int argc, char *argv[])
 	char * portName = NULL;                 // Name of serial port
 
 	/* Install signal handler */
-	struct sigaction act;
-	struct sigaction oldact;
-	act.sa_handler = endProgram;
-	sigemptyset(&act.sa_mask);
-	act.sa_flags = 0;
-	sigaction(SIGINT, &act, &oldact);
+	struct sigaction act;                   // The new sigaction
+	struct sigaction oldact;                // To preserve old sigaction
+	act.sa_handler = endProgram;            // Set endProgram() as sig handler
+	sigemptyset(&act.sa_mask);              // Empty act's signal set
+	act.sa_flags = 0;                       // Set act's flags to 0
+	sigaction(SIGINT, &act, &oldact);       // Set act to respond to SIGINT
 
 	/* ************************************************************************
 	 *                      Parse command line arguments
@@ -889,7 +889,6 @@ int main(int argc, char *argv[])
 			}
 		}
 
-
 		/* Sing a song upon accumulating enough reward */
 		rewardReport += reward;
 		if (rewardReport>songThreshold)
@@ -911,14 +910,11 @@ int main(int argc, char *argv[])
 			e[s][j] = 0;
 		}
 		e[s][a] = 1;
-		//printf("s a r s' a':%d %d %d %d %d\n", s, a, reward, sprime, aprime);
 		fprintf(logFile,"<sarsa_values>%d %d %d %d %d</sarsa_values>\n", s, a, reward, sprime, aprime);
 		fprintf(logFile,"<avg_reward> %f </avg_reward>\n",avgReward);
 		fprintf(logFile,"<delta> %f </delta>\n",delta);
 		for (i = 0; i < 16; i++)
 		{
-			//printf("Action values for state %d: %f %f %f %f\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
-			//printf("Eligibility traces for state %d: %f %f %f %f\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
 			fprintf(logFile,"<action_values state=\"%d\">%f %f %f %f </action_values>\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
 			fprintf(logFile,"<eligibility_trace state=\"%d\"%f %f %f %f</eligibility_trace>\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
 			for (j = 0; j < 4; j++)
