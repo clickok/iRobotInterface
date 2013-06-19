@@ -545,50 +545,68 @@ void reflexes() {
 //TODO: Try using poll() over select()
 void * csp3(void *arg)
 {
-  int errorCode, numBytesRead, i, j;
-  ubyte bytes[B];
-  int numBytesPreviouslyRead = 0;
-  struct timeval timeout;
-  fd_set readfs;
+	int errorCode, numBytesRead, i;
+	ubyte bytes[B];
+	int numBytesPreviouslyRead = 0;
+	struct timeval timeout;
+	fd_set readfs;
 
-  gettimeofday(&lastPktTime, NULL);
-  FD_SET(fd, &readfs);
+	gettimeofday(&lastPktTime, NULL);
+	FD_SET(fd, &readfs);
 
-  while (TRUE) {
-    timeout.tv_sec = 2;
-    timeout.tv_usec = 0;
-    errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
-    if (errorCode==0) {
-      printf("Timed out at select()\n");
-    } else if (errorCode==-1) {
-      fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    }
-    numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
-    if (numBytesRead==-1) {
-      fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    } else {
-      for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
-      numBytesPreviouslyRead += numBytesRead;
-      if (numBytesPreviouslyRead==B) {  //packet complete!
-	if (checkPacket()) {
-	  extractPacket();
-	  reflexes();
-	  ensureTransmitted();
-	  pthread_mutex_lock( &pktNumMutex );
-	  pktNum++;
-	  pthread_mutex_unlock( &pktNumMutex );
-	  numBytesPreviouslyRead = 0;
-	} else {
-	  printf("misaligned packet.\n");
-	  for (i = 1; i<B; i++) packet[i-1] = packet[i];
-	  numBytesPreviouslyRead--;
+	while (TRUE)
+	{
+		timeout.tv_sec = 2;
+		timeout.tv_usec = 0;
+		errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
+		if (errorCode==0)
+		{
+			printf("Timed out at select()\n");
+		}
+		else if (errorCode==-1)
+		{
+			fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+		numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
+		if (numBytesRead==-1)
+		{
+			fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+		else
+		{
+			for (i = 0; i < numBytesRead; i++)
+			{
+				packet[numBytesPreviouslyRead+i] = bytes[i];
+			}
+			numBytesPreviouslyRead += numBytesRead;
+			if (numBytesPreviouslyRead==B) /* packet complete! */
+			{
+				if (checkPacket())
+				{
+					extractPacket();
+					reflexes();
+					ensureTransmitted();
+					pthread_mutex_lock( &pktNumMutex );
+					++pktNum;
+					pthread_mutex_unlock( &pktNumMutex );
+					numBytesPreviouslyRead = 0;
+				}
+				else
+				{
+					printf("misaligned packet.\n");
+					for (i = 1; i<B; i++)
+					{
+						packet[i-1] = packet[i];
+					}
+					numBytesPreviouslyRead--;
+				}
+			}
+		}
 	}
-      }
-    }
-  }
-  return NULL;
+	//TODO: Necessary to return NULL?
+	return NULL;
 }
 
 /* int getPktNum()

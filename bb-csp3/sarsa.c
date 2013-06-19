@@ -545,7 +545,7 @@ void reflexes() {
 //TODO: Try using poll() over select()
 void * csp3(void *arg)
 {
-  int errorCode, numBytesRead, i, j;
+  int errorCode, numBytesRead, i;
   ubyte bytes[B];
   int numBytesPreviouslyRead = 0;
   struct timeval timeout;
