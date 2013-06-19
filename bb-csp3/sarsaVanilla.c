@@ -695,18 +695,19 @@ void endProgram()
 	ubyte bytes[10];
 	sem_post(&should_terminate);
 	sem_getvalue(&should_terminate,&val);
-	printf("[DEBUG] should_terminate value: %d\n",val);
 	pthread_join(tid, NULL);
-	printf("[DEBUG] thread join completed\n");
+	fprintf(logFile,"<debug>csp3() thread terminated</debug>\n");
 	driveWheels(0, 0);
 	ensureTransmitted();
-	printf("[DEBUG] driveWheels() stop successfully sent\n");
+	fprintf(logFile,"<debug>driveWheels(0,0) sent</debug>\n");
 	bytes[count++] = 150;
 	bytes[count++] = 0;
 	bytes[count++] = 128;
 	sendBytesToRobot(bytes,count);
 	ensureTransmitted();
+	fprintf(logFile,"<debug>program end opcodes sent</debug>\n");
 	usleep(20000); // Give time for commands to be sent/received
+	fprintf(logFile,"<debug>run terminated</debug>\n");
 	exit(0);
 }
 

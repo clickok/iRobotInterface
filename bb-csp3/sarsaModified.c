@@ -247,6 +247,7 @@
 //TODO: Check modular arithmetic statements
 //TODO: Update documentation for new command line argument structure
 //TODO: Look for "magic" opcodes and replace them with macros
+//TODO: Allow variables (alpha, epsilon, etc.) to be set from command line
 
 /******************************************************************************
  *                           Defines and Typedefs
