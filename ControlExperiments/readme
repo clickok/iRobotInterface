@@ -1,0 +1,17 @@
+Description
+-----------
+Code and data for control experiments in the microworld, for driving forward.
+
+Contributors: Joseph Modayil, ...
+
+Example Files
+--------------
+C code: sarsa-joseph.c
+logfile: DistanceSARSA-y2013-m06-d19-h11-m34-s53.logfile
+
+When running to collect data, experiment parameters can be listed on the command line, and they will be saved to the logfile.
+     prompt> ./sarsa /dev/tty.usbserial-A2001nbo -robot Rich -microworld M1Y -communication USB-Create-cable
+
+To extract average reward performance from the logfile and save a graph in logfilename.pdf
+     prompt> plotNetReward.py logfilename 
+
