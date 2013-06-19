@@ -899,6 +899,7 @@ int main(int argc, char *argv[])
 			sendBytesToRobot(bytes, 2);
 			rewardReport = 0;
 		}
+
 		/* Get next state-action pair, update Q and e */
 		p = (myPktNum + M - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
