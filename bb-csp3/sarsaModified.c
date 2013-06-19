@@ -739,6 +739,7 @@ int main(int argc, char *argv[])
 	double delta;							// Update
 	ubyte bytes[2];         				// Robot command array
 	int rewardReport;						// Reward tracking (for song)
+	int songThreshold = 50;                 // Reward needed to sing
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
 	char * logName = NULL;                  // Name of log file
@@ -854,12 +855,12 @@ int main(int argc, char *argv[])
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
 			reward += sDistance[p%M];
-			/* sensor report form: <deltaT> <cliff_left IR reading> <binary_of_cliff_left> ... <distance_travelled> */
 			printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
 				     sDeltaT[p%M],
 				     sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
 				     sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
 				     (short) sDistance[p%M]);
+			/* sensor report form: <deltaT> <cliff_left IR reading> <binary_of_cliff_left> ... <distance_travelled> */
 //			fprintf(logFile,"<sensor_report>"
 //							"<delta_t> %6.6f </delta_t> "
 //							"<cliff_sensors> %5u (%u) %6u (%u) %6u (%u) %6u (%u) </cliff_sensors> "
@@ -877,12 +878,14 @@ int main(int argc, char *argv[])
 			}
 		}
 		rewardReport += reward;
-		if (rewardReport>50)
+
+		/* Sing a song upon accumulating enough reward */
+		if (rewardReport>songThreshold)
 		{
 			bytes[0] = 141;
 			bytes[1] = 0;
 			sendBytesToRobot(bytes, 2);
-			rewardReport -= 50;
+			rewardReport -= 0;
 		}
 		p = (myPktNum - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
