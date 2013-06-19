@@ -686,12 +686,14 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
  * Ensures that the csp3() thread is terminated, stops the Create and sets it
  * to "passive" mode, then disconnects from the serial port.
  */
-void endProgram()
+void endProgram(pthread_t tid)
 {
 	int val;
 	sem_post(&should_terminate);
 	sem_getvalue(&should_terminate,&val);
 	printf("[DEBUG] should_terminate value: %d\n",val);
+	pthread_join(tid, NULL);
+	printf("[DEBUG] thread join completed\n");
 }
 
 /* main()
@@ -767,6 +769,8 @@ int main(int argc, char *argv[])
 	ensureTransmitted();
 	prevPktNum = myPktNum;
 	rewardReport = 0;
+
+	/* Control loop */
 	while (TRUE)
 	{
 		gettimeofday(&timeEnd, NULL);
@@ -795,8 +799,8 @@ int main(int argc, char *argv[])
 			{
 				driveWheels(0, 0);
 				tcdrain(fd);
-				endProgram();
-				return 0;  // quit on remote pause
+				endProgram(tid);
+				return 0;
 			}
 		}
 		rewardReport += reward;
