@@ -304,6 +304,8 @@ typedef unsigned char ubyte;
 pthread_t tid;        		  // csp3() thread
 sem_t should_terminate;       // A semaphore for csp3() termination
 
+FILE * log = stdout;          // Log file
+
 volatile unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
@@ -739,6 +741,7 @@ int main(int argc, char *argv[])
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
 
+
 	/* Install signal handler */
 	struct sigaction act;
 	struct sigaction oldact;
@@ -747,11 +750,15 @@ int main(int argc, char *argv[])
 	act.sa_flags = 0;
 	sigaction(SIGINT, &act, &oldact);
 
-
+	/* Command line arguments */
 	if (argc < 2)
 	{
 		fprintf(stderr, "Portname argument required -- something like /dev/tty.usbserial\n");
 		exit(EXIT_FAILURE);
+	}
+	else if (argc > 2)
+	{
+		log = fopen(argc[2],"w");
 	}
 
 	loadCliffThresholds();
