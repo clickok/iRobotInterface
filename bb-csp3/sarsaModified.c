@@ -559,7 +559,13 @@ void csp3(void *arg)
 
 	while (TRUE)
 	{
+		/* Check if the thread should terminate */
 		sem_getvalue(&should_terminate,&stopFlag);
+		if (stopFlag == TRUE)
+		{
+			printf("csp3() terminated\n");
+			pthread_exit(0);
+		}
 		timeout.tv_sec = 2;
 		timeout.tv_usec = 0;
 		errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
