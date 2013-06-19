@@ -725,13 +725,14 @@ int main(int argc, char *argv[])
 	int p;									// Byte tracking variable
 	double Q[16][4];						// State-Action value array
 	double e[16][4];						// Eligibility trace array
-	double stepsize = 0.1;					// Stepsize (alpha) parameter
+	double alpha = 0.1;						// Stepsize (alpha) parameter
 	double lambda = 0.9;					// Trace decay parameter
 	double gamma = 0.98;                    // Discount parameter
 	double epsilon = 0.01;                  // Exploration parameter
 	int a, aprime;                          // Action
 	int s, sprime;                          // State
 	int reward;                             // Reward
+	double avgReward = 0;					// Average Reward
 	int i, j;								// Iterator variables
 	double delta;							// Update
 	ubyte bytes[2];         				// Robot command array
@@ -754,6 +755,11 @@ int main(int argc, char *argv[])
 	 *                      Parse command line arguments
 	 * ***********************************************************************/
 	logFile = stdout;
+	if (argc < 2)
+	{
+		fprintf(stderr, "Portname argument required -- something like -p /dev/tty.usbserial\n");
+	    return 0;
+	}
 	while (1)
 	{
 		static struct option long_options[] =
@@ -781,8 +787,8 @@ int main(int argc, char *argv[])
 		case '?':
 			fprintf(stderr,"ERROR: Unknown command line argument\n");
 			exit(EXIT_FAILURE);
-			}
 		}
+	}
 
 	/* ************************************************************************
 	 *                  Further initialization of program
@@ -913,7 +919,7 @@ int main(int argc, char *argv[])
 			fprintf(logFile,"<eligibility_trace state=\"%d\"%f %f %f %f</eligibility_trace>\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
 			for (j = 0; j < 4; j++)
 			{
-				Q[i][j] = Q[i][j] + stepsize*delta*e[i][j];
+				Q[i][j] = Q[i][j] + alpha*delta*e[i][j];
 				e[i][j] = gamma*lambda*e[i][j];
 			}
 		}
