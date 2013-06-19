@@ -240,13 +240,11 @@
 //TODO: Benchmark with minor optimizations (using volatile, using poll())
 //TODO: Run code through a profiler once it is stable
 //TODO: Look for a better way of displaying real time information than printf()
-//TODO: Standardize data output to make it more machine friendly
 //TODO: Try to decouple multipurpose functions, if it makes sense
-//TODO: Consider separating agent thread from main() function.
+//TODO: Consider separating agent thread from main() function?
 //TODO: Add return codes to some of these void functions, if appropriate
 //TODO: Set up state-action array to make it more easily modified
-//TODO: Check all modular arithmetic statements
-//TODO: Figure out rationale for having both myPktNum and pktNum
+//TODO: Check modular arithmetic statements
 //TODO: Update documentation for new command line argument structure
 
 /******************************************************************************
@@ -472,7 +470,7 @@ void setupSerialPort(char serialPortName[]) {
  * expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
  */
 // TODO: Replace instances of magic numbers with defined macros
-// TODO: Try to make this code more general in case we wish to vary the sensors
+// TODO: Try to make this code more general in case we wish to vary the sensors?
 int checkPacket() {
   int i, sum;
   if (packet[0]==19 &&
@@ -498,7 +496,7 @@ int checkPacket() {
  * After this is done, it also gets the time value
  */
 //TODO: Improve time extraction (instead of using gettimeofday)
-//TODO: Make more general, so that we can use different sensors/combinations
+//TODO: Make more general, so that we can use different sensors/combinations?
 void extractPacket() {
   struct timeval currentTime;
   int p = pktNum%M;
@@ -659,8 +657,7 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
   int firstAction, lastAction;
 
   myPktNum = getPktNum();
-  //TODO: Better modular arithmetic
-  p = (myPktNum - 1) % M;
+  p = (myPktNum + M - 1) % M;
   firstAction = sCliffFLB[p] || sCliffFRB[p];
   if (sCliffLB[p] || sCliffRB[p])
   {
