@@ -1,4 +1,4 @@
-# iRobotInterface bb-csp3 Makefile
+# iRobotInterface AvgRewardSarsa Makefile
 #
 # Author: BB
 # Date  : 06-18-2013
