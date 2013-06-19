@@ -737,7 +737,7 @@ int main(int argc, char *argv[])
 	act.sa_handler = endProgram;
 	sigemptyset(&act.sa_mask);
 	act.sa_flags = 0;
-	//sigaction(SIGINT, &act, &oldact);
+	sigaction(SIGINT, &act, &oldact);
 
 
 	if (argc < 2)
