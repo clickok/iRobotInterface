@@ -698,6 +698,7 @@ void endProgram()
 	driveWheels(0, 0);
 	tcdrain(fd);
 	printf("[DEBUG] driveWheels() stop successfully sent\n");
+	exit(0);
 }
 
 
