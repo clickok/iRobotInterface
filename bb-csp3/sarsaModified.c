@@ -699,11 +699,12 @@ void endProgram()
 	driveWheels(0, 0);
 	ensureTransmitted();
 	printf("[DEBUG] driveWheels() stop successfully sent\n");
-//	bytes[count++] = 150;
-//	bytes[count++] = 0;
-//	bytes[count++] = 128;
-//	sendBytesToRobot(bytes,count);
-//	ensureTransmitted();
+	bytes[count++] = 150;
+	bytes[count++] = 0;
+	bytes[count++] = 128;
+	sendBytesToRobot(bytes,count);
+	ensureTransmitted();
+	usleep(20000); // Give time for commands to be sent/received
 	exit(0);
 }
 
