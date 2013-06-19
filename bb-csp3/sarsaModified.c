@@ -221,6 +221,7 @@
 
 #include <stdio.h>
 #include <pthread.h>
+#include <semaphore.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <fcntl.h>
@@ -300,7 +301,8 @@ typedef unsigned char ubyte;
  *                       Global Names and Variables
  *****************************************************************************/
 
-//TODO: Determine whether to add modifiers (i.e., 'volatile') to variables
+sem_t should_terminate;       // A semaphore for csp3() termination
+
 volatile unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
@@ -319,7 +321,7 @@ ubyte sIRbyte[M];             // Infrared byte e.g. remote
 
 int cliffThresholds[4];       // left, front left, front right, right
 int cliffHighValue;           // binary value taken if threshold exceeded
-//------------------------------------------------------------------
+
 
 
 /*****************************************************************************
@@ -549,6 +551,8 @@ void * csp3(void *arg)
 	ubyte bytes[B];
 	int numBytesPreviouslyRead = 0;
 	struct timeval timeout;
+	timeout.tv_sec = 2;
+	timeout.tv_usec = 0;
 	fd_set readfs;
 
 	gettimeofday(&lastPktTime, NULL);
@@ -556,8 +560,6 @@ void * csp3(void *arg)
 
 	while (TRUE)
 	{
-		timeout.tv_sec = 2;
-		timeout.tv_usec = 0;
 		errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
 		if (errorCode==0)
 		{
@@ -673,6 +675,19 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
   }
 }
 
+/* void endProgram()
+ * Performs tasks related to program termination.
+ * Ensures that the csp3() thread is terminated, stops the Create and sets it
+ * to "passive" mode, then disconnects from the serial port.
+ */
+void endProgram()
+{
+	int val;
+	sem_post(&should_terminate);
+	sem_getvalue(&should_terminate,&val);
+	printf("[DEBUG] should_terminate value: %d\n",val);
+}
+
 /* main()
  * The main function. Takes command line arguments specifying the (serial)
  * port that the robot is connected to, and uses the above helper functions to
@@ -708,6 +723,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Portname argument required -- something like /dev/tty.usbserial\n");
 		exit(EXIT_FAILURE);
 	}
+
 	loadCliffThresholds();
 	srand(0);
 	pthread_mutex_init(&pktNumMutex, NULL);
@@ -720,6 +736,10 @@ int main(int argc, char *argv[])
 	{
 		perror("Cannot create thread\n");
 		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		sem_init(&should_terminate, 0, FALSE);
 	}
 	prevPktNum = 0;
 
@@ -769,6 +789,7 @@ int main(int argc, char *argv[])
 			{
 				driveWheels(0, 0);
 				tcdrain(fd);
+				endProgram();
 				return 0;  // quit on remote pause
 			}
 		}
