@@ -695,6 +695,9 @@ void endProgram()
 	printf("[DEBUG] should_terminate value: %d\n",val);
 	pthread_join(tid, NULL);
 	printf("[DEBUG] thread join completed\n");
+	driveWheels(0, 0);
+	tcdrain(fd);
+	printf("[DEBUG] driveWheels() stop successfully sent\n");
 }
 
 
@@ -808,8 +811,6 @@ int main(int argc, char *argv[])
 					(short) sDistance[p%M]);
 			if (sIRbyte[p%M]==137)
 			{
-				driveWheels(0, 0);
-				tcdrain(fd);
 				endProgram(tid);
 				return 0;
 			}
