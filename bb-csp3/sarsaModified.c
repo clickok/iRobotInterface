@@ -752,6 +752,7 @@ int main(int argc, char *argv[])
 	sigaction(SIGINT, &act, &oldact);
 
 	/* Parse command line arguments */
+	logName = stdout;
 	while (1)
 	{
 		static struct option long_options[] =
