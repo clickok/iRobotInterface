@@ -247,6 +247,7 @@
 //TODO: Set up state-action array to make it more easily modified
 //TODO: Check all modular arithmetic statements
 //TODO: Figure out rationale for having both myPktNum and pktNum
+//TODO: Update documentation for new command line argument structure
 
 /******************************************************************************
  *                           Defines and Typedefs
@@ -752,7 +753,7 @@ int main(int argc, char *argv[])
 	sigaction(SIGINT, &act, &oldact);
 
 	/* Parse command line arguments */
-	logName = stdout;
+	logFile = stdout;
 	while (1)
 	{
 		static struct option long_options[] =
@@ -792,6 +793,7 @@ int main(int argc, char *argv[])
 	setupSerialPort(portName);
 	usleep(20000); // wait for at least one packet to have arrived
 
+	logFile = fopen(logName,"w"); // Open log file
 	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
 		perror("Cannot create thread\n");
