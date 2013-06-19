@@ -305,7 +305,7 @@ typedef unsigned char ubyte;
 pthread_t tid;        		  // csp3() thread
 sem_t should_terminate;       // A semaphore for csp3() termination
 
-FILE * logFile = stdout;          // Log file
+FILE * logFile;          // Log file
 
 volatile unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
