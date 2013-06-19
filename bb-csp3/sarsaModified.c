@@ -732,7 +732,7 @@ int main(int argc, char *argv[])
 
 	setupSerialPort(argv[1]);
 	usleep(20000); // wait for at least one packet to have arrived
-	if (0 != pthread_create(&tid, NULL, &csp3, NULL))
+	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
 		perror("Cannot create thread\n");
 		exit(EXIT_FAILURE);
