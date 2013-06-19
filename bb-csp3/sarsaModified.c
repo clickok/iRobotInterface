@@ -794,6 +794,10 @@ int main(int argc, char *argv[])
 	usleep(20000); // wait for at least one packet to have arrived
 
 	logFile = fopen(logName,"w"); // Open log file
+	if (logFile == NULL)
+	{
+		perror("Failed to open log file");
+	}
 	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
 		perror("Cannot create thread\n");
@@ -830,7 +834,7 @@ int main(int argc, char *argv[])
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 		+ (timeEnd.tv_usec-timeStart.tv_usec);
-		printf("Time for iteration (in microseconds): %ld\n", computationTime);
+		printf("<iteration_time_microseconds> %6ld </iteration_time_microseconds>\n", computationTime);
 		usleep(100000 - computationTime);
 		timeStart = timeEnd;
 		gettimeofday(&timeStart, NULL);
@@ -844,7 +848,10 @@ int main(int argc, char *argv[])
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
 			reward += sDistance[p%M];
-			printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
+			// sensor report form: <deltaT> <cliff_left IR reading> <binary_of_cliff_left> ... <distance_travelled>
+			printf("<sensor_report>"
+					"%6.6f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd"
+					"</sensor_report>\n",
 					sDeltaT[p%M],
 					sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
 					sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
