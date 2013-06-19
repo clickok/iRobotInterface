@@ -739,7 +739,7 @@ int main(int argc, char *argv[])
 	double delta;							// Update
 	ubyte bytes[2];         				// Robot command array
 	int rewardReport;						// Reward tracking (for song)
-	int songThreshold = 50;                 // Reward needed to sing
+	int songThreshold = 200;                 // Reward needed to sing
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
 	char * logName = NULL;                  // Name of log file
