@@ -753,7 +753,9 @@ int main(int argc, char *argv[])
 	act.sa_flags = 0;
 	sigaction(SIGINT, &act, &oldact);
 
-	/* Parse command line arguments */
+	/* ************************************************************************
+	 *                      Parse command line arguments
+	 * ***********************************************************************/
 	logFile = stdout;
 	while (1)
 	{
@@ -785,6 +787,9 @@ int main(int argc, char *argv[])
 			}
 		}
 
+	/* ************************************************************************
+	 *                  Further initialization of program
+	 * ***********************************************************************/
 	loadCliffThresholds();
 	srand(0);
 	pthread_mutex_init(&pktNumMutex, NULL);
@@ -802,6 +807,7 @@ int main(int argc, char *argv[])
 			perror("Failed to open log file");
 		}
 	}
+
 	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
 		perror("Cannot create thread\n");
