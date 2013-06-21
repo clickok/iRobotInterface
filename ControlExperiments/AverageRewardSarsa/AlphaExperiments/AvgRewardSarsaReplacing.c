@@ -213,16 +213,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Open log file (or use stdout if unspecified) */
-	if (logName != NULL)
-	{
-		printf("Opening log file with name: %s\n",logName);
-		logFile = fopen(logName,"a"); // Open log file
-		if (logFile == NULL)          // Ensure log file opened properly
-		{
-			perror("Failed to open log file");
-		}
-	}
 
 
 	/* ************************************************************************
