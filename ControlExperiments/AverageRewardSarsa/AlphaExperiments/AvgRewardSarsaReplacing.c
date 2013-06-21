@@ -72,6 +72,7 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 FILE * logFile;
+pthread_t tid;                // Thread for csp3()
 
 int terminationFlag = FALSE;  // A flag set when the program should end
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
