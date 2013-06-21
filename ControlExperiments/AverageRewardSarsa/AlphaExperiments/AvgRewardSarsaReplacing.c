@@ -253,7 +253,17 @@ int main(int argc, char *argv[])
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
 	int t_sec = (*timeinfo).tm_sec;
+	int t_min = (*timeinfo).tm_min;
+	int t_hour = (*timeinfo).tm_hour;
+	int t_day = (*timeinfo).tm_mday;
+	int t_month = (*timeinfo).tm_mon;
+	int t_year = (*timeinfo).tm_year;
 	fprintf(stderr,"[DEBUG] %d\n",t_sec);
+	fprintf(stderr,"[DEBUG] %d\n",t_min);
+	fprintf(stderr,"[DEBUG] %d\n",t_hour);
+	fprintf(stderr,"[DEBUG] %d\n",t_day);
+	fprintf(stderr,"[DEBUG] %d\n",t_month);
+	fprintf(stderr,"[DEBUG] %d\n",t_year);
 	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 
 
