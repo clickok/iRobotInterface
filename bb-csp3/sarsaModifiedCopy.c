@@ -586,7 +586,7 @@ void csp3(void *arg)
 		errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
 		if (errorCode==0)
 		{
-			printf("Timed out at select()\n");
+			fprintf(stderr,"Timed out at select()\n");
 		}
 		else if (errorCode==-1)
 		{

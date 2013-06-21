@@ -72,8 +72,9 @@ typedef unsigned char ubyte;
 
 FILE * logFile;
 
+int terminationFlag = FALSE;  // A flag set when the program should end
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
-pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
+pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex, endFlagMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
 struct timeval lastPktTime;   // time of last packet
 int fd = 0;                   // file descriptor for serial port
@@ -226,9 +227,9 @@ int main(int argc, char *argv[])
 
 	if (portName != NULL) setupSerialPort(portName);
 	usleep(20000); // wait for at least one packet to have arrived
-	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL));
+	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
-		perror("Could not create thread);
+		perror("Could not create thread");
 		exit(EXIT_FAILURE);
 	}
 
@@ -244,7 +245,6 @@ int main(int argc, char *argv[])
 
 	/* Get first state-action pair */
 	gettimeofday(&timeStart, NULL);
-	timeBegin = timeStart;
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
 	s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
@@ -291,13 +291,14 @@ int main(int argc, char *argv[])
 
 		/* Sing a song upon accumulating enough reward */
 		rewardReport += reward;
-		if (rewardReport>songThreshold)
+		if (rewardReport>SONG_REWARD_THRESHOLD)
 		{
 			bytes[0] = 141;
 			bytes[1] = 0;
 			sendBytesToRobot(bytes, 2);
 			rewardReport = 0;
 		}
+
 		/* Get next state, choose action based on it */
 		p = (myPktNum + M - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
@@ -352,6 +353,10 @@ void endProgram()
 	int count=0;
 	ubyte bytes[10];
 	/* Cancel csp3()'s thread */
+	pthread_mutex_lock( &endFlagMutex);
+	terminationFlag = TRUE;
+	pthread_mutex_unlock( &endFlagMutex);
+	pthread_join(tid,NULL);
 	//TODO Implement this
 	/* Stop the robot */
 	driveWheels(0, 0);
@@ -497,53 +502,6 @@ void extractPacket() {
   lastPktTime = currentTime;
 }
 
-void reflexes();
-
-void csp3(void *arg) {
-  int errorCode, numBytesRead, i, j;
-  ubyte bytes[B];
-  int numBytesPreviouslyRead = 0;
-  struct timeval timeout;
-  fd_set readfs;
-
-  gettimeofday(&lastPktTime, NULL);
-  FD_SET(fd, &readfs);
-
-  while (TRUE) {
-    timeout.tv_sec = 2;
-    timeout.tv_usec = 0;
-    errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
-    if (errorCode==0) {
-      printf("Timed out at select()\n");
-    } else if (errorCode==-1) {
-      fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    }
-    numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
-    if (numBytesRead==-1) {
-      fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    } else {
-      for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
-      numBytesPreviouslyRead += numBytesRead;
-      if (numBytesPreviouslyRead==B) {  //packet complete!
-	if (checkPacket()) {
-	  extractPacket();
-	  reflexes();
-	  ensureTransmitted();
-	  pthread_mutex_lock( &pktNumMutex );
-	  pktNum++;
-	  pthread_mutex_unlock( &pktNumMutex );
-	  numBytesPreviouslyRead = 0;
-	} else {
-	  printf("misaligned packet.\n");
-	  for (i = 1; i<B; i++) packet[i-1] = packet[i];
-	  numBytesPreviouslyRead--;
-	}
-      }
-    }
-  }
-}
 
 void reflexes() {
   int a;
@@ -564,14 +522,13 @@ void reflexes() {
   sendBytesToRobot(bytes, 2);
 }
 
-#define SPEED 300
 
 int getPktNum() {
   int myPktNum;
   pthread_mutex_lock( &pktNumMutex );
   myPktNum = pktNum;
   pthread_mutex_unlock( &pktNumMutex );
-  return myPktNum;  
+  return myPktNum;
 }
 
 void takeAction(int action) {
@@ -584,26 +541,102 @@ void takeAction(int action) {
     }
 }
 
-int epsilonGreedy(double Q[16][4], int s, int epsilon) {
-  int max, i;
-  int myPktNum, p;
-  int firstAction, lastAction;
+int epsilonGreedy(double Q[16][4], int s, int epsilon)
+{
+	int max, i;
+	int myPktNum, p;
+	int firstAction, lastAction;
 
-  myPktNum = getPktNum();
-  p = (myPktNum + M - 1) % M;
-  firstAction = sCliffFLB[p] || sCliffFRB[p];
-  if (sCliffLB[p] || sCliffRB[p]) lastAction = 2;
-  else lastAction = 3;
-  if (rand()/((double)RAND_MAX+1) < epsilon) {
-    printf("random action\n\n");
-    return firstAction + rand()%(lastAction + 1 - firstAction);
-  } else {
-    max = lastAction;
-    for (i = firstAction; i < lastAction; i++)
-      if (Q[s][i] > Q[s][max])
-        max = i;
+	myPktNum = getPktNum();
+	p = (myPktNum + M - 1) % M;
+	firstAction = sCliffFLB[p] || sCliffFRB[p];
+	if (sCliffLB[p] || sCliffRB[p])
+	{
+		lastAction = 2;
+	}
+	else
+	{
+		lastAction = 3;
+	}
+
+	if (rand()/((double)RAND_MAX+1) < epsilon)
+	{
+		//TODO What is going on here?
+		return firstAction + rand()%(lastAction + 1 - firstAction);
+	}
+	else
+	{
+		max = lastAction;
+		for (i = firstAction; i < lastAction; i++)
+		{
+			if (Q[s][i] > Q[s][max]) max = i;
+		}
     return max;
   }
+}
+
+void csp3(void *arg)
+{
+	int errorCode, numBytesRead, i, j;
+	ubyte bytes[B];
+	int numBytesPreviouslyRead = 0;
+	struct timeval timeout;
+	fd_set readfs;
+
+	gettimeofday(&lastPktTime, NULL);
+	FD_SET(fd, &readfs);
+
+	/* Reading loop */
+	while (TRUE)
+	{
+		pthread_mutex_lock( &endFlagMutex);
+		if (terminationFlag == TRUE) break;
+		pthread_mutex_unlock( &endFlagMutex);
+		timeout.tv_sec = 2;
+		timeout.tv_usec = 0;
+		errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
+		if (errorCode==0)
+		{
+			fprintf(stderr,"Timed out at select()\n");
+		}
+		else if (errorCode==-1)
+		{
+			fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+
+		numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
+		if (numBytesRead==-1)
+		{
+			fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
+			exit(EXIT_FAILURE);
+
+		}
+		else
+		{
+			for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
+			numBytesPreviouslyRead += numBytesRead;
+			if (numBytesPreviouslyRead==B) {  //packet complete!
+				if (checkPacket())
+				{
+					extractPacket();
+					reflexes();
+					ensureTransmitted();
+					pthread_mutex_lock( &pktNumMutex );
+					pktNum++;
+					pthread_mutex_unlock( &pktNumMutex );
+					numBytesPreviouslyRead = 0;
+				}
+				else
+				{
+					printf("misaligned packet.\n");
+					//TODO Does this have a range error?
+					for (i = 1; i<B; i++) packet[i-1] = packet[i];
+					numBytesPreviouslyRead--;
+				}
+			}
+		}
+	}
 }
 
 
