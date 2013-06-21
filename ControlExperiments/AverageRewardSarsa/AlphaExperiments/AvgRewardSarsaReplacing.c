@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-	int t_sec = timeinfo.tm_sec;
+	int t_sec = (*timeinfo).tm_sec;
 	fprintf(stderr,"[DEBUG] %d\n",t_sec);
 	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (&timeinfo) );
 
