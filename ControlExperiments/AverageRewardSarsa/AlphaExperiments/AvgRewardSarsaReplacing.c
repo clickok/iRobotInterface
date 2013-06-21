@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 	fprintf(logFile,"#Algorithm=AverageRewardSarsaReplacing\n");
 	fprintf(logFile,"#Alpha=%lf Lambda=%lf Epsilon=%lf Alpha-R=%lf Timestep=%d\n",
 					alpha,lambda,epsilon,alphaR,timestep);
-	fprintf(logFile,"#Iteration Timestep Reward AverageReward\n");
+	fprintf(logFile,"#Iteration Timestamp       Reward  AverageReward\n");
 	fflush(logFile);
 
 
@@ -422,7 +422,7 @@ int main(int argc, char *argv[])
 	    }
 
 		/* Log reward, timestep, and iteration */
-		fprintf(logFile,"%5d %10d.%6d %4d %6.12lf\n",
+		fprintf(logFile,"%11d %10d.%6d %4d %6.12lf\n",
 						iteration,
 						(int)timeStart.tv_sec,
 						(int)timeStart.tv_usec,
