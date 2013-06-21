@@ -226,12 +226,12 @@ int main(int argc, char *argv[])
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-	int t_sec = (*timeinfo).tm_sec;
-	int t_min = (*timeinfo).tm_min;
-	int t_hour = (*timeinfo).tm_hour;
-	int t_day = (*timeinfo).tm_mday;
-	int t_month = (*timeinfo).tm_mon;
-	int t_year = (*timeinfo).tm_year;
+//	int t_sec = (*timeinfo).tm_sec;
+//	int t_min = (*timeinfo).tm_min;
+//	int t_hour = (*timeinfo).tm_hour;
+//	int t_day = (*timeinfo).tm_mday;
+//	int t_month = (*timeinfo).tm_mon;
+//	int t_year = (*timeinfo).tm_year;
 
 	/* Open log file (or use stdout if unspecified) */
 	if (logName != NULL)
@@ -245,9 +245,9 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		char logName[80] = {"avgRewardSarsaReplacingLog"};
+		char logName[80];
 		/* Name the log file with the current date & time in file name */
-		strftime(logName+10,80,"%Y-%b-%d-%H-%M-%S",timeinfo);
+		strftime(logName+10,80,"avgRewardSarsaReplacingLog-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
 		printf("Creating log file with name: %s\n",logName);
 	}
 //	fprintf(stderr,"[DEBUG] %d\n",t_sec);
