@@ -268,8 +268,9 @@ int main(int argc, char *argv[])
 	}
 
 	/* Get first state-action pair */
+	gettimeofday(&timeBegin, NULL);
+	fprintf(stderr,"[DEBUG] Program started at %d.%d\n",timeBegin.tv_sec,timeBegin.tv_usec);
 	gettimeofday(&timeStart, NULL);
-	timeBegin = timeStart;
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
 	s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
