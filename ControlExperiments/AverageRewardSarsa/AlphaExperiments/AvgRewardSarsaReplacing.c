@@ -232,12 +232,12 @@ int main(int argc, char *argv[])
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-	int t_sec = (*timeinfo).tm_sec;
-	int t_min = (*timeinfo).tm_min;
-	int t_hour = (*timeinfo).tm_hour;
-	int t_day = (*timeinfo).tm_mday;
+	int t_sec   = (*timeinfo).tm_sec;
+	int t_min   = (*timeinfo).tm_min;
+	int t_hour  = (*timeinfo).tm_hour;
+	int t_day   = (*timeinfo).tm_mday;
 	int t_month = (*timeinfo).tm_mon;
-	int t_year = (*timeinfo).tm_year;
+	int t_year  = (*timeinfo).tm_year + 1900;
 
 
 	/* Open log file (or use stdout if unspecified) */
@@ -259,6 +259,7 @@ int main(int argc, char *argv[])
 	}
 
 	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
+
 	/* ********************** Write start of log file ************************/
 	/* Date and time of run */
 	fprintf(logFile,"#Year=%d Month=%d Day=%d Hour=%d Minute=%d Second=%d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
@@ -278,6 +279,8 @@ int main(int argc, char *argv[])
 	fprintf(logFile,"#Algorithm=AverageRewardSarsaReplacing\n");
 	fprintf(logFile,"#Alpha=%lf Lambda=%lf Epsilon=%lf Alpha-R=%lf Timestep=%d\n",
 					alpha,lambda,epsilon,alphaR,timestep);
+	fprintf(logFile,"#Iteration Timestep Reward AverageReward\n");
+	fflush(logFile);
 
 
 
@@ -371,12 +374,13 @@ int main(int argc, char *argv[])
 					sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
 					(short) sDistance[p%M]);
 					*/
-			//TODO If logging this, add an fflush()
+
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
 			}
 		}
+
 
 		/* Sing a song upon accumulating enough reward */
 		rewardReport += reward;
@@ -417,7 +421,13 @@ int main(int argc, char *argv[])
 	    	}
 	    }
 
-	    /* Log statement */
+		/* Log reward, timestep, and iteration */
+		fprintf(logFile,"%5d %d.%d %lf %lf\n",
+						iteration,
+						(int)timeStart.tv_sec,
+						(int)timeStart.tv_usec,
+						reward,
+						avgReward);
 
 	    /* Prepare for next loop */
 	    s = sprime;
