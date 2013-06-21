@@ -366,11 +366,11 @@ void endProgram()
 	terminationFlag = TRUE;
 	pthread_mutex_unlock( &endFlagMutex);
 	pthread_join(tid,NULL);
-	//TODO Implement this
+	fprintf(stderr,"[DEBUG] Threads successfully joined\n");
 	/* Stop the robot */
 	driveWheels(0, 0);
 	ensureTransmitted();
-	printf("[DEBUG] driveWheels() stop successfully sent\n");
+	fprintf(stderr,"[DEBUG] driveWheels() stop successfully sent\n");
 	/* Pause stream, return robot to passive mode */
 	bytes[count++] = 150;
 	bytes[count++] = 0;
@@ -379,6 +379,7 @@ void endProgram()
 	ensureTransmitted();
 	fflush(NULL);  // Flush all open streams
 	usleep(20000); // Give time for commands to be sent/received
+	fprintf(stderr,"[DEBUG] endProgram() complete \n");
 	exit(EXIT_SUCCESS);
 }
 
