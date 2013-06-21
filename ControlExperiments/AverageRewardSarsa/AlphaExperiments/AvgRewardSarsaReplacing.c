@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 	/* ************************************************************************
 	 *                    Handle command line arguments
 	 * ***********************************************************************/
-	logFile = stdout;
+
 	if (argc < 2)
 	{
 		fprintf(stderr, "Portname argument required -- something like -p /dev/tty.usbserial\n");
@@ -224,6 +224,47 @@ int main(int argc, char *argv[])
 		}
 	}
 
+
+	/* ************************************************************************
+	 *                         Set Up Log File
+	 *************************************************************************/
+	/* Write start of log file */
+	/* Get time in the form of a time_t value */
+
+	time_t rawtime;
+	struct tm * timeinfo;
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	int t_sec = (*timeinfo).tm_sec;
+	int t_min = (*timeinfo).tm_min;
+	int t_hour = (*timeinfo).tm_hour;
+	int t_day = (*timeinfo).tm_mday;
+	int t_month = (*timeinfo).tm_mon;
+	int t_year = (*timeinfo).tm_year;
+	/* Open log file (or use stdout if unspecified) */
+	if (logName != NULL)
+	{
+		printf("Opening log file with name: %s\n",logName);
+		logFile = fopen(logName,"w"); // Open log file
+		if (logFile == NULL)          // Ensure log file opened properly
+		{
+			perror("Failed to open log file");
+		}
+	}
+	else
+	{
+		char logName[80];
+		printf("Creating log file with name: %s\n",logName);
+	}
+//	fprintf(stderr,"[DEBUG] %d\n",t_sec);
+//	fprintf(stderr,"[DEBUG] %d\n",t_min);
+//	fprintf(stderr,"[DEBUG] %d\n",t_hour);
+//	fprintf(stderr,"[DEBUG] %d\n",t_day);
+//	fprintf(stderr,"[DEBUG] %d\n",t_month);
+//	fprintf(stderr,"[DEBUG] %d\n",t_year);
+	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
+
 	/* ************************************************************************
 	 *                Set up resources used by program
 	 * ***********************************************************************/
@@ -243,28 +284,6 @@ int main(int argc, char *argv[])
 	sigemptyset(&act.sa_mask);              // Empty act's signal set
 	act.sa_flags = 0;                       // Set act's flags to 0
 	sigaction(SIGINT, &act, &oldact);       // Set act to respond to SIGINT
-
-	/* Write start of log file */
-	/* Get time in the form of a time_t value */
-
-	time_t rawtime;
-	struct tm * timeinfo;
-
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	int t_sec = (*timeinfo).tm_sec;
-	int t_min = (*timeinfo).tm_min;
-	int t_hour = (*timeinfo).tm_hour;
-	int t_day = (*timeinfo).tm_mday;
-	int t_month = (*timeinfo).tm_mon;
-	int t_year = (*timeinfo).tm_year;
-	fprintf(stderr,"[DEBUG] %d\n",t_sec);
-	fprintf(stderr,"[DEBUG] %d\n",t_min);
-	fprintf(stderr,"[DEBUG] %d\n",t_hour);
-	fprintf(stderr,"[DEBUG] %d\n",t_day);
-	fprintf(stderr,"[DEBUG] %d\n",t_month);
-	fprintf(stderr,"[DEBUG] %d\n",t_year);
-	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 
 
 	/* Set up serial port and begin receiving data */
