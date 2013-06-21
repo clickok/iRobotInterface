@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 	/* ************************************************************************
 	 *                         Set Up Log File
 	 *************************************************************************/
-	/* Write start of log file */
+
 	/* Get time in the form of a time_t value */
 
 	time_t rawtime;
@@ -232,6 +232,7 @@ int main(int argc, char *argv[])
 	int t_day = (*timeinfo).tm_mday;
 	int t_month = (*timeinfo).tm_mon;
 	int t_year = (*timeinfo).tm_year;
+
 	/* Open log file (or use stdout if unspecified) */
 	if (logName != NULL)
 	{
@@ -244,9 +245,9 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		char logName[80];
+		char logName[80] = {"avgRewardSarsaReplacingLog"};
 		/* Name the log file with the current date & time in file name */
-		strftime(logName,80,"%Y-%b-%d-%H-%M-%S",timeinfo);
+		strftime(logName+10,80,"%Y-%b-%d-%H-%M-%S",timeinfo);
 		printf("Creating log file with name: %s\n",logName);
 	}
 //	fprintf(stderr,"[DEBUG] %d\n",t_sec);
@@ -256,6 +257,7 @@ int main(int argc, char *argv[])
 //	fprintf(stderr,"[DEBUG] %d\n",t_month);
 //	fprintf(stderr,"[DEBUG] %d\n",t_year);
 	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
+	/* Write start of log file */
 
 	/* ************************************************************************
 	 *                Set up resources used by program
