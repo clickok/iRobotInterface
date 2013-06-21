@@ -146,6 +146,7 @@ int main(int argc, char *argv[])
 	double alphaR = 0.001;                  // Average Reward Stepsize
 	double lambda = 0.9;					// Trace decay parameter
 	double epsilon = 0.01;                  // Exploration parameter
+	int timestep = 100000;                  // Timestep in microseconds
 	int a, aprime;                          // Action
 	int s, sprime;                          // State
 	int reward;                             // Reward
@@ -160,6 +161,10 @@ int main(int argc, char *argv[])
 	char * logName = NULL;                  // Name of log file
 	char * portName = NULL;                 // Name of serial port
 	char strbuf[1000];                      // String buffer for use w/ logging
+
+	/* Load cliff thresholds, seed RNG */
+	loadCliffThresholds();
+	srand(0);
 
 
 	/* ************************************************************************
@@ -233,12 +238,7 @@ int main(int argc, char *argv[])
 	int t_day = (*timeinfo).tm_mday;
 	int t_month = (*timeinfo).tm_mon;
 	int t_year = (*timeinfo).tm_year;
-//	fprintf(stderr,"[DEBUG] %d\n",t_sec);
-//	fprintf(stderr,"[DEBUG] %d\n",t_min);
-//	fprintf(stderr,"[DEBUG] %d\n",t_hour);
-//	fprintf(stderr,"[DEBUG] %d\n",t_day);
-//	fprintf(stderr,"[DEBUG] %d\n",t_month);
-//	fprintf(stderr,"[DEBUG] %d\n",t_year);
+
 
 	/* Open log file (or use stdout if unspecified) */
 	if (logName != NULL)
@@ -259,15 +259,31 @@ int main(int argc, char *argv[])
 	}
 
 	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
-	/* Write start of log file */
+	/* ********************** Write start of log file ************************/
+	/* Date and time of run */
 	fprintf(logFile,"#Year=%d Month=%d Day=%d Hour=%d Minute=%d Second=%d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
+	/* Robot, battery and microworld used */
+	fprintf(logFile,"#RobotUsed=Plus1 BatteryUsed=Plus1 Microworld=BlackInPen\n");
+	/* Cliff Thresholds */
+	fprintf(logFile,"#CliffHighValue=%d "
+					"CliffLeftThreshold=%d "
+					"CliffFrontLeftThreshold=%d "
+					"CliffFrontRightThreshold=%d "
+					"CliffRightThreshold=%d\n",
+					cliffHighValue,
+					cliffThresholds[0],
+					cliffThresholds[1],
+					cliffThresholds[2],
+					cliffThresholds[3]);
+	fprintf(logFile,"#Algorithm=AverageRewardSarsaReplacing\n");
+	fprintf(logFile,"#Alpha=%lf Lambda=%lf Epsilon=%lf Alpha-R=%lf Timestep=%d\n",
+					alpha,lambda,epsilon,alphaR,timestep);
+
+
 
 	/* ************************************************************************
 	 *                Set up resources used by program
 	 * ***********************************************************************/
-	/* Load cliff thresholds, seed RNG */
-	loadCliffThresholds();
-	srand(0);
 
 	/* Initialize mutex locks */
 	pthread_mutex_init(&pktNumMutex, NULL);
@@ -335,7 +351,6 @@ int main(int argc, char *argv[])
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
 		printf("Time for iteration (in microseconds): %ld\n", computationTime);
-		//TODO Make this a macro (for timestep, presumably)
 		usleep(100000 - computationTime);
 		timeStart = timeEnd;
 		gettimeofday(&timeStart, NULL);
