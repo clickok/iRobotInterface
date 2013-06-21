@@ -284,7 +284,7 @@ int main(int argc, char *argv[])
 	 * ***********************************************************************/
 	while (TRUE)
 	{
-		printf("Iteration number: %6d\n",iteration);
+		printf("Iteration number: %6d\n",++iteration);
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
