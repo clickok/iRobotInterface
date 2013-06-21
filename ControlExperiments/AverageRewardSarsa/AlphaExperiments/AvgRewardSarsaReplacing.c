@@ -160,6 +160,9 @@ int main(int argc, char *argv[])
 	long computationTime; 					// Timing related
 	char * logName = NULL;                  // Name of log file
 	char * portName = NULL;                 // Name of serial port
+	char * robotName = NULL;                // Name of robot
+	char * batteryName = NULL;              // Name of battery
+	char * microworldName = NULL;           // Name of microworld
 	char strbuf[1000];                      // String buffer for use w/ logging
 
 	/* Load cliff thresholds, seed RNG */
@@ -180,18 +183,21 @@ int main(int argc, char *argv[])
 	{
 		static struct option long_options[] =
 		{
-			{"port",    required_argument,   0, 'p'},
-			{"logname", required_argument,   0, 'f'},
-			{"alpha",   required_argument,   0, 'a'},
-			{"epsilon", required_argument,   0, 'e'},
-			{"lambda",  required_argument,   0, 'l'},
-			{"help",    no_argument,         0, 'h'},
+			{"port",            required_argument,   0, 'p'},
+			{"logname",         required_argument,   0, 'f'},
+			{"alpha",           required_argument,   0, 'a'},
+			{"epsilon",         required_argument,   0, 'e'},
+			{"lambda",          required_argument,   0, 'l'},
+			{"microworldname",  required_argument,   0, 'm'},
+			{"batteryname",     required_argument,   0, 'b'},
+			{"robotname",       required_argument,   0, 'r'},
+			{"help",            no_argument,         0, 'h'},
 			{0, 0, 0, 0}
 		};
 		int c;
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "p:f:a:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:f:a:r:m:b",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
@@ -203,6 +209,15 @@ int main(int argc, char *argv[])
 			break;
 		case 'f':
 			logName = optarg;
+			break;
+		case 'm':
+			microworldName = optarg;
+			break;
+		case 'b':
+			batteryName = optarg;
+			break;
+		case 'f':
+			robotName = optarg;
 			break;
 		case 'a':
 			alpha = strtod(optarg, NULL);
@@ -264,7 +279,8 @@ int main(int argc, char *argv[])
 	/* Date and time of run */
 	fprintf(logFile,"#Year=%d Month=%d Day=%d Hour=%d Minute=%d Second=%d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
 	/* Robot, battery and microworld used */
-	fprintf(logFile,"#RobotUsed=Plus1 BatteryUsed=Plus1 Microworld=BlackInPen\n");
+	fprintf(logFile,"#RobotUsed=%s BatteryUsed=%s Microworld=%s\n",
+					robotName,batteryName,microworldName);
 	/* Cliff Thresholds */
 	fprintf(logFile,"#CliffHighValue=%d "
 					"CliffLeftThreshold=%d "
