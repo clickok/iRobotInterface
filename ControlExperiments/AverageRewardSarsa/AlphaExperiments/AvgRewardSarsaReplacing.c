@@ -255,6 +255,8 @@ int main(int argc, char *argv[])
 	else
 	{
 		char logName[80];
+		/* Name the log file with the current date & time in file name */
+		strftime(logName,80,"%Y-%b-%d-%H-%M-%S",timeinfo);
 		printf("Creating log file with name: %s\n",logName);
 	}
 //	fprintf(stderr,"[DEBUG] %d\n",t_sec);
