@@ -143,7 +143,6 @@ int main(int argc, char *argv[])
 	double alpha = 0.1;						// Stepsize (alpha) parameter
 	double alphaR = 0.001;                  // Average Reward Stepsize
 	double lambda = 0.9;					// Trace decay parameter
-	double gamma = 0.98;                    // Discount parameter
 	double epsilon = 0.01;                  // Exploration parameter
 	int a, aprime;                          // Action
 	int s, sprime;                          // State
