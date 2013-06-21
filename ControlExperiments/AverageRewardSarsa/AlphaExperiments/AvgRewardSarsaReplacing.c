@@ -153,6 +153,7 @@ int main(int argc, char *argv[])
 	double delta;							// Update
 	ubyte bytes[2];         				// Robot command array
 	int rewardReport = 0;					// Reward tracking (for song)
+	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
 	char * logName = NULL;                  // Name of log file
@@ -268,6 +269,7 @@ int main(int argc, char *argv[])
 
 	/* Get first state-action pair */
 	gettimeofday(&timeStart, NULL);
+	timeBegin = timeStart;
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
 	s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
@@ -335,7 +337,7 @@ int main(int argc, char *argv[])
 		delta = reward - avgReward + Q[sprime][aprime] - Q[s][a];
 
 	    // TODO Make sure this is printing in the correct place
-	    printf("s a r s' a':%d %d %d %d %d\n", s, a, reward, sprime, aprime);
+	    //printf("s a r s' a':%d %d %d %d %d\n", s, a, reward, sprime, aprime);
 	    //printf("average reward: %f\n", avgReward);
 	    //printf("delta: %f\n", delta);
 
@@ -344,7 +346,7 @@ int main(int argc, char *argv[])
 	    for (i = 0; i < 16; i++)
 	    {
 	    	//printf("Action values for state %d: %f %f %f %f\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
-	    	printf("Eligibility traces for state %d: %f %f %f %f\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
+	    	//printf("Eligibility traces for state %d: %f %f %f %f\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
 	    	for (j = 0; j < 4; j++)
 	    	{
 	    		Q[i][j] = Q[i][j] + (alpha * delta * e[i][j]);
