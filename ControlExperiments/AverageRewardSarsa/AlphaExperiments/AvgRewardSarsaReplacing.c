@@ -288,7 +288,11 @@ int main(int argc, char *argv[])
 		printf("Iteration number: %6d\n",++iteration);
 		if (iteration > maxIterations)
 		{
+			gettimeofday(&timeEnd, NULL);
 			fprintf(stderr,"[DEBUG] Maximum iterations reached\n");
+			fprintf(stderr,"[DEBUG] Total seconds taken: %d.%d\n",
+							(timeEnd.tv_sec  - timeBegin.tv_sec),
+							(timeEnd.tv_usec - timeBegin.tv_usec));
 			endProgram();
 		}
 		gettimeofday(&timeEnd, NULL);
