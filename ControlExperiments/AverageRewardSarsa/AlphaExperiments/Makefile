@@ -32,3 +32,6 @@ updateAll:
 	make clean
 	git pull
 	make all
+	
+clearLogs:
+	rm logSarsa*.txt
