@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		/* Name the log file with the current date & time in file name */
-		strftime(strbuf,80,"avgRewardSarsaReplacingLog-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
+		strftime(strbuf,80,"logSarsa-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
 		printf("Creating log file with name: %s\n",strbuf);
 		logFile = fopen(strbuf,"w");
 	}
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 	/* Write start of log file */
-	fprintf(logFile,"#Year: %5d Month: %2d Day: %2d Hour: %2d Minute: %2d Second: %2d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
+	fprintf(logFile,"#Year=%d Month=%d Day=%d Hour=%d Minute=%d Second=%d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
 
 	/* ************************************************************************
 	 *                Set up resources used by program
