@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 	unsigned int prevPktNum = 0;		    // Previous packet number
 	int p;									// Byte tracking variable
 	int iteration = 0;                      // Control loop counter
-	int maxIterations = 8000;               // Limit for number of iterations
+	int maxIterations = 1200;               // Limit for number of iterations
 	double Q[16][4];						// State-Action value array
 	double e[16][4];						// Eligibility trace array
 	double alpha = 0.1;						// Stepsize (alpha) parameter
