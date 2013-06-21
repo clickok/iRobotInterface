@@ -100,4 +100,5 @@ int main(int argc, char *argv[]) {
     printf("Margin %d too small; needs to be %d\n", minMargin, REQUIRED_MARGIN);
   else
     printf("Bounds overlap by %d\n", -minMargin);
+  return 0;
 }
