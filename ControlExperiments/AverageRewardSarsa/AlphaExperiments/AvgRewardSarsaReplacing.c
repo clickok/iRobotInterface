@@ -285,11 +285,12 @@ int main(int argc, char *argv[])
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
 			reward += sDistance[p%M];
-			printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
+			/*printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
 					sDeltaT[p%M],
 					sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
 					sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
 					(short) sDistance[p%M]);
+					*/
 			//TODO If logging this, add an fflush()
 			if (sIRbyte[p%M]==137)
 			{
@@ -319,14 +320,14 @@ int main(int argc, char *argv[])
 
 	    // TODO Make sure this is printing in the correct place
 	    printf("s a r s' a':%d %d %d %d %d\n", s, a, reward, sprime, aprime);
-	    printf("average reward: %f\n", avgReward);
-	    printf("delta: %f\n", delta);
+	    //printf("average reward: %f\n", avgReward);
+	    //printf("delta: %f\n", delta);
 
 		/* Replacing traces */
 		e[s][a] = 1;
 	    for (i = 0; i < 16; i++)
 	    {
-	    	printf("Action values for state %d: %f %f %f %f\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
+	    	//printf("Action values for state %d: %f %f %f %f\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
 	    	printf("Eligibility traces for state %d: %f %f %f %f\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
 	    	for (j = 0; j < 4; j++)
 	    	{
@@ -376,6 +377,7 @@ void endProgram()
 	bytes[count++] = 128;
 	sendBytesToRobot(bytes,count);
 	ensureTransmitted();
+	fflush(NULL);  // Flush all open streams
 	usleep(20000); // Give time for commands to be sent/received
 	exit(EXIT_SUCCESS);
 }
