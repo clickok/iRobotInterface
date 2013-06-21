@@ -227,12 +227,12 @@ int main(int argc, char *argv[])
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-//	int t_sec = (*timeinfo).tm_sec;
-//	int t_min = (*timeinfo).tm_min;
-//	int t_hour = (*timeinfo).tm_hour;
-//	int t_day = (*timeinfo).tm_mday;
-//	int t_month = (*timeinfo).tm_mon;
-//	int t_year = (*timeinfo).tm_year;
+	int t_sec = (*timeinfo).tm_sec;
+	int t_min = (*timeinfo).tm_min;
+	int t_hour = (*timeinfo).tm_hour;
+	int t_day = (*timeinfo).tm_mday;
+	int t_month = (*timeinfo).tm_mon;
+	int t_year = (*timeinfo).tm_year;
 //	fprintf(stderr,"[DEBUG] %d\n",t_sec);
 //	fprintf(stderr,"[DEBUG] %d\n",t_min);
 //	fprintf(stderr,"[DEBUG] %d\n",t_hour);
@@ -245,20 +245,22 @@ int main(int argc, char *argv[])
 	{
 		printf("Opening log file with name: %s\n",logName);
 		logFile = fopen(logName,"w"); // Open log file
-		if (logFile == NULL)          // Ensure log file opened properly
-		{
-			perror("Failed to open log file");
-		}
 	}
 	else
 	{
 		/* Name the log file with the current date & time in file name */
 		strftime(strbuf,80,"avgRewardSarsaReplacingLog-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
 		printf("Creating log file with name: %s\n",strbuf);
+		logFile = fopen(strbuf,"w");
 	}
+	if (logFile == NULL)          // Ensure log file opened properly
+	{
+		perror("Failed to open log file");
+	}
+
 	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 	/* Write start of log file */
-	fprintf(logFile,)
+	fprintf(logFile,"#Year: %5d Month: %2d Day: %2d Hour: %2d Minute: %2d Second: %2d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
 
 	/* ************************************************************************
 	 *                Set up resources used by program
