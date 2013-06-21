@@ -290,9 +290,9 @@ int main(int argc, char *argv[])
 		{
 			gettimeofday(&timeEnd, NULL);
 			fprintf(stderr,"[DEBUG] Maximum iterations reached\n");
-			fprintf(stderr,"[DEBUG] Total seconds taken: %d.%d\n",
-							(timeEnd.tv_sec  - timeBegin.tv_sec),
-							(timeEnd.tv_usec - timeBegin.tv_usec));
+			fprintf(stderr,"[DEBUG] Total seconds taken: %lf\n",
+							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
+							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
 			endProgram();
 		}
 		gettimeofday(&timeEnd, NULL);
