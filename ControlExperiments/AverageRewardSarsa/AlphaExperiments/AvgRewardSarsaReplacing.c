@@ -171,14 +171,18 @@ int main(int argc, char *argv[])
 	{
 		static struct option long_options[] =
 		{
-			{"Port/device to communicate with",    required_argument,   0, 'p'},
-			{"Name of log file to (over)write to", required_argument,   0, 'f'},
+			{"port",    required_argument,   0, 'p'},
+			{"logname", required_argument,   0, 'f'},
+			{"alpha",   required_argument,   0, 'a'},
+			{"epsilon", required_argument,   0, 'e'},
+			{"lambda",  required_argument,   0, 'l'},
+			{"help",    no_argument,         0, 'h'},
 			{0, 0, 0, 0}
 		};
 		int c;
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "p:f:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:f:a:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
@@ -190,6 +194,14 @@ int main(int argc, char *argv[])
 			break;
 		case 'f':
 			logName = optarg;
+			break;
+		case 'a':
+			alpha = strtod(optarg, NULL);
+			if ((alpha > 2) || (alpha < 0))
+			{
+				fprintf(stderr,"ERROR: Invalid alpha. Choose an alpha within [0,2]\n");
+				exit(EXIT_FAILURE);
+			}
 			break;
 		case '?':
 			fprintf(stderr,"ERROR: Unknown command line argument\n");
