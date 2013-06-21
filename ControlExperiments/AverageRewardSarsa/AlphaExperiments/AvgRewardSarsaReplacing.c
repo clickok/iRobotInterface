@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 		int c;
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "p:f:a:r:m:b",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:f:a:r:m:b:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
@@ -215,7 +215,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'b':
 			batteryName = optarg;
-			fprintf(stderr,"[DEBUG] Battery Name = %s\n",batteryName);
 			break;
 		case 'r':
 			robotName = optarg;
