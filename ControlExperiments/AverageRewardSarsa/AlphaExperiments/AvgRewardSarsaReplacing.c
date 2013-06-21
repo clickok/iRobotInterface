@@ -541,6 +541,7 @@ void takeAction(int action) {
     }
 }
 
+
 int epsilonGreedy(double Q[16][4], int s, int epsilon)
 {
 	int max, i;
