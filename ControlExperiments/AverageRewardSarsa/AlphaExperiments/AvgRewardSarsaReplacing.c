@@ -215,13 +215,13 @@ int main(int argc, char *argv[])
 			break;
 		case 'b':
 			batteryName = optarg;
+			fprintf(stderr,"[DEBUG] Battery Name = %s\n",batteryName);
 			break;
 		case 'r':
 			robotName = optarg;
 			break;
 		case 'a':
 			alpha = strtod(optarg, NULL);
-			fprintf(stderr,"[DEBUG] alpha = %lf\n",alpha);
 			if ((alpha > 2) || (alpha < 0))
 			{
 				fprintf(stderr,"ERROR: Invalid alpha. Choose an alpha within [0,2]\n");
