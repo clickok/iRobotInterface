@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
 	timeinfo = localtime ( &rawtime );
 	int t_sec = (*timeinfo).tm_sec;
 	fprintf(stderr,"[DEBUG] %d\n",t_sec);
-	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (&timeinfo) );
+	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 
 
 	/* Set up serial port and begin receiving data */
