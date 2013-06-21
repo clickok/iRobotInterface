@@ -269,10 +269,13 @@ int main(int argc, char *argv[])
 	}
 
 	/* Get time in the form of a time_t value */
-	struct time_t currentTime;
-	struct tm * now = localtime(&currentTime);
-	fprintf(stderr,"[DEBUG] Program started at %s\n",asctime(&now));
 
+	time_t rawtime;
+	struct tm * timeinfo;
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 	/* Get time just before control loop starts */
 	gettimeofday(&timeBegin, NULL);
 
