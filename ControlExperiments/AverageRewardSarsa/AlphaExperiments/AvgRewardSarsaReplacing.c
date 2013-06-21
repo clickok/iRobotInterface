@@ -138,7 +138,8 @@ int main(int argc, char *argv[])
 	unsigned int myPktNum;                  // Packet number variable
 	unsigned int prevPktNum = 0;		    // Previous packet number
 	int p;									// Byte tracking variable
-	int iteration = 0;                     // Control loop counter
+	int iteration = 0;                      // Control loop counter
+	int maxIterations = 8000;               // Limit for number of iterations
 	double Q[16][4];						// State-Action value array
 	double e[16][4];						// Eligibility trace array
 	double alpha = 0.1;						// Stepsize (alpha) parameter
@@ -285,6 +286,11 @@ int main(int argc, char *argv[])
 	while (TRUE)
 	{
 		printf("Iteration number: %6d\n",++iteration);
+		if (iteration > maxIterations)
+		{
+			fprintf(stderr,"[DEBUG] Maximum iterations reached\n");
+			endProgram();
+		}
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
