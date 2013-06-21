@@ -268,9 +268,14 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Get first state-action pair */
+	/* Get time in the form of a time_t value */
+	//struct time_t currentTime;
+	fprintf(stderr,"[DEBUG] Program started at %s\n",asctime(localtime(time(NULL))));
+
+	/* Get time just before control loop starts */
 	gettimeofday(&timeBegin, NULL);
-	fprintf(stderr,"[DEBUG] Program started at %s\n",asctime(localtime(time())));
+
+	/* Get first state-action pair */
 	gettimeofday(&timeStart, NULL);
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
