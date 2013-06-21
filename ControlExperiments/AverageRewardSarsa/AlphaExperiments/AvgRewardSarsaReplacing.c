@@ -159,6 +159,7 @@ int main(int argc, char *argv[])
 	long computationTime; 					// Timing related
 	char * logName = NULL;                  // Name of log file
 	char * portName = NULL;                 // Name of serial port
+	char strbuf[1000];                      // String buffer for use w/ logging
 
 
 	/* ************************************************************************
@@ -232,6 +233,12 @@ int main(int argc, char *argv[])
 //	int t_day = (*timeinfo).tm_mday;
 //	int t_month = (*timeinfo).tm_mon;
 //	int t_year = (*timeinfo).tm_year;
+//	fprintf(stderr,"[DEBUG] %d\n",t_sec);
+//	fprintf(stderr,"[DEBUG] %d\n",t_min);
+//	fprintf(stderr,"[DEBUG] %d\n",t_hour);
+//	fprintf(stderr,"[DEBUG] %d\n",t_day);
+//	fprintf(stderr,"[DEBUG] %d\n",t_month);
+//	fprintf(stderr,"[DEBUG] %d\n",t_year);
 
 	/* Open log file (or use stdout if unspecified) */
 	if (logName != NULL)
@@ -245,19 +252,13 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		char logName[80];
 		/* Name the log file with the current date & time in file name */
-		strftime(logName+10,80,"avgRewardSarsaReplacingLog-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
-		printf("Creating log file with name: %s\n",logName);
+		strftime(strbuf,80,"avgRewardSarsaReplacingLog-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
+		printf("Creating log file with name: %s\n",strbuf);
 	}
-//	fprintf(stderr,"[DEBUG] %d\n",t_sec);
-//	fprintf(stderr,"[DEBUG] %d\n",t_min);
-//	fprintf(stderr,"[DEBUG] %d\n",t_hour);
-//	fprintf(stderr,"[DEBUG] %d\n",t_day);
-//	fprintf(stderr,"[DEBUG] %d\n",t_month);
-//	fprintf(stderr,"[DEBUG] %d\n",t_year);
 	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 	/* Write start of log file */
+	fprintf(logFile,)
 
 	/* ************************************************************************
 	 *                Set up resources used by program
