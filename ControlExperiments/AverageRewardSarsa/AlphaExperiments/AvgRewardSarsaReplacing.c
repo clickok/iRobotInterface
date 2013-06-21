@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
 		case 'b':
 			batteryName = optarg;
 			break;
-		case 'f':
+		case 'r':
 			robotName = optarg;
 			break;
 		case 'a':
