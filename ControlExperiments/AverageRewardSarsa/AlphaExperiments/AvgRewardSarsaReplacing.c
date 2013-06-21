@@ -279,7 +279,8 @@ int main(int argc, char *argv[])
 	fprintf(logFile,"#Algorithm=AverageRewardSarsaReplacing\n");
 	fprintf(logFile,"#Alpha=%lf Lambda=%lf Epsilon=%lf Alpha-R=%lf Timestep=%d\n",
 					alpha,lambda,epsilon,alphaR,timestep);
-	fprintf(logFile,"#Iteration Timestamp       Reward  AverageReward\n");
+
+	fprintf(logFile,"#Iteration Timestamp Reward  AverageReward\n");
 	fflush(logFile);
 
 
@@ -346,6 +347,9 @@ int main(int argc, char *argv[])
 			gettimeofday(&timeEnd, NULL);
 			fprintf(stderr,"[DEBUG] Maximum iterations reached\n");
 			fprintf(stderr,"[DEBUG] Total seconds taken: %lf\n",
+							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
+							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
+			fprintf(logFile,"#TotalTime=%lf\n",
 							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
 							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
 			endProgram();
