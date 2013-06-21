@@ -307,7 +307,7 @@ sem_t should_terminate;       // A semaphore for csp3() termination
 
 FILE * logFile;          // Log file
 
-volatile unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
+/*volatile*/ unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
 struct timeval lastPktTime;   // time of last packet

@@ -756,13 +756,6 @@ int main(int argc, char *argv[])
 	char * logName = NULL;                  // Name of log file
 	char * portName = NULL;                 // Name of serial port
 
-	/* Install signal handler */
-	struct sigaction act;                   // The new sigaction
-	struct sigaction oldact;                // To preserve old sigaction
-	act.sa_handler = endProgram;            // Set endProgram() as sig handler
-	sigemptyset(&act.sa_mask);              // Empty act's signal set
-	act.sa_flags = 0;                       // Set act's flags to 0
-	sigaction(SIGINT, &act, &oldact);       // Set act to respond to SIGINT
 
 	/* ************************************************************************
 	 *                      Parse command line arguments
@@ -806,11 +799,6 @@ int main(int argc, char *argv[])
 	/* ************************************************************************
 	 *                  Further initialization of program
 	 * ***********************************************************************/
-	loadCliffThresholds();
-	srand(0);
-	pthread_mutex_init(&pktNumMutex, NULL);
-	pthread_mutex_init(&serialMutex, NULL);
-	pthread_mutex_init(&lastActionMutex, NULL);
 
 	if (portName != NULL) setupSerialPort(portName);
 	usleep(20000); // wait for at least one packet to have arrived
@@ -878,7 +866,7 @@ int main(int argc, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 		reward = 0;
-		for (p = prevPktNum; p < myPktNum; ++p)
+		for (p = prevPktNum; p < myPktNum; p++)
 		{
 			reward += sDistance[p%M];
 			/* sensor report form: <deltaT> <cliff_left IR reading> <binary_of_cliff_left> ... <distance_travelled> */
