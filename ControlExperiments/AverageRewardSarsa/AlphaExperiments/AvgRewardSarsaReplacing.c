@@ -200,7 +200,8 @@ int main(int argc, char *argv[])
 	/* Open log file (or use stdout if unspecified) */
 	if (logName != NULL)
 	{
-		logFile = fopen(logName,"w"); // Open log file
+		printf("Opening log file with name: %s\n",logName);
+		logFile = fopen(logName,"a"); // Open log file
 		if (logFile == NULL)          // Ensure log file opened properly
 		{
 			perror("Failed to open log file");
@@ -366,7 +367,7 @@ void endProgram()
 	terminationFlag = TRUE;
 	pthread_mutex_unlock( &endFlagMutex);
 	pthread_join(tid,NULL);
-	fprintf(stderr,"[DEBUG] Threads successfully joined\n");
+	fprintf(stderr,"\n[DEBUG] Threads successfully joined\n");
 	/* Stop the robot */
 	driveWheels(0, 0);
 	ensureTransmitted();
