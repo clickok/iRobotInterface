@@ -587,7 +587,7 @@ int epsilonGreedy(double Q[16][4], int s, int epsilon)
 
 void csp3(void *arg)
 {
-	int errorCode, numBytesRead, i, j;
+	int errorCode, numBytesRead, i;
 	ubyte bytes[B];
 	int numBytesPreviouslyRead = 0;
 	struct timeval timeout;
