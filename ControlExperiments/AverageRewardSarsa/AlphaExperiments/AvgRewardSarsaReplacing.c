@@ -248,12 +248,13 @@ int main(int argc, char *argv[])
 	/* Get time in the form of a time_t value */
 
 	time_t rawtime;
+	struct tm * timeinfo;
 
 	time ( &rawtime );
-	struct tm timeinfo = * localtime ( &rawtime );
+	timeinfo = localtime ( &rawtime );
 	int t_sec = timeinfo.tm_sec;
 	fprintf(stderr,"[DEBUG] %d\n",t_sec);
-	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
+	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (&timeinfo) );
 
 
 	/* Set up serial port and begin receiving data */
