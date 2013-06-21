@@ -245,7 +245,16 @@ int main(int argc, char *argv[])
 	sigaction(SIGINT, &act, &oldact);       // Set act to respond to SIGINT
 
 	/* Write start of log file */
-	//TODO Implement this
+	/* Get time in the form of a time_t value */
+
+	time_t rawtime;
+	struct tm timeinfo;
+
+	time ( &rawtime );
+	&timeinfo = localtime ( &rawtime );
+	int t_sec = timeinfo.tm_sec;
+	fprintf(stderr,"[DEBUG] %d\n",t_sec);
+	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (&timeinfo) );
 
 
 	/* Set up serial port and begin receiving data */
@@ -268,14 +277,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Get time in the form of a time_t value */
-
-	time_t rawtime;
-	struct tm * timeinfo;
-
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	fprintf (stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 	/* Get time just before control loop starts */
 	gettimeofday(&timeBegin, NULL);
 
