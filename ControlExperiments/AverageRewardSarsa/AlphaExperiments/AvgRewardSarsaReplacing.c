@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
 
 	/* Get first state-action pair */
 	gettimeofday(&timeBegin, NULL);
-	fprintf(stderr,"[DEBUG] Program started at %d.%d\n",timeBegin.tv_sec,timeBegin.tv_usec);
+	fprintf(stderr,"[DEBUG] Program started at %s\n",asctime(localtime(time)));
 	gettimeofday(&timeStart, NULL);
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
