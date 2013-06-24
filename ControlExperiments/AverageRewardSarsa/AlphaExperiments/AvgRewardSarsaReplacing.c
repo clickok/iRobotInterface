@@ -441,7 +441,7 @@ int main(int argc, char *argv[])
 	    }
 
 		/* Log reward, timestep, and iteration */
-		fprintf(logFile,"%5d %10d.%6d %4d %6.12lf\n",
+		fprintf(logFile,"%5d %d.%d %d %6.12lf\n",
 						iteration,
 						(int)timeStart.tv_sec,
 						(int)timeStart.tv_usec,
