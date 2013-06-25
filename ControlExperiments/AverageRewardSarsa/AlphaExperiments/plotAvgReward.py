@@ -114,8 +114,6 @@ def plotForAlpha(data,alpha):
             horizontalalignment='left',
             bbox=statboxProps)
 
-#    print("For alpha = %f, average of last 100 y-values: %f"%
-#          (alpha,np.mean(ydata[-100:])))
     outputPlotName = ("logPlotAlpha-%f"%alpha).replace(".",",")
     plt.savefig(outputPlotName)
 
@@ -132,3 +130,19 @@ def plotEverything():
         plotForAlpha(logData,key)
         
     
+def plotAllAtOnce():
+    parentdir = "."
+    logFileLst = getAllLogs(parentdir)
+    logData = separateByAlpha(logFileLst)
+    fig, ax = plt.subplots(1)
+    ax.set_title("Average Reward vs. Timestep for Varying Alpha")
+    ax.set_ylabel("Average Reward")
+    ax.set_xlabel("Timestep")
+    for key in logData.keys():
+        avgData = makeAvgArray(logData[key])
+        xdata = avgData[:,0]
+        ydata = np.cumsum(avgData[:,2])/avgData[:,0]
+        ax.plot(xdata,ydata,label="$\\alpha = %f$"%key)
+    ax.set_ylim([0,20])
+    plt.legend()
+    plt.savefig("logPlotAllAlphasClose")
