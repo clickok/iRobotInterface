@@ -16,6 +16,9 @@
 *.out
 *.app
 
+# Python generated
+*__pycache__*
+
 # System files
 .cproject
 .project
@@ -27,3 +30,5 @@ logSarsa*
 logPlot*
 *(Saskatoon)*
 *(Pearl)*
+graph*.pdf
+graph*.png
