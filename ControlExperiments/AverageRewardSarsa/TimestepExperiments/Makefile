@@ -1,4 +1,4 @@
-# iRobotInterface AlphaExperiments Makefile
+# iRobotInterface TimeStep Experiments Makefile
 #
 # Author: BB
 # Date  : 06-18-2013
