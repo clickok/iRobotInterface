@@ -120,12 +120,12 @@ int cliffHighValue;           // binary value taken if threshold exceeded
 void setupSerialPort(char serialPortName[]);
 void csp3(void *arg);
 void loadCliffThresholds();
-int epsilonGreedy(double Q[16][4], int s, int epsilon);
+int  epsilonGreedy(double Q[16][4], int s, double epsilon);
 void takeAction(int action);
 void driveWheels(int left, int right);
 void sendBytesToRobot(ubyte* bytes, int numBytes);
 void ensureTransmitted();
-int getPktNum();
+int  getPktNum();
 void endProgram();
 
 /* ****************************************************************************
