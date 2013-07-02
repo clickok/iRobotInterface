@@ -368,7 +368,6 @@ void csp3(void *arg)
 				if (checkPacket())
 				{
 					extractPacket();
-					reflexes();
 					ensureTransmitted();
 					pthread_mutex_lock( &pktNumMutex );
 					pktNum++;
