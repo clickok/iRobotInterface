@@ -192,13 +192,14 @@ int main(int argc, char *argv[])
 			{"microworldname",  required_argument,   0, 'm'},
 			{"batteryname",     required_argument,   0, 'b'},
 			{"robotname",       required_argument,   0, 'r'},
+			{"iterations",      required_argument,   0, 'i'},
 			{"help",            no_argument,         0, 'h'},
 			{0, 0, 0, 0}
 		};
 		int c;
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:i:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
