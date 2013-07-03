@@ -140,8 +140,34 @@ int main(int argc, char * argv[])
 	int timestep = 100000;                  // Timestep in microseconds
 	ubyte bytes[2];         				// Robot command array
 	long computationTime; 					// Timing related
+	struct timeval timeStart, timeEnd;      // Timing related
+
+	pthread_mutex_init(&pktNumMutex, NULL);
+	pthread_mutex_init(&serialMutex, NULL);
+	pthread_mutex_init(&lastActionMutex, NULL);
+
+	/* The program itself */
 
 	loadCliffThresholds();
+
+	if (argc != 2)
+	{
+		fprintf(stderr, "Portname argument required -- something like /dev/tty.usbserial\n");
+	    exit(EXIT_FAILURE);
+	}
+	setupSerialPort(argv[1]);
+	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
+	{
+		perror("Could not create thread");
+		exit(EXIT_FAILURE);
+	}
+
+	while(TRUE)
+	{
+		gettimeofday(&timeEnd, NULL);
+		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
+						+ (timeEnd.tv_usec-timeStart.tv_usec);
+	}
 	return 0;
 }
 

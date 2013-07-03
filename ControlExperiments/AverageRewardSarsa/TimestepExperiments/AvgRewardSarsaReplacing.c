@@ -313,6 +313,7 @@ int main(int argc, char *argv[])
 	pthread_mutex_init(&pktNumMutex, NULL);
 	pthread_mutex_init(&serialMutex, NULL);
 	pthread_mutex_init(&lastActionMutex, NULL);
+	pthread_mutex_init(&endFlagMutex, NULL);
 	
 	/* Install signal handler */
 	struct sigaction act;                   // The new sigaction
@@ -379,7 +380,7 @@ int main(int argc, char *argv[])
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
 		printf("Time for iteration (in microseconds): %ld\n", computationTime);
 		usleep(timestep - computationTime);
-		timeStart = timeEnd;
+		timeStart = timeEnd; //TODO Is this needed?
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
@@ -392,19 +393,11 @@ int main(int argc, char *argv[])
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
 			reward += sDistance[p%M];
-			/*printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
-					sDeltaT[p%M],
-					sCliffL[p%M],sCliffLB[p%M],sCliffFL[p%M],sCliffFLB[p%M],
-					sCliffFR[p%M],sCliffFRB[p%M],sCliffR[p%M],sCliffRB[p%M],
-					(short) sDistance[p%M]);
-					*/
-
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
 			}
 		}
-
 
 		/* Sing a song upon accumulating enough reward */
 		rewardReport += reward;
@@ -426,17 +419,11 @@ int main(int argc, char *argv[])
 		/* Update action values and  eligibility trace */
 		delta = reward - avgReward + Q[sprime][aprime] - Q[s][a];
 
-	    // TODO Make sure this is printing in the correct place
-	    //printf("s a r s' a':%d %d %d %d %d\n", s, a, reward, sprime, aprime);
-	    //printf("average reward: %f\n", avgReward);
-	    //printf("delta: %f\n", delta);
 
 		/* Replacing traces */
 		e[s][a] = 1;
 	    for (i = 0; i < 16; i++)
 	    {
-	    	//printf("Action values for state %d: %f %f %f %f\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
-	    	//printf("Eligibility traces for state %d: %f %f %f %f\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
 	    	for (j = 0; j < 4; j++)
 	    	{
 	    		Q[i][j] = Q[i][j] + (alpha * delta * e[i][j]);
