@@ -199,7 +199,8 @@ int main(int argc, char *argv[])
 		int c;
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:i:",long_options, &option_index);
+		//TODO Alphabetize the command line arguments
+		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:i:e:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
@@ -229,6 +230,14 @@ int main(int argc, char *argv[])
 			if ((alpha > 2) || (alpha < 0))
 			{
 				fprintf(stderr,"ERROR: Invalid alpha. Choose an alpha within [0,2]\n");
+				exit(EXIT_FAILURE);
+			}
+			break;
+		case 'e':
+			epsilon = strtod(optarg, NULL);
+			if ((epsilon > 1) || (epsilon < 0))
+			{
+				fprintf(stderr,"ERROR: Invalid epsilon. Choose an epsilon within [0,2]\n");
 				exit(EXIT_FAILURE);
 			}
 			break;
@@ -718,6 +727,7 @@ void csp3(void *arg)
 		else if (errorCode==-1)
 		{
 			fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
+			//endProgram();
 			exit(EXIT_FAILURE);
 		}
 
@@ -725,6 +735,7 @@ void csp3(void *arg)
 		if (numBytesRead==-1)
 		{
 			fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
+			//endProgram(); //TODO See if it is possible to implement this instead of just exit()
 			exit(EXIT_FAILURE);
 
 		}
