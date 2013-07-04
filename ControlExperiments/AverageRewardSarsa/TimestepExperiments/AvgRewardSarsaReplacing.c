@@ -189,10 +189,10 @@ int main(int argc, char *argv[])
 			{"epsilon",         required_argument,   0, 'e'},
 			{"lambda",          required_argument,   0, 'l'},
 			{"timestep",        required_argument,   0, 't'},
+			{"iterations",      required_argument,   0, 'i'},
 			{"microworldname",  required_argument,   0, 'm'},
 			{"batteryname",     required_argument,   0, 'b'},
 			{"robotname",       required_argument,   0, 'r'},
-			{"iterations",      required_argument,   0, 'i'},
 			{"help",            no_argument,         0, 'h'},
 			{0, 0, 0, 0}
 		};
@@ -231,6 +231,9 @@ int main(int argc, char *argv[])
 				fprintf(stderr,"ERROR: Invalid alpha. Choose an alpha within [0,2]\n");
 				exit(EXIT_FAILURE);
 			}
+			break;
+		case 'i':
+			maxIterations = strtol(optarg, (char **) NULL, 10);
 			break;
 		case '?':
 			fprintf(stderr,"ERROR: Unknown command line argument\n");
