@@ -399,6 +399,7 @@ int main(int argc, char *argv[])
 		printf("Time for iteration (in microseconds): %ld\n", computationTime);
 		if (timestep - computationTime > 0)
 		{
+			fprintf(stderr,"[DEBUG]: Sleeping for %d us\n",timestep - computationTime);
 			usleep(timestep - computationTime);
 		}
 		else
@@ -410,6 +411,7 @@ int main(int argc, char *argv[])
 		incrementBy.tv_usec = timestep;
 		timeradd(&timeStart, &incrementBy, &timeStart);
 
+		fprintf(stderr,"[DEBUG]: Incrementation completed\n");
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
 		{
@@ -428,6 +430,7 @@ int main(int argc, char *argv[])
 				endProgram();
 			}
 		}
+		fprintf(stderr,"[DEBUG]: Iteration completed\n");
 
 		/* Sing a song upon accumulating enough reward */
 		rewardReport += reward;
@@ -438,6 +441,7 @@ int main(int argc, char *argv[])
 			sendBytesToRobot(bytes, 2);
 			rewardReport = 0;
 		}
+		fprintf(stderr,"[DEBUG]: Finished deciding to sing\n");
 
 		/* Get next state, choose action based on it */
 		p = (myPktNum + M - 1) % M;
@@ -462,6 +466,7 @@ int main(int argc, char *argv[])
 	    		avgReward += alphaR*delta;
 	    	}
 	    }
+	    fprintf(stderr,"[DEBUG]: Trace update completed\n");
 
 		/* Log reward, timestep, and iteration */
 		fprintf(logFile,"%5d %d.%d %d %6.12lf\n",
