@@ -1,3 +1,4 @@
 alias cd-iri='cd ~/git/iRobotInterface'
 alias cd-tse='cd ~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/'
 alias cd-ctrlexp='cd ~/git/iRobotInterface/ControlExperiments/'
+alias update-aliases='cat ~/git/UtilityCode/bash_aliases.txt > ~/.bash_aliases'
