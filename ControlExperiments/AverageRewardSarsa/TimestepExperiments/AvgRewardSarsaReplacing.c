@@ -430,7 +430,7 @@ int main(int argc, char *argv[])
 				endProgram();
 			}
 		}
-		fprintf(stderr,"[DEBUG]: Iteration completed\n");
+		fprintf(stderr,"[DEBUG]: Reward update completed\n");
 
 		/* Sing a song upon accumulating enough reward */
 		rewardReport += reward;
@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
 		{
 			bytes[0] = 141;
 			bytes[1] = 0;
-			sendBytesToRobot(bytes, 2);
+			//sendBytesToRobot(bytes, 2);
 			rewardReport = 0;
 		}
 		fprintf(stderr,"[DEBUG]: Finished deciding to sing\n");
