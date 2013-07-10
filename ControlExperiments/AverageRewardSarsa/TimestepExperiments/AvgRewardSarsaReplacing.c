@@ -410,7 +410,7 @@ int main(int argc, char *argv[])
 		//incrementBy.tv_usec = timestep;
 		//timeradd(&timeStart, &incrementBy, &timeStart);
 
-		//timeStart = timeEnd; //TODO Is this needed?
+		timeStart = timeEnd; //TODO Is this needed?
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
