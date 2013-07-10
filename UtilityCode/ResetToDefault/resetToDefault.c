@@ -504,13 +504,19 @@ int actionChooser(int s)
 	pthread_mutex_lock(&resetPhaseMutex);
 	if (resetPhase == 0)
 	{
-		choice = 0;
-		resetPhase = 0;
+		if(sCliffFLB[p] && sCliffFRB[p])
+		{
+			resetPhase = 1;
+		}
+		else
+		{
+			choice = 0;
+		}
 	}
 	else if (resetPhase == 1)
 	{
-		choice = 1;
-		resetPhase = 0;
+		choice = 3;
+		resetPhase = 1;
 	}
 	else
 	{
