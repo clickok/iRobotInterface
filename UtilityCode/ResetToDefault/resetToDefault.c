@@ -511,6 +511,8 @@ int actionChooser(int s)
 	printf("%d %d %d %d\n",s_FL, s_L,s_FR,s_R);
 
 	pthread_mutex_lock(&resetPhaseMutex);
+
+	// Go forward until an edge is reached
 	if (resetPhase == 0)
 	{
 		if(sCliffFLB[p] || sCliffFRB[p])
@@ -523,9 +525,10 @@ int actionChooser(int s)
 			choice = 0;
 		}
 	}
+	// Turn until BOTH front sensors are off
 	else if (resetPhase == 1)
 	{
-		if (s_L && s_R)
+		if (s_FL && s_FR)
 		{
 			resetPhase = 2;
 		}
@@ -538,9 +541,10 @@ int actionChooser(int s)
 			choice = 1;
 		}
 	}
+	// Go backwards until BOTH side sensors are off
 	else if (resetPhase == 2)
 	{
-		choice = 0;
+		choice = 3;
 	}
 	else
 	{
