@@ -499,7 +499,9 @@ int actionChooser(int s)
 
 	myPktNum = getPktNum(); //TODO Simplify this, if possible
 	p = (myPktNum + M - 1) % M;
-	printf("%d %d %d %d\n",sCliffLB[p], sCliffFLB[p], sCliffFRB[p],sCliffRB[p]);
+	int s_FR = sCliffFRB[p];
+	int s_FL = sCliffFLB[p];
+	printf("%d %d %d %d\n",s_FR, sCliffFLB[p],s_FR,sCliffFRB[p]);
 
 	pthread_mutex_lock(&resetPhaseMutex);
 	if (resetPhase == 0)
@@ -507,6 +509,14 @@ int actionChooser(int s)
 		if(sCliffFLB[p] && sCliffFRB[p])
 		{
 			resetPhase = 1;
+		}
+		else if (s_FR)
+		{
+			choice = 2;
+		}
+		else if (s_FL)
+		{
+			choice = 3;
 		}
 		else
 		{
