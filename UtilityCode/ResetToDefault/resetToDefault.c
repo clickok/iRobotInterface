@@ -512,11 +512,11 @@ int actionChooser(int s)
 		}
 		else if (s_FR)
 		{
-			choice = 2;
+			choice = 1;
 		}
 		else if (s_FL)
 		{
-			choice = 3;
+			choice = 2;
 		}
 		else
 		{
