@@ -31,7 +31,7 @@
 typedef unsigned char ubyte;
 
 /* The speed at which the Create drives its wheels */
-#define SPEED 100
+#define SPEED 50
 
 /* The reward threshold for the Create to "sing"   */
 #define SONG_REWARD_THRESHOLD  100
@@ -452,7 +452,11 @@ void extractPacket() {
   lastPktTime = currentTime;
 }
 
-
+/* reflexes()
+ * Reflex actions (to ensure robot safety, and also light up the LEDs)
+ * Stops the robot if EITHER of the front sensors are "off" or if EITHER
+ * of the left and right sensors are "off".
+ */
 void reflexes() {
   int a;
   int p = pktNum%M;
@@ -460,7 +464,7 @@ void reflexes() {
   a = lastAction;
   pthread_mutex_unlock( &lastActionMutex );
   if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
-      (a==3 && (sCliffLB[p] && sCliffRB[p]))) {   // attempt to go backward over cliff
+      (a==3 && (sCliffLB[p]  || sCliffRB[p]))) {   // attempt to go backward over cliff
     driveWheels(0, 0);                            // then interrupt motion
   }
 
@@ -483,10 +487,11 @@ int getPktNum() {
 
 void takeAction(int action) {
     switch (action) {
-    case 0  : driveWheels(SPEED, SPEED); break;    // forward
-    case 1  : driveWheels(-SPEED, SPEED); break;   // left
-    case 2  : driveWheels(SPEED, -SPEED); break;   // right
-    case 3  : driveWheels(-SPEED, -SPEED); break;  // backward
+    case 0  : driveWheels(SPEED, SPEED);   break;   // forward
+    case 1  : driveWheels(-SPEED, SPEED);  break;   // left
+    case 2  : driveWheels(SPEED, -SPEED);  break;   // right
+    case 3  : driveWheels(-SPEED, -SPEED); break;   // backward
+    case 4  : driveWheels(0,0);            break;   // stop
     default : printf("Bad action\n");
     }
 }
@@ -508,9 +513,21 @@ int actionChooser(int s)
 	pthread_mutex_lock(&resetPhaseMutex);
 	if (resetPhase == 0)
 	{
-		if(sCliffFLB[p] && sCliffFRB[p])
+		if(sCliffFLB[p] || sCliffFRB[p])
 		{
 			resetPhase = 1;
+			choice = 4;
+		}
+		else
+		{
+			choice = 0;
+		}
+	}
+	else if (resetPhase == 1)
+	{
+		if (s_L && s_R)
+		{
+			resetPhase = 2;
 		}
 		else if (s_FR)
 		{
@@ -520,20 +537,15 @@ int actionChooser(int s)
 		{
 			choice = 1;
 		}
-		else
-		{
-			choice = 0;
-		}
 	}
-	else if (resetPhase == 1)
+	else if (resetPhase == 2)
 	{
-		choice = 3;
-		resetPhase = 1;
+		choice = 0;
 	}
 	else
 	{
-		choice = 1;
-		resetPhase = 1;
+		choice = 3;
+		resetPhase = 999;
 	}
 	pthread_mutex_unlock(&resetPhaseMutex);
     return choice;
