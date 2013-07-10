@@ -579,7 +579,7 @@ int actionChooser(int s)
 	}
 	else if (resetPhase == 3)
 	{
-		if (resetCount > 10)
+		if (resetCount > 50)
 		{
 			fprintf(stderr,"[DEBUG] Completed resetting!\n");
 			endProgram();
