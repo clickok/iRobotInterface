@@ -20,8 +20,9 @@ def plotAvgRewardVsAlpha(plotEach=True,plotMean=False,graphName=False):
     Can be modified to print the cumulative reward average for only certain
     parts of the run
     '''
-    parentdir  = "."
+    parentdir  = '.'
     logFileLst = getAllLogs(parentdir)
+    print(logFileLst)
     logData    = groupByAlpha(logFileLst)
     fig, ax = plt.subplots(1)
     stepMax = None                  # Start of timesteps to sum from
