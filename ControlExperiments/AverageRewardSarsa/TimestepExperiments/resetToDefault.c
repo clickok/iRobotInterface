@@ -13,6 +13,16 @@
 #define __OSPLATFORM__ "Apple"
 #endif
 
+#ifdef _WIN32
+#define __OSPLATFORM__ "Win32"
+#elif __posix__
+#define __OSPLATFORM__ "Posix"
+#elif __linux__
+#define __OSPLATFORM__ "Linux"
+#elif __APPLE__
+#define __OSPLATFORM__ "Apple"
+#endif
+
 int main()
 {
 	printf("Version: %s\n",__VERSION__);
