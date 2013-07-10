@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #define __OSPLATFORM__ "Win32"
 #elif __unix__ // all unices
-#define __OSPLATFORM__ "Unix"
+//Unix
 #elif __posix__
 #define __OSPLATFORM__ "Posix"
 #elif __linux__
