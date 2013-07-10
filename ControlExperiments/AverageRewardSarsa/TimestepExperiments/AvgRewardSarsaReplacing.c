@@ -475,7 +475,7 @@ int main(int argc, char *argv[])
 	    s = sprime;
 	    a = aprime;
 	    prevPktNum = myPktNum;
-	    printf(stderr,"[DEBUG]: Iteration completed\n");
+	    fprintf(stderr,"[DEBUG]: Iteration completed\n");
 	}
 	return 0;
 }
