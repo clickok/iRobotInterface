@@ -372,7 +372,7 @@ int main(int argc, char *argv[])
 
 	pthread_mutex_lock(&actionMutex);
 	action = a;
-	ptrhead_mutex_unlock(&actionMutex);
+	pthread_mutex_unlock(&actionMutex);
 	prevPktNum = myPktNum;
 
 	/* ************************************************************************
