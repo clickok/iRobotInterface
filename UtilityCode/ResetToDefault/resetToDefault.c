@@ -460,7 +460,7 @@ void reflexes() {
   a = lastAction;
   pthread_mutex_unlock( &lastActionMutex );
   if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
-      (a==3 && (sCliffLB[p] || sCliffRB[p]))) {   // attempt to go backward over cliff
+      (a==3 && (sCliffLB[p] && sCliffRB[p]))) {   // attempt to go backward over cliff
     driveWheels(0, 0);                            // then interrupt motion
   }
 
