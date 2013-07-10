@@ -152,12 +152,7 @@ int main(int argc, char *argv[])
 	int timestep = 100000;                  // Timestep in microseconds
 	int a, aprime;                          // Action
 	int s, sprime;                          // State
-	int reward;                             // Reward
-	double avgReward = 0;					// Average Reward
 	int i, j;								// Iterator variables
-	double delta;							// Update
-	ubyte bytes[2];         				// Robot command array
-	int rewardReport = 0;					// Reward tracking (for song)
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
@@ -255,70 +250,6 @@ int main(int argc, char *argv[])
 
 
 
-	/* ************************************************************************
-	 *                         Set Up Log File
-	 *************************************************************************/
-
-	/* Get time in the form of a time_t value */
-
-	time_t rawtime;
-	struct tm * timeinfo;
-
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	int t_sec   = (*timeinfo).tm_sec;
-	int t_min   = (*timeinfo).tm_min;
-	int t_hour  = (*timeinfo).tm_hour;
-	int t_day   = (*timeinfo).tm_mday;
-	int t_month = (*timeinfo).tm_mon;
-	int t_year  = (*timeinfo).tm_year + 1900;
-
-
-	/* Open log file (or use stdout if unspecified) */
-	if (logName != NULL)
-	{
-		printf("Opening log file with name: %s\n",logName);
-		logFile = fopen(logName,"w"); // Open log file
-	}
-	else
-	{
-		/* Name the log file with the current date & time in file name */
-		strftime(strbuf,80,"logSarsa-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
-		printf("Creating log file with name: %s\n",strbuf);
-		logFile = fopen(strbuf,"w");
-	}
-	if (logFile == NULL)          // Ensure log file opened properly
-	{
-		perror("Failed to open log file");
-	}
-
-	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
-
-	/* ********************** Write start of log file ************************/
-	/* Date and time of run */
-	fprintf(logFile,"#Year=%d Month=%d Day=%d Hour=%d Minute=%d Second=%d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
-	/* Robot, battery and microworld used */
-	fprintf(logFile,"#RobotUsed=%s BatteryUsed=%s Microworld=%s\n",
-					robotName,batteryName,microworldName);
-	/* Cliff Thresholds */
-	fprintf(logFile,"#CliffHighValue=%d "
-					"CliffLeftThreshold=%d "
-					"CliffFrontLeftThreshold=%d "
-					"CliffFrontRightThreshold=%d "
-					"CliffRightThreshold=%d\n",
-					cliffHighValue,
-					cliffThresholds[0],
-					cliffThresholds[1],
-					cliffThresholds[2],
-					cliffThresholds[3]);
-	fprintf(logFile,"#Algorithm=AverageRewardSarsaReplacing\n");
-	fprintf(logFile,"#Alpha=%lf Lambda=%lf Epsilon=%lf Alpha-R=%lf Timestep=%d\n",
-					alpha,lambda,epsilon,alphaR,timestep);
-
-	fprintf(logFile,"#Iteration Timestamp Reward  AverageReward\n");
-	fflush(logFile);
-
-
 
 	/* ************************************************************************
 	 *                Set up resources used by program
@@ -329,6 +260,7 @@ int main(int argc, char *argv[])
 	pthread_mutex_init(&serialMutex, NULL);
 	pthread_mutex_init(&lastActionMutex, NULL);
 	pthread_mutex_init(&endFlagMutex, NULL);
+	pthread_mutex_init(&resetPhaseMutex,NULL);
 
 	/* Install signal handler */
 	struct sigaction act;                   // The new sigaction
@@ -349,16 +281,6 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	/* Initialize state-action values and eligibility trace */
-	for (i = 0; i < 16; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
-			Q[i][j] = 5 + 0.001*( rand()/((double) RAND_MAX) - 0.5);
-			e[i][j] = 0;
-		}
-	}
-
 	/* Get time just before control loop starts */
 	gettimeofday(&timeBegin, NULL);
 
@@ -367,7 +289,7 @@ int main(int argc, char *argv[])
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
 	s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
-	a = epsilonGreedy(Q, s, epsilon);
+	a = actionChooser(s);
 	takeAction(a);
 	ensureTransmitted();
 	prevPktNum = myPktNum;
@@ -404,56 +326,21 @@ int main(int argc, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 
-		reward = 0;
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
-			reward += sDistance[p%M];
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
 			}
 		}
 
-		/* Sing a song upon accumulating enough reward */
-		rewardReport += reward;
-		if (rewardReport>SONG_REWARD_THRESHOLD)
-		{
-			bytes[0] = 141;
-			bytes[1] = 0;
-			sendBytesToRobot(bytes, 2);
-			rewardReport = 0;
-		}
 
 		/* Get next state, choose action based on it */
 		p = (myPktNum + M - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
-		aprime = epsilonGreedy(Q, sprime, epsilon);
+		aprime = actionChooser(sprime);
 		takeAction(aprime);
 		ensureTransmitted();
-
-		/* Update action values and  eligibility trace */
-		delta = reward - avgReward + Q[sprime][aprime] - Q[s][a];
-
-
-		/* Replacing traces */
-		e[s][a] = 1;
-	    for (i = 0; i < 16; i++)
-	    {
-	    	for (j = 0; j < 4; j++)
-	    	{
-	    		Q[i][j] = Q[i][j] + (alpha * delta * e[i][j]);
-	    		e[i][j] = lambda*e[i][j];
-	    		avgReward += alphaR*delta;
-	    	}
-	    }
-
-		/* Log reward, timestep, and iteration */
-		fprintf(logFile,"%5d %d.%d %d %6.12lf\n",
-						iteration,
-						(int)timeStart.tv_sec,
-						(int)timeStart.tv_usec,
-						reward,
-						avgReward);
 
 	    /* Prepare for next loop */
 	    s = sprime;
