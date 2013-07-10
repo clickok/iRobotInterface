@@ -79,6 +79,7 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 int resetPhase = 0;
+int resetCount = 0;
 pthread_mutex_t resetPhaseMutex;
 
 FILE * logFile;
@@ -515,9 +516,24 @@ int actionChooser(int s)
 	// Go forward until an edge is reached
 	if (resetPhase == 0)
 	{
-		if(sCliffFLB[p] || sCliffFRB[p])
+		if (s_FL && s_FR)
+		{
+			if (resetCount > 2)
+			{
+				choice = 4;
+				resetPhase = 3;
+				resetCount = 0;
+			}
+			else
+			{
+				resetPhase = 2;
+				resetCount++;
+			}
+		}
+		else if(sCliffFLB[p] || sCliffFRB[p])
 		{
 			resetPhase = 1;
+			resetCount = 0;
 			fprintf(stderr,"[DEBUG]: Phase 1");
 		}
 		else
@@ -559,6 +575,19 @@ int actionChooser(int s)
 		else
 		{
 			choice = 3;
+		}
+	}
+	else if (resetPhase == 3)
+	{
+		if (resetCount > 10)
+		{
+			fprintf(stderr,"[DEBUG] Completed resetting!\n");
+			endProgram();
+		}
+		else
+		{
+			choice = 3;
+			resetCount++;
 		}
 	}
 	else
