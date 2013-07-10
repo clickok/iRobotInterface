@@ -78,6 +78,9 @@ typedef unsigned char ubyte;
  *                       Global Names and Variables
  *****************************************************************************/
 
+int resetPhase = 0;
+pthread_mutex_t resetPhaseMutex;
+
 FILE * logFile;
 pthread_t tid;                // Thread for csp3()
 
@@ -120,7 +123,7 @@ int cliffHighValue;           // binary value taken if threshold exceeded
 void setupSerialPort(char serialPortName[]);
 void csp3(void *arg);
 void loadCliffThresholds();
-int  epsilonGreedy(double Q[16][4], int s, double epsilon);
+int  actionChooser(int s);
 void takeAction(int action);
 void driveWheels(int left, int right);
 void sendBytesToRobot(ubyte* bytes, int numBytes);
@@ -666,38 +669,34 @@ void takeAction(int action) {
 }
 
 
-int epsilonGreedy(double Q[16][4], int s, double epsilon)
+int actionChooser(int s)
 {
-	int max, i;
+	int choice;
 	int myPktNum, p;
 	int firstAction, lastAction;
 
-	myPktNum = getPktNum();
+	myPktNum = getPktNum(); //TODO Simplify this, if possible
 	p = (myPktNum + M - 1) % M;
 	firstAction = sCliffFLB[p] || sCliffFRB[p];
-	if (sCliffLB[p] || sCliffRB[p])
-	{
-		lastAction = 2;
-	}
-	else
-	{
-		lastAction = 3;
-	}
 
-	if (rand()/((double)RAND_MAX+1) < epsilon)
+	pthread_mutex_lock(&resetPhaseMutex);
+	if (resetPhase == 0)
 	{
-		//TODO What is going on here?
-		return firstAction + rand()%(lastAction + 1 - firstAction);
+		choice = 0;
+		resetPhase = 1;
+	}
+	else if (resetPhase == 1)
+	{
+		choice = 1;
+		resetPhase = 0;
 	}
 	else
 	{
-		max = lastAction;
-		for (i = firstAction; i < lastAction; i++)
-		{
-			if (Q[s][i] > Q[s][max]) max = i;
-		}
-    return max;
-  }
+		choice = 1;
+		resetPhase = 1;
+	}
+	pthread_mutex_unlock(&resetPhaseMutex);
+    return choice;
 }
 
 void csp3(void *arg)
