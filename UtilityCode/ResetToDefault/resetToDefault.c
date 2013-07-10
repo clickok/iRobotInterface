@@ -496,11 +496,10 @@ int actionChooser(int s)
 {
 	int choice;
 	int myPktNum, p;
-	int firstAction, lastAction;
 
 	myPktNum = getPktNum(); //TODO Simplify this, if possible
 	p = (myPktNum + M - 1) % M;
-	firstAction = sCliffFLB[p] || sCliffFRB[p];
+
 
 	pthread_mutex_lock(&resetPhaseMutex);
 	if (resetPhase == 0)
