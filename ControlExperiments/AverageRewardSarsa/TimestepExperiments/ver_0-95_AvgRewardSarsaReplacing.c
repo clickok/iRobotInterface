@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
 		printf("Time for iteration (in microseconds): %ld\n", computationTime);
 		if (timestep - computationTime > 0)
 		{
-			fprintf(stderr,"[DEBUG]: Sleeping for %d us\n",timestep - computationTime);
+			fprintf(stderr,"[DEBUG]: Sleeping for %ld us\n",timestep - computationTime);
 			usleep(timestep - computationTime);
 		}
 		else
@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
 		{
 			bytes[0] = 141;
 			bytes[1] = 0;
-			//sendBytesToRobot(bytes, 2);
+			sendBytesToRobot(bytes, 2);
 			rewardReport = 0;
 		}
 		fprintf(stderr,"[DEBUG]: Finished deciding to sing\n");
