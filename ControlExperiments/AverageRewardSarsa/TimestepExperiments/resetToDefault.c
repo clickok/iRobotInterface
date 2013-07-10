@@ -6,18 +6,18 @@
 #elif __unix__ // all unices
 #define __OSPLATFORM__ "Unix"
 #elif __posix__
-    // POSIX
+#define __OSPLATFORM__ "Posix"
 #elif __linux__
-    // linux
+#define __OSPLATFORM__ "Linux"
 #elif __APPLE__
-    // Mac OS, not sure if this is covered by __posix__ and/or __unix__ though...
+#define __OSPLATFORM__ "Apple"
 #endif
 
 int main()
 {
 	printf("Version: %s\n",__VERSION__);
 	#ifdef __OSPLATFORM__
-	printf("das\n");
+	printf("OS Used: %s\n",__OSPLATFORM__);
 	#endif
 	return 0;
 }
