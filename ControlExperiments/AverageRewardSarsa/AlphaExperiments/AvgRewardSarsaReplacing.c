@@ -299,6 +299,7 @@ int main(int argc, char *argv[])
 	fprintf(logFile,"#Alpha=%lf Lambda=%lf Epsilon=%lf Alpha-R=%lf Timestep=%d\n",
 					alpha,lambda,epsilon,alphaR,timestep);
 
+	fprintf(logFile,"#ProgramName=%s\n",__FILE__);
 	fprintf(logFile,"#Iteration Timestamp Reward  AverageReward\n");
 	fflush(logFile);
 
