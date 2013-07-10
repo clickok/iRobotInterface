@@ -499,7 +499,7 @@ void takeAction(int action) {
 
 int actionChooser(int s)
 {
-	int choice;
+	int choice = 4;
 	int myPktNum, p;
 
 	myPktNum = getPktNum(); //TODO Simplify this, if possible
@@ -518,7 +518,7 @@ int actionChooser(int s)
 		if(sCliffFLB[p] || sCliffFRB[p])
 		{
 			resetPhase = 1;
-			choice = 4;
+			fprintf(stderr,"[DEBUG]: Phase 1");
 		}
 		else
 		{
@@ -532,19 +532,34 @@ int actionChooser(int s)
 		{
 			resetPhase = 2;
 		}
-		else if (s_FR)
-		{
-			choice = 2;
-		}
 		else if (s_FL)
 		{
 			choice = 1;
+		}
+		else if (s_FR)
+		{
+			choice = 2;
 		}
 	}
 	// Go backwards until BOTH side sensors are off
 	else if (resetPhase == 2)
 	{
-		choice = 3;
+		if(s_L && s_R)
+		{
+			resetPhase = 3;
+		}
+		else if (s_L)
+		{
+			choice = 2;
+		}
+		else if (s_R)
+		{
+			choice = 1;
+		}
+		else
+		{
+			choice = 3;
+		}
 	}
 	else
 	{
