@@ -406,12 +406,10 @@ int main(int argc, char *argv[])
 			printf("[ERROR]: computationTime exceeded timestep\n");
 		}
 		//TODO Understand the purpose of this change
-		//incrementBy.tv_sec = 0;
-		//incrementBy.tv_usec = timestep;
-		//timeradd(&timeStart, &incrementBy, &timeStart);
+		incrementBy.tv_sec = 0;
+		incrementBy.tv_usec = timestep;
+		timeradd(&timeStart, &incrementBy, &timeStart);
 
-		timeStart = timeEnd; //TODO Is this needed?
-		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
 		{
