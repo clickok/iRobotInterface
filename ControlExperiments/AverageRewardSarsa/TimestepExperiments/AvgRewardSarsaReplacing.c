@@ -81,9 +81,11 @@ typedef unsigned char ubyte;
 FILE * logFile;
 pthread_t tid;                // Thread for csp3()
 
+int resetPhase = 0;
+
 int terminationFlag = FALSE;  // A flag set when the program should end
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
-pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex, endFlagMutex; // locks
+pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex, endFlagMutex; resetPhaseMutex;// locks
 int lastAction = 0;           // last action sent to Create by agent
 struct timeval lastPktTime;   // time of last packet
 int fd = 0;                   // file descriptor for serial port
@@ -326,6 +328,7 @@ int main(int argc, char *argv[])
 	pthread_mutex_init(&serialMutex, NULL);
 	pthread_mutex_init(&lastActionMutex, NULL);
 	pthread_mutex_init(&endFlagMutex, NULL);
+	pthread_mutex_init(&resetPhaseMutex,NULL);
 	
 	/* Install signal handler */
 	struct sigaction act;                   // The new sigaction
@@ -401,56 +404,22 @@ int main(int argc, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 
-		reward = 0;
+
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
-			reward += sDistance[p%M];
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
 			}
 		}
 
-		/* Sing a song upon accumulating enough reward */
-		rewardReport += reward;
-		if (rewardReport>SONG_REWARD_THRESHOLD)
-		{
-			bytes[0] = 141;
-			bytes[1] = 0;
-			sendBytesToRobot(bytes, 2);
-			rewardReport = 0;
-		}
 
 		/* Get next state, choose action based on it */
 		p = (myPktNum + M - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
-		aprime = epsilonGreedy(Q, sprime, epsilon);
+		aprime = actionChooser(sprime);
 		takeAction(aprime);
 		ensureTransmitted();
-
-		/* Update action values and  eligibility trace */
-		delta = reward - avgReward + Q[sprime][aprime] - Q[s][a];
-
-
-		/* Replacing traces */
-		e[s][a] = 1;
-	    for (i = 0; i < 16; i++)
-	    {
-	    	for (j = 0; j < 4; j++)
-	    	{
-	    		Q[i][j] = Q[i][j] + (alpha * delta * e[i][j]);
-	    		e[i][j] = lambda*e[i][j];
-	    		avgReward += alphaR*delta;
-	    	}
-	    }
-
-		/* Log reward, timestep, and iteration */
-		fprintf(logFile,"%5d %d.%d %d %6.12lf\n",
-						iteration,
-						(int)timeStart.tv_sec,
-						(int)timeStart.tv_usec,
-						reward,
-						avgReward);
 
 	    /* Prepare for next loop */
 	    s = sprime;
@@ -666,38 +635,34 @@ void takeAction(int action) {
 }
 
 
-int epsilonGreedy(double Q[16][4], int s, double epsilon)
+int actionChooser(int s)
 {
-	int max, i;
+	int choice;
 	int myPktNum, p;
 	int firstAction, lastAction;
 
-	myPktNum = getPktNum();
+	myPktNum = getPktNum(); //TODO Simplify this, if possible
 	p = (myPktNum + M - 1) % M;
 	firstAction = sCliffFLB[p] || sCliffFRB[p];
-	if (sCliffLB[p] || sCliffRB[p])
-	{
-		lastAction = 2;
-	}
-	else
-	{
-		lastAction = 3;
-	}
 
-	if (rand()/((double)RAND_MAX+1) < epsilon)
+	pthread_mutex_lock(&resetPhaseMutex);
+	if (resetPhase == 0)
 	{
-		//TODO What is going on here?
-		return firstAction + rand()%(lastAction + 1 - firstAction);
+		choice = 0;
+		resetPhase = 1;
+	}
+	else if (resetPhase == 1)
+	{
+		choice = 1;
+		resetPhase = 0;
 	}
 	else
 	{
-		max = lastAction;
-		for (i = firstAction; i < lastAction; i++)
-		{
-			if (Q[s][i] > Q[s][max]) max = i;
-		}
-    return max;
-  }
+		choice = 2;
+		resetPhase = 0;
+	}
+	pthread_mutex_unlock(&resetPhaseMutex);
+    return choice;
 }
 
 void csp3(void *arg)
