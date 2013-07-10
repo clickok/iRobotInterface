@@ -108,6 +108,7 @@ ubyte           sCliffFRB[M];
 short           sDistance[M]; // wheel rotation counts (small integers, pos/neg)
 double          sDeltaT[M];   // in milliseconds
 ubyte           sIRbyte[M];   // Infrared byte e.g. remote
+char * portName;
 
 /* Cliff thresholds (taken from cliffThresholds.dat) */
 int cliffThresholds[4];       // left, front left, front right, right
@@ -142,13 +143,6 @@ int main(int argc, char *argv[])
 	unsigned int prevPktNum = 0;		    // Previous packet number
 	int p;									// Byte tracking variable
 	int iteration = 0;                      // Control loop counter
-	int maxIterations = 1200;               // Limit for number of iterations
-	double Q[16][4];						// State-Action value array
-	double e[16][4];						// Eligibility trace array
-	double alpha = 0.1;						// Stepsize (alpha) parameter
-	double alphaR = 0.001;                  // Average Reward Stepsize
-	double lambda = 0.9;					// Trace decay parameter
-	double epsilon = 0.01;                  // Exploration parameter
 	int timestep = 100000;                  // Timestep in microseconds
 	int a, aprime;                          // Action
 	int s, sprime;                          // State
@@ -156,12 +150,6 @@ int main(int argc, char *argv[])
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
-	char * logName = NULL;                  // Name of log file
-	char * portName = NULL;                 // Name of serial port
-	char * robotName = NULL;                // Name of robot
-	char * batteryName = NULL;              // Name of battery
-	char * microworldName = NULL;           // Name of microworld
-	char strbuf[1000];                      // String buffer for use w/ logging
 
 	/* Load cliff thresholds, seed RNG */
 	loadCliffThresholds();
@@ -182,23 +170,14 @@ int main(int argc, char *argv[])
 		static struct option long_options[] =
 		{
 			{"port",            required_argument,   0, 'p'},
-			{"logname",         required_argument,   0, 'f'},
-			{"alpha",           required_argument,   0, 'a'},
-			{"epsilon",         required_argument,   0, 'e'},
-			{"lambda",          required_argument,   0, 'l'},
 			{"timestep",        required_argument,   0, 't'},
-			{"iterations",      required_argument,   0, 'i'},
-			{"microworldname",  required_argument,   0, 'm'},
-			{"batteryname",     required_argument,   0, 'b'},
-			{"robotname",       required_argument,   0, 'r'},
 			{"help",            no_argument,         0, 'h'},
 			{0, 0, 0, 0}
 		};
 		int c;
 		int option_index = 0;
 
-		//TODO Alphabetize the command line arguments
-		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:i:e:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:t:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
@@ -208,39 +187,8 @@ int main(int argc, char *argv[])
 		case 'p':
 			portName = optarg;
 			break;
-		case 'f':
-			logName = optarg;
-			break;
-		case 'm':
-			microworldName = optarg;
-			break;
-		case 'b':
-			batteryName = optarg;
-			break;
-		case 'r':
-			robotName = optarg;
-			break;
 		case 't':
 			timestep = strtol(optarg, (char **) NULL, 10);
-			break;
-		case 'a':
-			alpha = strtod(optarg, NULL);
-			if ((alpha > 2) || (alpha < 0))
-			{
-				fprintf(stderr,"ERROR: Invalid alpha. Choose an alpha within [0,2]\n");
-				exit(EXIT_FAILURE);
-			}
-			break;
-		case 'e':
-			epsilon = strtod(optarg, NULL);
-			if ((epsilon > 1) || (epsilon < 0))
-			{
-				fprintf(stderr,"ERROR: Invalid epsilon. Choose an epsilon within [0,2]\n");
-				exit(EXIT_FAILURE);
-			}
-			break;
-		case 'i':
-			maxIterations = strtol(optarg, (char **) NULL, 10);
 			break;
 		case '?':
 			fprintf(stderr,"ERROR: Unknown command line argument\n");
@@ -300,18 +248,6 @@ int main(int argc, char *argv[])
 	while (TRUE)
 	{
 		printf("Iteration number: %6d\n",++iteration);
-		if (iteration > maxIterations)
-		{
-			gettimeofday(&timeEnd, NULL);
-			fprintf(stderr,"[DEBUG] Maximum iterations reached\n");
-			fprintf(stderr,"[DEBUG] Total seconds taken: %lf\n",
-							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
-							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
-			fprintf(logFile,"#TotalTime=%lf\n",
-							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
-							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
-			endProgram();
-		}
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
