@@ -31,7 +31,7 @@
 typedef unsigned char ubyte;
 
 /* The speed at which the Create drives its wheels */
-#define SPEED 300
+#define SPEED 100
 
 /* The reward threshold for the Create to "sing"   */
 #define SONG_REWARD_THRESHOLD  100
