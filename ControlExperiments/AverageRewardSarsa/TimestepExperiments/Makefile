@@ -34,4 +34,4 @@ updateAll:
 	make all
 	
 clearLogs:
-	rm logSarsa*.txt
+	rm -f logSarsa*.txt
