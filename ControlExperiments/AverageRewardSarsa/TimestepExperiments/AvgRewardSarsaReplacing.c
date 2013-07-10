@@ -83,8 +83,8 @@ pthread_t tid;                // Thread for csp3()
 
 int terminationFlag = FALSE;  // A flag set when the program should end
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
-pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex, endFlagMutex; // locks
-int lastAction = 0;           // last action sent to Create by agent
+pthread_mutex_t pktNumMutex, actionMutex, endFlagMutex; // locks
+int action = 0;               // current action selected by agent (initially fw)
 struct timeval lastPktTime;   // time of last packet
 int fd = 0;                   // file descriptor for serial port
 #define B 20                  // number of bytes in a packet
@@ -105,6 +105,8 @@ ubyte           sCliffFRB[M];
 short           sDistance[M]; // wheel rotation counts (small integers, pos/neg)
 double          sDeltaT[M];   // in milliseconds
 ubyte           sIRbyte[M];   // Infrared byte e.g. remote
+
+ubyte           sDrive[M];    // Drive commands; one of {0,1,2,3,4}
 
 /* Cliff thresholds (taken from cliffThresholds.dat) */
 int cliffThresholds[4];       // left, front left, front right, right
@@ -135,9 +137,11 @@ void endProgram();
 int main(int argc, char *argv[])
 {
 	/* Initialize variables */
+	//TODO Alphabetize these?
 	unsigned int myPktNum;                  // Packet number variable
 	unsigned int prevPktNum = 0;		    // Previous packet number
 	int p;									// Byte tracking variable
+	int pn;									// Additional byte tracking variable
 	int iteration = 0;                      // Control loop counter
 	int maxIterations = 1200;               // Limit for number of iterations
 	double Q[16][4];						// State-Action value array
@@ -156,7 +160,8 @@ int main(int argc, char *argv[])
 	ubyte bytes[2];         				// Robot command array
 	int rewardReport = 0;					// Reward tracking (for song)
 	struct timeval timeBegin;               // Control loop start time
-	struct timeval timeStart, timeEnd;      // Timing related
+	struct timeval incrementBy;             // For adjusting iteration times
+	struct timeval timeStart, timeEnd;      // Time iterations through loops
 	long computationTime; 					// Timing related
 	char * logName = NULL;                  // Name of log file
 	char * portName = NULL;                 // Name of serial port
@@ -323,8 +328,7 @@ int main(int argc, char *argv[])
 
 	/* Initialize mutex locks */
 	pthread_mutex_init(&pktNumMutex, NULL);
-	pthread_mutex_init(&serialMutex, NULL);
-	pthread_mutex_init(&lastActionMutex, NULL);
+	pthread_mutex_init(&actionMutex, NULL);
 	pthread_mutex_init(&endFlagMutex, NULL);
 	
 	/* Install signal handler */
@@ -365,8 +369,10 @@ int main(int argc, char *argv[])
 	p = (myPktNum + M - 1) % M;
 	s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 	a = epsilonGreedy(Q, s, epsilon);
-	takeAction(a);
-	ensureTransmitted();
+
+	pthread_mutex_lock(&actionMutex);
+	action = a;
+	ptrhead_mutex_unlock(&actionMutex);
 	prevPktNum = myPktNum;
 
 	/* ************************************************************************
@@ -391,21 +397,35 @@ int main(int argc, char *argv[])
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
 		printf("Time for iteration (in microseconds): %ld\n", computationTime);
-		usleep(timestep - computationTime);
-		timeStart = timeEnd; //TODO Is this needed?
+		if (timestep - computationTime > 0)
+		{
+			usleep(timestep - computationTime);
+		}
+		else
+		{
+			printf("[ERROR]: computationTime exceeded timestep\n");
+		}
+		//TODO Understand the purpose of this change
+		//incrementBy.tv_sec = 0;
+		//incrementBy.tv_usec = timestep;
+		//timeradd(&timeStart, &incrementBy, &timeStart);
+
+		//timeStart = timeEnd; //TODO Is this needed?
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
 		{
-			fprintf(stderr, "Buffer overflow!\n");
+			fprintf(stderr, "[ERROR]: Buffer overflow!\n");
 			exit(EXIT_FAILURE);
 		}
 
+		/* Calculate reward based on distance travelled since last checked */
 		reward = 0;
-		for (p = prevPktNum; p < myPktNum; p++)
+		for (pn = prevPktNum; p < myPktNum; p++)
 		{
-			reward += sDistance[p%M];
-			if (sIRbyte[p%M]==137)
+			p = pn % M;
+			reward += sDistance[p];
+			if (sIRbyte[p%M]==137) //Exit on remote pause//TODO Replace this with a macro
 			{
 				endProgram();
 			}
@@ -425,8 +445,9 @@ int main(int argc, char *argv[])
 		p = (myPktNum + M - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 		aprime = epsilonGreedy(Q, sprime, epsilon);
-		takeAction(aprime);
-		ensureTransmitted();
+		pthread_mutex_lock(&actionMutex);
+		action = aprime;
+		pthread_mutex_unlock(&actionMutex);
 
 		/* Update action values and  eligibility trace */
 		delta = reward - avgReward + Q[sprime][aprime] - Q[s][a];
@@ -455,9 +476,6 @@ int main(int argc, char *argv[])
 	    /* Prepare for next loop */
 	    s = sprime;
 	    a = aprime;
-	    pthread_mutex_lock( &lastActionMutex );
-	    lastAction = aprime;
-	    pthread_mutex_unlock( &lastActionMutex );
 	    prevPktNum = myPktNum;
 	}
 	return 0;
@@ -510,22 +528,18 @@ void loadCliffThresholds() {
 
 void sendBytesToRobot(ubyte* bytes, int numBytes) {
   int ret;
-  pthread_mutex_lock( &serialMutex );
   if ((ret=write(fd, bytes, numBytes))==-1) {
     fprintf(stderr, "Problem with write(): %s\n", strerror(errno));
     exit(EXIT_FAILURE);
   }
-  pthread_mutex_unlock( &serialMutex );
 }
 
 void ensureTransmitted() {
   int ret;
-  pthread_mutex_lock( &serialMutex );
   if ((ret=tcdrain(fd))==-1) {
 	fprintf(stderr, "Problem with tcdrain(): %s\n", strerror(errno));
 	exit(EXIT_FAILURE);
   }
-  pthread_mutex_unlock( &serialMutex );
 }
 
 void driveWheels(int left, int right) {
@@ -628,15 +642,14 @@ void extractPacket() {
 
 
 void reflexes() {
-  int a;
   int p = pktNum%M;
-  pthread_mutex_lock( &lastActionMutex );
-  a = lastAction;
-  pthread_mutex_unlock( &lastActionMutex );
-  if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
-      (a==3 && (sCliffLB[p] || sCliffRB[p]))) {   // attempt to go backward over cliff
-    driveWheels(0, 0);                            // then interrupt motion
-  }
+  pthread_mutex_lock( &actionMutex );
+  sDrive[p] = action;
+  pthread_mutex_unlock( &actionMutex );
+  if ((sDrive[p]==0 && (sCliffFLB[p] || sCliffFRB[p])) || // if forward over cliff
+      (sDrive[p]==3 && (sCliffLB[p] || sCliffRB[p])))    // or backward over cliff
+    sDrive[p] = 4;                            // then stop instead
+  takeAction(sDrive[p]);
 
   ubyte bytes[2];
   ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
@@ -657,10 +670,11 @@ int getPktNum() {
 
 void takeAction(int action) {
     switch (action) {
-    case 0  : driveWheels(SPEED, SPEED); break;    // forward
-    case 1  : driveWheels(-SPEED, SPEED); break;   // left
-    case 2  : driveWheels(SPEED, -SPEED); break;   // right
-    case 3  : driveWheels(-SPEED, -SPEED); break;  // backward
+    case 0  : driveWheels(SPEED, SPEED);   break;   // forward
+    case 1  : driveWheels(-SPEED, SPEED);  break;   // left
+    case 2  : driveWheels(SPEED, -SPEED);  break;   // right
+    case 3  : driveWheels(-SPEED, -SPEED); break;   // backward
+    case 4  : driveWheels(0,0);            break;   // stop
     default : printf("Bad action\n");
     }
 }
@@ -668,12 +682,11 @@ void takeAction(int action) {
 
 int epsilonGreedy(double Q[16][4], int s, double epsilon)
 {
-	int max, i;
-	int myPktNum, p;
+	int max, i, p;
 	int firstAction, lastAction;
 
-	myPktNum = getPktNum();
-	p = (myPktNum + M - 1) % M;
+
+	p = (getPktNum() + M - 1) % M;
 	firstAction = sCliffFLB[p] || sCliffFRB[p];
 	if (sCliffLB[p] || sCliffRB[p])
 	{

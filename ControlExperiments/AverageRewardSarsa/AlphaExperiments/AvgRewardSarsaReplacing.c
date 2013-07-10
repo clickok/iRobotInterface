@@ -83,8 +83,8 @@ pthread_t tid;                // Thread for csp3()
 
 int terminationFlag = FALSE;  // A flag set when the program should end
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
-pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex, endFlagMutex; // locks
-int lastAction = 0;           // last action sent to Create by agent
+pthread_mutex_t pktNumMutex, lastActionMutex, endFlagMutex; // locks
+int action = 0;           // last action sent to Create by agent
 struct timeval lastPktTime;   // time of last packet
 int fd = 0;                   // file descriptor for serial port
 #define B 20                  // number of bytes in a packet
@@ -105,6 +105,7 @@ ubyte           sCliffFRB[M];
 short           sDistance[M]; // wheel rotation counts (small integers, pos/neg)
 double          sDeltaT[M];   // in milliseconds
 ubyte           sIRbyte[M];   // Infrared byte e.g. remote
+ubyte           sDrive[M];    // Contains drive commands (one of {0,1,2,3,4,5}
 
 /* Cliff thresholds (taken from cliffThresholds.dat) */
 int cliffThresholds[4];       // left, front left, front right, right
@@ -138,6 +139,7 @@ int main(int argc, char *argv[])
 	unsigned int myPktNum;                  // Packet number variable
 	unsigned int prevPktNum = 0;		    // Previous packet number
 	int p;									// Byte tracking variable
+	int pn;                                 // Another byte tracking variable
 	int iteration = 0;                      // Control loop counter
 	int maxIterations = 1200;               // Limit for number of iterations
 	double Q[16][4];						// State-Action value array
@@ -157,6 +159,7 @@ int main(int argc, char *argv[])
 	int rewardReport = 0;					// Reward tracking (for song)
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
+	struct timeval incrementBy;
 	long computationTime; 					// Timing related
 	char * logName = NULL;                  // Name of log file
 	char * portName = NULL;                 // Name of serial port
