@@ -546,7 +546,7 @@ int actionChooser(int s)
 	{
 		if(s_L && s_R)
 		{
-			resetPhase = 3;
+			resetPhase = 0;
 		}
 		else if (s_L)
 		{
@@ -563,7 +563,7 @@ int actionChooser(int s)
 	}
 	else
 	{
-		choice = 3;
+		choice = 0;
 		resetPhase = 999;
 	}
 	pthread_mutex_unlock(&resetPhaseMutex);
