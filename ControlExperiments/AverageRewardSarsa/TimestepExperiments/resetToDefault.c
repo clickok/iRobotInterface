@@ -3,6 +3,9 @@
 
 int main()
 {
-	printf("%s\n",__VERSION__);
+	printf("Version: %s\n",__VERSION__);
+	#ifdef __PLATFORM__
+	printf("das\n");
+	#endif
 	return 0;
 }
