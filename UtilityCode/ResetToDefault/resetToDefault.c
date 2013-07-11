@@ -516,7 +516,7 @@ int actionChooser(int s)
 	// Go forward until an edge is reached
 	if (resetPhase == 0)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 0");
+		fprintf(stderr,"[DEBUG]: Phase 0\n");
 		if (s_FL && s_FR)
 		{
 			if (resetCount > 2)
@@ -544,7 +544,7 @@ int actionChooser(int s)
 	// Turn until BOTH front sensors are off
 	else if (resetPhase == 1)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 1");
+		fprintf(stderr,"[DEBUG]: Phase 1\n");
 		if (s_FL && s_FR)
 		{
 			resetPhase = 2;
@@ -561,7 +561,7 @@ int actionChooser(int s)
 	// Go backwards until BOTH side sensors are off
 	else if (resetPhase == 2)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 2");
+		fprintf(stderr,"[DEBUG]: Phase 2\n");
 		if(s_L && s_R)
 		{
 			resetPhase = 0;
@@ -581,7 +581,7 @@ int actionChooser(int s)
 	}
 	else if (resetPhase == 3)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 3");
+		fprintf(stderr,"[DEBUG]: Phase 3\n");
 		if (resetCount > resetCountLimit)
 		{
 			fprintf(stderr,"[DEBUG] Completed resetting!\n");
