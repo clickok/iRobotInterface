@@ -16,17 +16,21 @@ def runAndReset(expParameters):
     expFile = "AvgRewardSarsaReplacing.out"
 
     expArgString =  "./"+ expFile + " "  + " ".join( ["--"+str(key)+" "+str(val) for key, val in expParameters.items()])
-    
-    os.chdir(os.path.expanduser(expDir))
-    p = subprocess.Popen(shlex.split(expArgString))
-    p.wait()
+    print(expArgString)
+    try:
+        os.chdir(os.path.expanduser(expDir))
+        p = subprocess.Popen(shlex.split(expArgString))
+        p.wait()
+        
+        resetParameters = {"p":"/dev/ttyUSB0"}
+        resetArgString ="./" + resetFile + " " + " ".join(["--"+str(key)+" "+str(val) for key, val in resetParameters.items()])
 
-    resetParameters = {"p":"/dev/ttyUSB0"}
-    resetArgString ="./" + resetFile + " " + " ".join(["--"+str(key)+" "+str(val) for key, val in resetParameters.items()])
+        os.chdir(os.path.expanduser(resetDir))
+        p = subprocess.Popen(shlex.split(resetArgString))
+        p.wait()
+except:
+        os.chdir(origWD)
 
-    os.chdir(os.path.expanduser(resetDir))
-    p = subprocess.Popen(shlex.split(resetArgString))
-    p.wait()
 
     os.chdir(origWD)
 
