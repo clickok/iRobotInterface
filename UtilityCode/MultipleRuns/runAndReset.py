@@ -79,6 +79,10 @@ def updatePrograms():
         p = subprocess.call("make all",shell=True)
         p.wait()
 
+        os.chdir(os.path.expanduser(expDir))
+        p = subprocess.call("make all",shell=True)
+        p.wait()
+
     except Exception as e:
         print(e)
         print("An exception has occured!")
