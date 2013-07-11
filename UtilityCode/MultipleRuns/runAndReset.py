@@ -20,3 +20,5 @@ def runAndReset():
     print(expArgString)
     os.chdir(os.path.expanduser(expDir))
     p = subprocess.Popen(shlex.split(expArgString))
+
+    os.chdir(origWD)
