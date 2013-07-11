@@ -56,8 +56,18 @@ def performReset(portname):
     finally:
         os.chdir(origWD)
 
-def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
-    params = {"port":"/dev/ttyUSB0","alpha":A,"epsilon":E,"lambda":L,"iterations":I}
+def performTimestepTrials(trials=1,portname="/dev/ttyUSB0",
+                          Alpha=0.9,Epsilon=0.01,Lambda=0.9,Iterations=1200,Timestep=100000,
+                          robotname="<Unknown>",microname="<Unknown>",batteryname="<Unknown>"):
+    params = {"port":portname,
+              "alpha":Alpha,
+              "epsilon":Epsilon,
+              "lambda":Lambda,
+              "iterations":Iterations,
+              "timestep":Timestep,
+              "robotname":robotname,
+              "microworldname":microname,
+              "batteryname":batteryname}
     startTime = datetime.now()
     print("Program start time:",str(startTime))
     performReset(params["port"])
