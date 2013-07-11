@@ -19,4 +19,4 @@ def runAndReset():
     expArgString =  "./"+ expFile + " "  + " ".join( ["-"+str(key)+" "+str(val) for key, val in expParameters.items()])
     print(expArgString)
     os.chdir(os.path.expanduser(expDir))
-    p = subprocess.Popen(expArgString)
+    p = subprocess.Popen(shlex.split(expArgString))
