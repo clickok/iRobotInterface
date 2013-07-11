@@ -1,7 +1,9 @@
+import datetime
 import os
 import shlex
 import subprocess
 import sys
+
 
 
 def runAndReset(expParameters):
@@ -55,10 +57,21 @@ def performReset(portname):
 
 def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
     params = {"port":"/dev/ttyUSB0","alpha":A,"epsilon":E,"lambda":L,"iterations":I}
+    startTime = datetime.now()
+    print("Program start time:",str(startTime))
     performReset(params["port"])
     for key in params.keys():
         print(params[key])
     for i in range(trials):
         runAndReset(params)
+    endTime = datetime.now()
+    print("Program end time:",str(endTime))
+    print("Total execution time:",str(endTime-startTime))
 
 
+
+if __name__ == "__main__":
+    if len(sys.argv) < 1:
+        pass
+    else:
+        performTrials(trials = int(sys.argv[1]))
