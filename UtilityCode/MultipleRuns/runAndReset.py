@@ -28,7 +28,7 @@ def runAndReset(expParameters):
         os.chdir(os.path.expanduser(resetDir))
         p = subprocess.Popen(shlex.split(resetArgString))
         p.wait()
-except:
+    except:
         os.chdir(origWD)
 
 
