@@ -34,6 +34,25 @@ def runAndReset(expParameters):
 
     os.chdir(origWD)
 
+def performReset(portname):
+    print("Ensure that the calibration is correct in all source directories!")
+
+    origWD = os.getcwd()
+
+    resetDir      = "~/git/iRobotInterface/UtilityCode/ResetToDefault/"
+    resetFile     = "resetToDefault.out"
+
+    resetParameters = {"p":"/dev/ttyUSB0"}
+    resetArgString ="./" + resetFile + " " + " ".join(["--"+str(key)+" "+str(val) for key, val in resetParameters.items()])
+    try:
+        os.chdir(os.path.expanduser(resetDir))
+        p = subprocess.Popen(shlex.split(resetArgString))
+        p.wait()
+    except:
+        os.chdir(origWD)
+    finally:
+        os.chdir(origWD)
+
 def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
     params = {"port":"/dev/ttyUSB0","alpha":A,"epsilon":E,"lambda":L,"iterations":I}
     for i in range(trials):
