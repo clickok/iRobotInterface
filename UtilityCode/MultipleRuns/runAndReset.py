@@ -30,8 +30,8 @@ def runAndReset(expParameters):
 
     os.chdir(origWD)
 
-def performTrials(trials=1,A=0.9,E=0.01,L=0.9,i=1200):
-    params = {"alpha":A,"epsilon":E,"lambda":L}
+def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
+    params = {"alpha":A,"epsilon":E,"lambda":L,"iterations":I}
     for i in range(trials):
         runAndReset(params)
 
