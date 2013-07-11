@@ -23,7 +23,7 @@ def runAndReset():
     p.wait()
 
     resetParameters = {"p":"/dev/ttyUSB0"}
-    resetArgString ="./" + "resetFile" + " " + " ".join(["-"+str(key)+" "+str(val) for key, val in resetParameters.items()])
+    resetArgString ="./" + resetFile + " " + " ".join(["-"+str(key)+" "+str(val) for key, val in resetParameters.items()])
 
     os.chdir(os.path.expanduser(resetDir))
     p = subprocess.Popen(shlex.split(resetArgString))
