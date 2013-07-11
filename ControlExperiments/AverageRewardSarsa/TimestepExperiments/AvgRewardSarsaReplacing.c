@@ -407,6 +407,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
+			fprintf(stderr,"[DEBUG]: Computation time less than timestep\n");
 			usleep(timestep - computationTime);
 		}
 		timeStart = timeEnd; //TODO Is this needed?
