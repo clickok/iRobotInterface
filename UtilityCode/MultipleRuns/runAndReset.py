@@ -96,6 +96,71 @@ def updatePrograms():
     finally:
         os.chdir(origWD)
 
+def removeUnfinishedLogs(minEntries, expDir=None):
+    if expDir == None:
+        expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
+    origWD = os.getcwd()
+    badSplitExp = re.compile("\.\s+")
+    try:
+        os.chdir(os.path.expanduser(expDir))
+        flst = getAllLogs(".")
+        for fpath in flst:
+            count = 0
+            f = open(fpath,"r")
+            for line in f:
+                if re.match(".*#",line):
+                    pass
+                else:
+                    # A non-data line!
+                    tmp = badSplitExp.sub("",line).split()
+                    if tmp[0].isdigit():
+                        count +=1
+            print(count)
+    finally:
+        os.chdir(origWD)
+
+                
+    
+
+def getAllLogs(parentDir):
+    '''
+    Walk through subdirectories, getting all files with 
+    beginning with "logSarsa".
+    '''
+    lst = []
+    logRegex = re.compile("logSarsa.*\.txt")
+    for (dirpath, dirnames, filenames) in os.walk(parentDir):
+        for name in filenames:
+            if logRegex.match(name):
+                lst.append(os.path.join(dirpath,name))
+    return lst
+
+def parseFile(path):
+    """
+    Parse a file, getting the data as well as the metadata
+    Could be better done, vis-a-vis eliminating the first regex, but 
+    this is reasonably clean and safe and allows us to grab the actual
+    data on the same pass
+    """
+    metaData = {}
+    runData = []
+    metaExp = re.compile("([\w\-]*)=(\S*)")
+    badSplitExp = re.compile("\.\s+")
+    f = open(path,"r")
+    for line in f:
+        if re.match(".*#",line):
+            #print(line)
+            tmp = metaExp.findall(line)
+            for i in tmp:
+                #print(i[0],i[1])
+                metaData[i[0]] = i[1]
+        else:
+            # This is a non-data line!
+            tmp = badSplitExp.sub("",line).split()
+            #print(tmp)
+            runData.append([int(tmp[0]),float(tmp[1]),int(tmp[2])])
+    
+    return np.array(runData), metaData
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
