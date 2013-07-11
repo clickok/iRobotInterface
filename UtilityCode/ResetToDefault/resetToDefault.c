@@ -1,6 +1,12 @@
-/* AvgRewardSarsaReplacing.c
-   Author: Rupam
-   Modified by Brendan for experiments with modification of alpha parameter
+/* resetToDefault.c
+   Author: Brendan Bennett
+   Version: 1.0
+   For use with the iRobot Create and the RL AI Robot Microworld. Controls the
+   robot, so that it can go from a non-standard position inside a microworld to
+   a centered position from which other tests can be run in a more systematic
+   way.
+   Modified from AvgRewardSarsaReplacing.c (which itself is based on Rupam and
+   Rich's csp3 code)
  */
 
 #include <errno.h>
@@ -80,7 +86,7 @@ typedef unsigned char ubyte;
 
 int resetPhase = 0;
 int resetCount = 0;
-int resetCountLimit = 10;
+int resetCountLimit = 9;
 pthread_mutex_t resetPhaseMutex;
 
 FILE * logFile;
