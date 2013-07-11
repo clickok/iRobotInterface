@@ -17,9 +17,10 @@ def runAndReset(expParameters):
     expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
     expFile = "AvgRewardSarsaReplacing.out"
 
-    expArgString =  "./"+ expFile + " "  + " ".join( ["--"+str(key)+" "+str(val) for key, val in expParameters.items()])
-    print(expArgString)
+
     try:
+        expArgString =  "./"+ expFile + " "  + " ".join( ["--"+str(key)+" "+str(val) for key, val in expParameters.items()])
+        print(expArgString)
         os.chdir(os.path.expanduser(expDir))
         p = subprocess.Popen(shlex.split(expArgString))
         p.wait()
@@ -68,6 +69,16 @@ def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
     print("Program end time:",str(endTime))
     print("Total execution time:",str(endTime-startTime))
 
+
+def updatePrograms():
+     origWD = os.getcwd()
+     resetDir      = "~/git/iRobotInterface/UtilityCode/ResetToDefault/"
+     expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
+     try:
+         os.chdir(resetDir)
+         subprocess.call("make all")
+    finally:
+        os.chdir(origWD)
 
 
 if __name__ == "__main__":
