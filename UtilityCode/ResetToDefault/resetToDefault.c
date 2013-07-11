@@ -31,7 +31,7 @@
 typedef unsigned char ubyte;
 
 /* The speed at which the Create drives its wheels */
-#define SPEED 50
+#define SPEED 100
 
 /* The reward threshold for the Create to "sing"   */
 #define SONG_REWARD_THRESHOLD  100
@@ -488,11 +488,11 @@ int getPktNum() {
 
 void takeAction(int action) {
     switch (action) {
-    case 0  : driveWheels(SPEED, SPEED);   break;   // forward
-    case 1  : driveWheels(-SPEED, SPEED);  break;   // left
-    case 2  : driveWheels(SPEED, -SPEED);  break;   // right
-    case 3  : driveWheels(-SPEED, -SPEED); break;   // backward
-    case 4  : driveWheels(0,0);            break;   // stop
+    case 0  : driveWheels(SPEED, SPEED);       break;   // forward
+    case 1  : driveWheels(-SPEED/2, SPEED/2);  break;   // left
+    case 2  : driveWheels(SPEED/2, -SPEED/2);  break;   // right
+    case 3  : driveWheels(-SPEED, -SPEED);     break;   // backward
+    case 4  : driveWheels(0,0);                break;   // stop
     default : printf("Bad action\n");
     }
 }
