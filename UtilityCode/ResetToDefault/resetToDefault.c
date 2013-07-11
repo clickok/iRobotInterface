@@ -486,6 +486,9 @@ int getPktNum() {
   return myPktNum;
 }
 
+/* takeAction()
+ * Modified to turn at HALF SPEED!
+ */
 void takeAction(int action) {
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED);       break;   // forward
