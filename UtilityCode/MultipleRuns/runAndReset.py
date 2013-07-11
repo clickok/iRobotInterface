@@ -10,6 +10,6 @@ def runAndReset():
     path_Experiment = "~/git/iRobotInterface/ControlExperiments/.AverageRewardSarsa/TimestepExperiments/AvgRewardSarsaReplacing.out"
 
     expParameters = {"p":"/dev/ttyUSB0"}
-    expArgString = path_Experiment + " ".join( ["-"+str(key)+" "+str(val) for key, val in expParameters.items()])
+    expArgString = path_Experiment + " "  + " ".join( ["-"+str(key)+" "+str(val) for key, val in expParameters.items()])
     print(expArgString)
-    p = subprocess.Popen(cmdLineArgsExp)
+    p = subprocess.Popen(expArgString)
