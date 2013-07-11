@@ -31,7 +31,7 @@
 typedef unsigned char ubyte;
 
 /* The speed at which the Create drives its wheels */
-#define SPEED 50
+#define SPEED 40
 
 /* The reward threshold for the Create to "sing"   */
 #define SONG_REWARD_THRESHOLD  100
@@ -80,6 +80,7 @@ typedef unsigned char ubyte;
 
 int resetPhase = 0;
 int resetCount = 0;
+int resetCountLimit = 50;
 pthread_mutex_t resetPhaseMutex;
 
 FILE * logFile;
@@ -147,7 +148,6 @@ int main(int argc, char *argv[])
 	int timestep = 100000;                  // Timestep in microseconds
 	int a, aprime;                          // Action
 	int s, sprime;                          // State
-	int i, j;								// Iterator variables
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime; 					// Timing related
@@ -579,7 +579,7 @@ int actionChooser(int s)
 	}
 	else if (resetPhase == 3)
 	{
-		if (resetCount > 50)
+		if (resetCount > resetCountLimit)
 		{
 			fprintf(stderr,"[DEBUG] Completed resetting!\n");
 			endProgram();
