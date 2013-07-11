@@ -42,7 +42,7 @@ def performReset(portname):
     resetDir      = "~/git/iRobotInterface/UtilityCode/ResetToDefault/"
     resetFile     = "resetToDefault.out"
 
-    resetParameters = {"p":"/dev/ttyUSB0"}
+    resetParameters = {"p":portname}
     resetArgString ="./" + resetFile + " " + " ".join(["--"+str(key)+" "+str(val) for key, val in resetParameters.items()])
     try:
         os.chdir(os.path.expanduser(resetDir))
@@ -55,6 +55,7 @@ def performReset(portname):
 
 def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
     params = {"port":"/dev/ttyUSB0","alpha":A,"epsilon":E,"lambda":L,"iterations":I}
+    performReset(params["port"])
     for i in range(trials):
         runAndReset(params)
 

@@ -399,7 +399,15 @@ int main(int argc, char *argv[])
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
 		printf("Time for iteration (in microseconds): %ld\n", computationTime);
-		usleep(timestep - computationTime);
+		if ((timestep - computationTime) < 0)
+		{
+			fprintf(stderr,"[ERROR]: Computation time exceeded timestep!\n");
+			usleep(timestep);
+		}
+		else
+		{
+			usleep(timestep - computationTime);
+		}
 		timeStart = timeEnd; //TODO Is this needed?
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
