@@ -71,7 +71,7 @@ def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 1:
+    if len(sys.argv) < 2:
         pass
     else:
         performTrials(trials = int(sys.argv[1]))
