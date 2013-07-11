@@ -76,11 +76,11 @@ def updatePrograms():
     expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
     try:
         os.chdir(os.path.expanduser(resetDir))
-        p = subprocess.call("make all",shell=True)
+        subprocess.call("make all",shell=True)
         p.wait()
 
         os.chdir(os.path.expanduser(expDir))
-        p = subprocess.call("make all",shell=True)
+        subprocess.call("make all",shell=True)
         p.wait()
 
     except Exception as e:
