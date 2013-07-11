@@ -71,12 +71,12 @@ def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
 
 
 def updatePrograms():
-     origWD = os.getcwd()
-     resetDir      = "~/git/iRobotInterface/UtilityCode/ResetToDefault/"
-     expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
-     try:
-         os.chdir(resetDir)
-         subprocess.call("make all")
+    origWD = os.getcwd()
+    resetDir      = "~/git/iRobotInterface/UtilityCode/ResetToDefault/"
+    expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
+    try:
+        os.chdir(resetDir)
+        subprocess.call("make all")
     except:
         print("An exception has occured!")
     finally:
