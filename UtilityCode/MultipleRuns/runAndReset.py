@@ -75,7 +75,7 @@ def updatePrograms():
     resetDir      = "~/git/iRobotInterface/UtilityCode/ResetToDefault/"
     expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
     try:
-        os.chdir(resetDir)
+        os.chdir(os.path.expanduser(resetDir))
         subprocess.call("make all",shell=True)
     except Exception as e:
         print(e)
