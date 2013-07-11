@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 		int option_index = 0;
 
 		//TODO Alphabetize the command line arguments
-		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:i:e:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:i:e:l:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
@@ -237,12 +237,20 @@ int main(int argc, char *argv[])
 			epsilon = strtod(optarg, NULL);
 			if ((epsilon > 1) || (epsilon < 0))
 			{
-				fprintf(stderr,"ERROR: Invalid epsilon. Choose an epsilon within [0,2]\n");
+				fprintf(stderr,"ERROR: Invalid epsilon. Choose an epsilon within [0,1]\n");
 				exit(EXIT_FAILURE);
 			}
 			break;
 		case 'i':
 			maxIterations = strtol(optarg, (char **) NULL, 10);
+			break;
+		case 'l':
+			lambda = strtod(optarg, NULL);
+			if ((lambda > 1) || (lambda < 0))
+			{
+				fprintf(stderr,"ERROR: Invalid lambda. Choose a lambda within [0,1]\n");
+				exit(EXIT_FAILURE);
+			}
 			break;
 		case '?':
 			fprintf(stderr,"ERROR: Unknown command line argument\n");
