@@ -35,7 +35,7 @@ def runAndReset(expParameters):
     os.chdir(origWD)
 
 def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
-    params = {"portname":"/dev/ttyUSB0","alpha":A,"epsilon":E,"lambda":L,"iterations":I}
+    params = {"port":"/dev/ttyUSB0","alpha":A,"epsilon":E,"lambda":L,"iterations":I}
     for i in range(trials):
         runAndReset(params)
 
