@@ -116,8 +116,10 @@ def removeUnfinishedLogs(minEntries, expDir=None):
                     tmp = badSplitExp.sub("",line).split()
                     if tmp[0].isdigit():
                         count +=1
-            
             print(fpath,count)
+            if count < minEntries:
+                #os.remove(fpath)
+                print("DELETE")
     finally:
         os.chdir(origWD)
 
