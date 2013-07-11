@@ -80,7 +80,7 @@ typedef unsigned char ubyte;
 
 int resetPhase = 0;
 int resetCount = 0;
-int resetCountLimit = 30;
+int resetCountLimit = 25;
 pthread_mutex_t resetPhaseMutex;
 
 FILE * logFile;
