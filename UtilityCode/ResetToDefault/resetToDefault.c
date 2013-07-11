@@ -31,7 +31,7 @@
 typedef unsigned char ubyte;
 
 /* The speed at which the Create drives its wheels */
-#define SPEED 40
+#define SPEED 50
 
 /* The reward threshold for the Create to "sing"   */
 #define SONG_REWARD_THRESHOLD  100
@@ -80,7 +80,7 @@ typedef unsigned char ubyte;
 
 int resetPhase = 0;
 int resetCount = 0;
-int resetCountLimit = 50;
+int resetCountLimit = 30;
 pthread_mutex_t resetPhaseMutex;
 
 FILE * logFile;
@@ -516,6 +516,7 @@ int actionChooser(int s)
 	// Go forward until an edge is reached
 	if (resetPhase == 0)
 	{
+		fprintf(stderr,"[DEBUG]: Phase 0");
 		if (s_FL && s_FR)
 		{
 			if (resetCount > 2)
@@ -534,7 +535,6 @@ int actionChooser(int s)
 		{
 			resetPhase = 1;
 			resetCount = 0;
-			fprintf(stderr,"[DEBUG]: Phase 1");
 		}
 		else
 		{
@@ -544,6 +544,7 @@ int actionChooser(int s)
 	// Turn until BOTH front sensors are off
 	else if (resetPhase == 1)
 	{
+		fprintf(stderr,"[DEBUG]: Phase 1");
 		if (s_FL && s_FR)
 		{
 			resetPhase = 2;
@@ -560,6 +561,7 @@ int actionChooser(int s)
 	// Go backwards until BOTH side sensors are off
 	else if (resetPhase == 2)
 	{
+		fprintf(stderr,"[DEBUG]: Phase 2");
 		if(s_L && s_R)
 		{
 			resetPhase = 0;
@@ -579,6 +581,7 @@ int actionChooser(int s)
 	}
 	else if (resetPhase == 3)
 	{
+		fprintf(stderr,"[DEBUG]: Phase 3");
 		if (resetCount > resetCountLimit)
 		{
 			fprintf(stderr,"[DEBUG] Completed resetting!\n");
