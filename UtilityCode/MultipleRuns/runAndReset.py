@@ -77,6 +77,8 @@ def updatePrograms():
      try:
          os.chdir(resetDir)
          subprocess.call("make all")
+    except:
+        print("An exception has occured!")
     finally:
         os.chdir(origWD)
 
