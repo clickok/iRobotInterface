@@ -15,7 +15,7 @@ def runAndReset():
     expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
     expFile = "AvgRewardSarsaReplacing.out"
 
-    expParameters = {"p":"/dev/ttyUSB0"}
+    expParameters = {"p":"/dev/ttyUSB0","i":"200"}
     expArgString =  "./"+ expFile + " "  + " ".join( ["-"+str(key)+" "+str(val) for key, val in expParameters.items()])
     
     os.chdir(os.path.expanduser(expDir))
