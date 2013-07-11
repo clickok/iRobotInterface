@@ -519,7 +519,7 @@ int actionChooser(int s)
 		fprintf(stderr,"[DEBUG]: Phase 0\n");
 		if (s_FL && s_FR)
 		{
-			if (resetCount > 2)
+			if (resetCount > 1)
 			{
 				choice = 4;
 				resetPhase = 3;
