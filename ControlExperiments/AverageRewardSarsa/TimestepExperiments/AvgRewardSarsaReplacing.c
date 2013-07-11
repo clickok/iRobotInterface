@@ -399,6 +399,7 @@ int main(int argc, char *argv[])
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
 		printf("Time for iteration (in microseconds): %ld\n", computationTime);
+		//TODO This is a potential problem, and also a source of timestep drift; fix it
 		if ((timestep - computationTime) < 0)
 		{
 			fprintf(stderr,"[ERROR]: Computation time exceeded timestep!\n");

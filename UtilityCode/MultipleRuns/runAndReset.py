@@ -56,6 +56,8 @@ def performReset(portname):
 def performTrials(trials=1,A=0.9,E=0.01,L=0.9,I=1200):
     params = {"port":"/dev/ttyUSB0","alpha":A,"epsilon":E,"lambda":L,"iterations":I}
     performReset(params["port"])
+    for key in params.keys():
+        print(params[key])
     for i in range(trials):
         runAndReset(params)
 
