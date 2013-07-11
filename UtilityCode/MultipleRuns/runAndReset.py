@@ -97,7 +97,7 @@ def updatePrograms():
     finally:
         os.chdir(origWD)
 
-def removeUnfinishedLogs(minEntries, expDir=None):
+def removeUnfinishedLogs(minEntries, expDir=None,printOnly=False):
     if expDir == None:
         expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
     origWD = os.getcwd()
@@ -117,9 +117,9 @@ def removeUnfinishedLogs(minEntries, expDir=None):
                     if tmp[0].isdigit():
                         count +=1
             print(fpath,count)
-            if count < minEntries:
-                #os.remove(fpath)
-                print("DELETE")
+            if count < minEntries and not printOnly:
+                os.remove(fpath)
+                print("DELETING")
     finally:
         os.chdir(origWD)
 
