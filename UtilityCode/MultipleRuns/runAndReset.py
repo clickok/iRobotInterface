@@ -121,7 +121,7 @@ def differentValueTimestep(trials=1,portname="/dev/ttyUSB0",
     '''
     startTime = datetime.now()
     print("Program start time:",str(startTime))
-    performReset(params["port"])
+    performReset(portname)
     for i in range(trials):
         for a in list(Alpha):
             performRun(portname,a,\
