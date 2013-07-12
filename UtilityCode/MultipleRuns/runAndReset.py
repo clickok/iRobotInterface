@@ -60,6 +60,11 @@ def performRun(portname="/dev/ttyUSB0",
         print("Performing run with command:",expArgString)
         p = subprocess.Popen(shlex.split(expArgString))
         p.wait()
+        endTime = datetime.now()
+        print("Run end time:",str(endTime))
+        print("Total time:",str(endTime-startTime))
+    finally:
+        os.chdir(origWD)
         
 
 
