@@ -34,9 +34,34 @@ def runAndReset(expParameters):
         p.wait()
     except:
         os.chdir(origWD)
-
-
     os.chdir(origWD)
+
+
+def performRun(portname="/dev/ttyUSB0",
+               Alpha=0.5,Epsilon=0.01,Lambda=0.9,Iterations=1200,Timestep=100000,
+               robotname="<Unknown>",microname="<Unknown>",batteryname="<Unknown>"):
+    params = {"port":portname,
+              "alpha":Alpha,
+              "epsilon":Epsilon,
+              "lambda":Lambda,
+              "iterations":Iterations,
+              "timestep":Timestep,
+              "robotname":robotname,
+              "microworldname":microname,
+              "batteryname":batteryname}
+    origWD = os.getcwd()
+    startTime = datetime.now()
+    expDir = "~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/TimestepExperiments/"
+    expFile = "AvgRewardSarsaReplacing.out"
+    print("Run start time:",str(startTime))
+    try:
+        os.chdir(os.path.expanduser(expDir))
+        expArgString =  "./"+ expFile + " "  + " ".join( ["--"+str(key)+" "+str(val) for key, val in expParameters.items()])
+        print("Performing run with command:",expArgString)
+        p = subprocess.Popen(shlex.split(expArgString))
+        p.wait()
+        
+
 
 def performReset(portname):
     print("Ensure that the calibration is correct in all source directories!")
@@ -75,11 +100,31 @@ def performTimestepTrials(trials=1,portname="/dev/ttyUSB0",
     for key in params.keys():
         print(params[key])
     for i in range(trials):
+        print("Trial number: %d"%(i))
         runAndReset(params)
     endTime = datetime.now()
     print("Program end time:",str(endTime))
     print("Total execution time:",str(endTime-startTime))
 
+
+def differentValueTimestep(trials=1,portname="/dev/ttyUSB0",
+                          Alpha=[0.5],Epsilon=0.01,Lambda=0.9,Iterations=1200,Timestep=100000,
+                          robotname="<Unknown>",microname="<Unknown>",batteryname="<Unknown>"):
+    '''
+    A modification of the code so that we can perform a series of trials
+    where alpha varies from trial to trial. 
+    '''
+    startTime = datetime.now()
+    print("Program start time:",str(startTime))
+    performReset(params["port"])
+    for i in range(trials):
+        for a in list(Alpha):
+            performRun(portname,Alpha=a,\
+                       Epsilon,Lambda=,Iterations,Timestep,robotname,microname,batteryname)
+            performReset(portname)
+
+            
+            
 
 def updatePrograms():
     origWD = os.getcwd()
