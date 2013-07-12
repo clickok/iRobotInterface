@@ -124,7 +124,7 @@ def differentValueTimestep(trials=1,portname="/dev/ttyUSB0",
     performReset(params["port"])
     for i in range(trials):
         for a in list(Alpha):
-            performRun(portname,Alpha=a,\
+            performRun(portname,a,\
                        Epsilon,Lambda,Iterations,Timestep,robotname,microname,batteryname)
             performReset(portname)
 
