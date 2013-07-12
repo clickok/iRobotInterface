@@ -56,7 +56,7 @@ def performRun(portname="/dev/ttyUSB0",
     print("Run start time:",str(startTime))
     try:
         os.chdir(os.path.expanduser(expDir))
-        expArgString =  "./"+ expFile + " "  + " ".join( ["--"+str(key)+" "+str(val) for key, val in expParameters.items()])
+        expArgString =  "./"+ expFile + " "  + " ".join( ["--"+str(key)+" "+str(val) for key, val in params.items()])
         print("Performing run with command:",expArgString)
         p = subprocess.Popen(shlex.split(expArgString))
         p.wait()
