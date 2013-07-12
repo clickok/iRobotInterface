@@ -58,7 +58,7 @@ def performReset(portname):
         os.chdir(origWD)
 
 def performTimestepTrials(trials=1,portname="/dev/ttyUSB0",
-                          Alpha=0.9,Epsilon=0.01,Lambda=0.9,Iterations=1200,Timestep=100000,
+                          Alpha=0.5,Epsilon=0.01,Lambda=0.9,Iterations=1200,Timestep=100000,
                           robotname="<Unknown>",microname="<Unknown>",batteryname="<Unknown>"):
     params = {"port":portname,
               "alpha":Alpha,
