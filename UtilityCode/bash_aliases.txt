@@ -3,4 +3,4 @@ alias cd-tse='cd ~/git/iRobotInterface/ControlExperiments/AverageRewardSarsa/Tim
 alias cd-ctrlexp='cd ~/git/iRobotInterface/ControlExperiments/'
 alias cd-mult='cd ~/git/iRobotInterface/UtilityCode/MultipleRuns/'
 alias cd-reset='cd ~/git/iRobotInterface/UtilityCode/ResetToDefault/'
-alias update-aliases='cat ~/git/UtilityCode/bash_aliases.txt > ~/.bash_aliases'
+alias update-aliases='cat ~/git/iRobotInterface/UtilityCode/bash_aliases.txt > ~/.bash_aliases'
