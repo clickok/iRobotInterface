@@ -728,6 +728,7 @@ void csp3(void *arg)
 	ubyte bytes[B];
 	int numBytesPreviouslyRead = 0;
 	struct timeval timeout;
+	struct timeval tv;
 	fd_set readfs;
 
 	gettimeofday(&lastPktTime, NULL);
@@ -775,6 +776,8 @@ void csp3(void *arg)
 			if (numBytesPreviouslyRead==B) {  //packet complete!
 				if (checkPacket())
 				{
+					gettimeofday(&tv,NULL);
+					fprintf(comLog,"[DEBUG] %d.%d Packet complete\n",tv.tv_sec,tv.tv_usec);
 					extractPacket();
 					reflexes();
 					ensureTransmitted();
