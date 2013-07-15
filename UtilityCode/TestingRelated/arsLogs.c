@@ -535,6 +535,7 @@ void loadCliffThresholds() {
 
 void sendBytesToRobot(ubyte* bytes, int numBytes) {
   int ret;
+  fprintf(agentLog,"[DEBUG] sendBytesToRobot: numBytes = %d\n",numBytes);
   pthread_mutex_lock( &serialMutex );
   if ((ret=write(fd, bytes, numBytes))==-1) {
     fprintf(stderr, "Problem with write(): %s\n", strerror(errno));
@@ -564,6 +565,7 @@ void driveWheels(int left, int right) {
   bytes[2] = right & 0x00FF;
   bytes[3] = (left >> 8) & 0x00FF;
   bytes[4] = left & 0x00FF;
+  fprintf(agentLog,"[DEBUG] driveWheels: left = %d right = %d\n",left,right);
   sendBytesToRobot(bytes, 5);
 }
 
