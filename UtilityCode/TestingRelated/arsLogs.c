@@ -79,6 +79,7 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 FILE * logFile;
+FILE * comLog;
 pthread_t tid;                // Thread for csp3()
 
 int terminationFlag = FALSE;  // A flag set when the program should end
@@ -291,6 +292,9 @@ int main(int argc, char *argv[])
 		strftime(strbuf,80,"logSarsa-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
 		printf("Creating log file with name: %s\n",strbuf);
 		logFile = fopen(strbuf,"w");
+		strftime(strbuf,80,"logCommunication-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
+		printf("Creating log file with name: %s\n",strbuf);
+		comLog  = fopen(strbuf,"w");
 	}
 	if (logFile == NULL)          // Ensure log file opened properly
 	{
