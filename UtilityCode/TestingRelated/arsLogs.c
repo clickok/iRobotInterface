@@ -777,7 +777,7 @@ void csp3(void *arg)
 				if (checkPacket())
 				{
 					gettimeofday(&tv,NULL);
-					fprintf(comLog,"[DEBUG] %d.%d Packet complete\n",tv.tv_sec,tv.tv_usec);
+					fprintf(comLog,"[DEBUG] %d.%d Packet complete\n",(int)tv.tv_sec,(int)tv.tv_usec);
 					extractPacket();
 					reflexes();
 					ensureTransmitted();
