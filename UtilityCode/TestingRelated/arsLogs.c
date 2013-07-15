@@ -79,7 +79,8 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 FILE * logFile;
-FILE * comLog;
+FILE * csp3Log;
+FILE * agentLog;
 pthread_t tid;                // Thread for csp3()
 
 int terminationFlag = FALSE;  // A flag set when the program should end
@@ -292,9 +293,12 @@ int main(int argc, char *argv[])
 		strftime(strbuf,80,"logSarsa-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
 		printf("Creating log file with name: %s\n",strbuf);
 		logFile = fopen(strbuf,"w");
-		strftime(strbuf,80,"logCommunication-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
+		strftime(strbuf,80,"logCSP3-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
 		printf("Creating log file with name: %s\n",strbuf);
-		comLog  = fopen(strbuf,"w");
+		csp3Log  = fopen(strbuf,"w");
+		strftime(strbuf,80,"logAgent-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
+		printf("Creating log file with name: %s\n",strbuf);
+		agentLog  = fopen(strbuf,"w");
 	}
 	if (logFile == NULL)          // Ensure log file opened properly
 	{
@@ -411,7 +415,6 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			fprintf(stderr,"[DEBUG]: Computation time less than timestep\n");
 			usleep(timestep - computationTime);
 		}
 		timeStart = timeEnd; //TODO Is this needed?
@@ -746,18 +749,18 @@ void csp3(void *arg)
 		if (errorCode==0)
 		{
 			fprintf(stderr,"Timed out at select()\n");
-			fprintf(comLog,"[ERROR] Timed out at select()\n");
+			fprintf(csp3Log,"[ERROR] Timed out at select()\n");
 		}
 		else if (errorCode==-1)
 		{
 			fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
-			fprintf(comLog,"[ERROR] Problem with select()\n");
+			fprintf(csp3Log,"[ERROR] Problem with select()\n");
 			//endProgram();
 			exit(EXIT_FAILURE);
 		}
 
 		numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
-		fprintf(comLog,"[DEBUG] numBytesRead = %d\n",numBytesRead);
+		fprintf(csp3Log,"[DEBUG] numBytesRead = %d\n",numBytesRead);
 		//for(i = 0; i < numBytesRead; i++)
 		//{
 		//	fprintf(comLog,"")
@@ -777,7 +780,7 @@ void csp3(void *arg)
 				if (checkPacket())
 				{
 					gettimeofday(&tv,NULL);
-					fprintf(comLog,"[DEBUG] %d.%d Packet complete\n",(int)tv.tv_sec,(int)tv.tv_usec);
+					fprintf(csp3Log,"[DEBUG] %d.%d Packet complete\n",(int)tv.tv_sec,(int)tv.tv_usec);
 					extractPacket();
 					reflexes();
 					ensureTransmitted();
@@ -788,8 +791,8 @@ void csp3(void *arg)
 				}
 				else
 				{
-					fprintf(stderr,"[DEBUG]: Misaligned packet\n");
-					fprintf(comLog,"[DEBUG]: Misaligned packet\n");
+					fprintf(stderr,"[ERROR] Misaligned packet\n");
+					fprintf(csp3Log,"[DEBUG] Misaligned packet\n");
 					//TODO Does this have a range error?
 					for (i = 1; i<B; i++) packet[i-1] = packet[i];
 					numBytesPreviouslyRead--;
