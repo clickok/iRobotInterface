@@ -745,15 +745,22 @@ void csp3(void *arg)
 		if (errorCode==0)
 		{
 			fprintf(stderr,"Timed out at select()\n");
+			fprintf(comLog,"[ERROR] Timed out at select()\n");
 		}
 		else if (errorCode==-1)
 		{
 			fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
+			fprintf(comLog,"[ERROR] Problem with select()\n");
 			//endProgram();
 			exit(EXIT_FAILURE);
 		}
 
 		numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
+		fprintf(comLog,"[DEBUG] numBytesRead = %d\n",numBytesRead);
+		//for(i = 0; i < numBytesRead; i++)
+		//{
+		//	fprintf(comLog,"")
+		//}
 		if (numBytesRead==-1)
 		{
 			fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
@@ -778,7 +785,8 @@ void csp3(void *arg)
 				}
 				else
 				{
-					printf("misaligned packet.\n");
+					fprintf(stderr,"[DEBUG]: Misaligned packet\n");
+					fprintf(comLog,"[DEBUG]: Misaligned packet\n");
 					//TODO Does this have a range error?
 					for (i = 1; i<B; i++) packet[i-1] = packet[i];
 					numBytesPreviouslyRead--;
