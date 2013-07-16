@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 	int rewardReport = 0;					// Reward tracking (for song)
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
-	long computationTime; 					// Timing related
+	long computationTime = 0; 				// Timing related
 	char * logName = NULL;                  // Name of log file
 	char * portName = NULL;                 // Name of serial port
 	char * robotName = NULL;                // Name of robot
@@ -402,9 +402,6 @@ int main(int argc, char *argv[])
 			pthread_mutex_unlock(&logFileMutex);
 			endProgram();
 		}
-		gettimeofday(&timeEnd, NULL);
-		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
-						+ (timeEnd.tv_usec-timeStart.tv_usec);
 		// Print iteration data every so often to indicate progress
 		++iteration;
 		if (((iteration % 50) == 0) || TRUE)
@@ -412,6 +409,9 @@ int main(int argc, char *argv[])
 			printf("Iteration number: %6d\n",iteration);
 			printf("Time for iteration (in microseconds): %ld\n", computationTime);
 		}
+		gettimeofday(&timeEnd, NULL);
+		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
+						+ (timeEnd.tv_usec-timeStart.tv_usec);
 
 		//TODO Currently experiencing timing "drift", investigate fixes
 		if ((timestep - computationTime) < 0)
