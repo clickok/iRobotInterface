@@ -735,7 +735,6 @@ void csp3(void *arg)
 		else if (errorCode==-1)
 		{
 			fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
-			//endProgram();
 			exit(EXIT_FAILURE);
 		}
 
@@ -743,7 +742,6 @@ void csp3(void *arg)
 		if (numBytesRead==-1)
 		{
 			fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
-			//endProgram(); //TODO See if it is possible to implement this instead of just exit()
 			exit(EXIT_FAILURE);
 
 		}
@@ -765,7 +763,6 @@ void csp3(void *arg)
 				else
 				{
 					printf("misaligned packet.\n");
-					//TODO Does this have a range error?
 					for (i = 1; i<B; i++) packet[i-1] = packet[i];
 					numBytesPreviouslyRead--;
 				}
