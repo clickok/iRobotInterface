@@ -395,6 +395,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr,"[DEBUG] Total seconds taken: %lf\n",
 							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
 							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
+			fprintf(stderr,"[DEBUG] Final PktNum Value: %d\n",getPktNum());
 			pthread_mutex_lock(&logFileMutex);
 			fprintf(logFile,"#TotalTime=%lf\n",
 							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
@@ -405,7 +406,7 @@ int main(int argc, char *argv[])
 		}
 
 		// Print iteration data every so often to indicate progress
-		if (((iteration % 50) == 0) || TRUE)
+		if (((iteration % 50) == 0))
 		{
 			printf("Iteration number: %6d\n",iteration);
 			printf("Time for iteration (in microseconds): %ld\n", computationTime);
