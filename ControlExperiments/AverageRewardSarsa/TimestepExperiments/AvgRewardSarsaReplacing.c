@@ -413,6 +413,8 @@ int main(int argc, char *argv[])
 		}
 		++iteration;
 		gettimeofday(&timeEnd, NULL);
+
+		/*------------------- Code is not timed within! ------------------*/
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
 
@@ -432,7 +434,7 @@ int main(int argc, char *argv[])
 		{
 			usleep(timestep - computationTime);
 		}
-
+		/*--------------------- End Non-Timed Block ----------------------*/
 		// Begin timing AFTER usleep()
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
