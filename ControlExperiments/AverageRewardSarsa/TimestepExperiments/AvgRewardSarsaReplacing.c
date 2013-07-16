@@ -427,6 +427,7 @@ int main(int argc, char *argv[])
 			//fprintf(stderr,"[DEBUG]: Computation time less than timestep\n");
 			usleep(timestep - computationTime);
 		}
+
 		timeStart = timeEnd; //TODO Is this needed?
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
