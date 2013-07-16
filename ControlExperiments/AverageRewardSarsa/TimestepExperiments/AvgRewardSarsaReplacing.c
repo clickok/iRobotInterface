@@ -420,10 +420,10 @@ int main(int argc, char *argv[])
 					"Iteration = %d, "
 					"Time = %d.%d\n",
 					iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec);
-			//pthread_mutex_lock(&logFileMutex);
+
 			//fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
-			//pthread_mutex_unlock(&logFileMutex);
-			usleep(timestep);
+			//TODO How best to handle situation where timestep has exceeded computationTime?
+			//usleep(timestep);
 		}
 		else
 		{
@@ -431,7 +431,7 @@ int main(int argc, char *argv[])
 			usleep(timestep - computationTime);
 		}
 
-		//timeStart = timeEnd; //TODO Is this needed?
+
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
