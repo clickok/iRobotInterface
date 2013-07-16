@@ -431,7 +431,7 @@ int main(int argc, char *argv[])
 			usleep(timestep - computationTime);
 		}
 
-		timeStart = timeEnd; //TODO Is this needed?
+		//timeStart = timeEnd; //TODO Is this needed?
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
@@ -791,7 +791,6 @@ void csp3(void *arg)
 					//Log when packet successfully received
 					pthread_mutex_lock(&logFileMutex);
 					fprintf(logFile,"#[DEBUG] Received complete packet\n");
-					fflush(logFile);
 					pthread_mutex_unlock(&logFileMutex);
 					extractPacket();
 					reflexes();
