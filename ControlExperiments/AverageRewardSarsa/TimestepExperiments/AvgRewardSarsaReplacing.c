@@ -405,7 +405,7 @@ int main(int argc, char *argv[])
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
-		gettimeofday(&timeStart, NULL);
+		//gettimeofday(&timeStart, NULL);
 		// Print iteration data every so often to indicate progress
 		++iteration;
 		if (((iteration % 50) == 0) || TRUE)
@@ -428,10 +428,9 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			//fprintf(stderr,"[DEBUG]: Computation time less than timestep\n");
 			usleep(timestep - computationTime);
 		}
-
+		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
 		{
