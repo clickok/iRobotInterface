@@ -418,9 +418,10 @@ int main(int argc, char *argv[])
 		if ((timestep - computationTime) < 0)
 		{
 			fprintf(stderr,"[ERROR]: Computation time exceeded timestep: "
+					"computationTime = %d "
 					"Iteration = %d, "
 					"Time = %d.%d\n",
-					iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec);
+					computationTime, iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec);
 
 			//fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
 			//TODO How best to handle situation where timestep has exceeded computationTime?
