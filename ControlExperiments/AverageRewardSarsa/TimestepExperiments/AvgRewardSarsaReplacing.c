@@ -419,7 +419,7 @@ int main(int argc, char *argv[])
 		if ((timestep - computationTime) < 0)
 		{
 			fprintf(stderr,"[ERROR]: Computation time exceeded timestep: "
-					"computationTime = %d "
+					"computationTime = %ld "
 					"Iteration = %d, "
 					"Time = %d.%d\n",
 					computationTime, iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec);
