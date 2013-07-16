@@ -403,12 +403,12 @@ int main(int argc, char *argv[])
 			endProgram();
 		}
 		// Print iteration data every so often to indicate progress
-		++iteration;
 		if (((iteration % 50) == 0) || TRUE)
 		{
 			printf("Iteration number: %6d\n",iteration);
 			printf("Time for iteration (in microseconds): %ld\n", computationTime);
 		}
+		++iteration;
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
