@@ -715,6 +715,8 @@ int epsilonGreedy(double Q[16][4], int s, double epsilon)
 
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
+
+	//TODO Shouldn't this be handled by reflexes() instead?
 	firstAction = sCliffFLB[p] || sCliffFRB[p];
 	if (sCliffLB[p] || sCliffRB[p])
 	{
@@ -727,7 +729,6 @@ int epsilonGreedy(double Q[16][4], int s, double epsilon)
 
 	if (rand()/((double)RAND_MAX+1) < epsilon)
 	{
-		//TODO What is going on here?
 		return firstAction + rand()%(lastAction + 1 - firstAction);
 	}
 	else
@@ -790,6 +791,7 @@ void csp3(void *arg)
 					//Log when packet successfully received
 					pthread_mutex_lock(&logFileMutex);
 					fprintf(logFile,"#[DEBUG] Received complete packet\n");
+					fflush(logFile);
 					pthread_mutex_unlock(&logFileMutex);
 					extractPacket();
 					reflexes();
