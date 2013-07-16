@@ -416,10 +416,13 @@ int main(int argc, char *argv[])
 		//TODO Currently experiencing timing "drift", investigate fixes
 		if ((timestep - computationTime) < 0)
 		{
-			fprintf(stderr,"[ERROR]: Computation time exceeded timestep!\n");
-			pthread_mutex_lock(&logFileMutex);
-			fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
-			pthread_mutex_unlock(&logFileMutex);
+			fprintf(stderr,"[ERROR]: Computation time exceeded timestep: "
+					"Iteration = %d, "
+					"Time = %d.%d\n",
+					iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec);
+			//pthread_mutex_lock(&logFileMutex);
+			//fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
+			//pthread_mutex_unlock(&logFileMutex);
 			usleep(timestep);
 		}
 		else
