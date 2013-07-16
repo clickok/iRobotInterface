@@ -777,7 +777,7 @@ void csp3(void *arg)
 		if (numBytesRead==-1)
 		{
 			fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
-			//endProgram(); //TODO See if it is possible to implement this instead of just exit()
+			//TODO See if it is possible to implement this instead of just exit()
 			exit(EXIT_FAILURE);
 
 		}
@@ -789,9 +789,9 @@ void csp3(void *arg)
 				if (checkPacket())
 				{
 					//Log when packet successfully received
-					pthread_mutex_lock(&logFileMutex);
-					fprintf(logFile,"#[DEBUG] Received complete packet\n");
-					pthread_mutex_unlock(&logFileMutex);
+					//pthread_mutex_lock(&logFileMutex);
+					//fprintf(logFile,"#[DEBUG] Received complete packet\n");
+					//pthread_mutex_unlock(&logFileMutex);
 					extractPacket();
 					reflexes();
 					ensureTransmitted();
