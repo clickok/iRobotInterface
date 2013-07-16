@@ -399,7 +399,6 @@ int main(int argc, char *argv[])
 			fprintf(logFile,"#TotalTime=%lf\n",
 							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
 							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
-			fprintf(logFile,"#PacketNumAtEnd=%d\n",getPktNum());
 			pthread_mutex_unlock(&logFileMutex);
 			endProgram();
 		}
@@ -409,7 +408,7 @@ int main(int argc, char *argv[])
 		gettimeofday(&timeStart, NULL);
 		// Print iteration data every so often to indicate progress
 		++iteration;
-		if (((iteration % 60) == 0) || TRUE)
+		if (((iteration % 50) == 0) || TRUE)
 		{
 			printf("Iteration number: %6d\n",iteration);
 			printf("Time for iteration (in microseconds): %ld\n", computationTime);
@@ -419,16 +418,17 @@ int main(int argc, char *argv[])
 		if ((timestep - computationTime) < 0)
 		{
 			fprintf(stderr,"[ERROR]: Computation time exceeded timestep: "
-					"computationTime = %ld "
 					"Iteration = %d, "
 					"Time = %d.%d\n",
-					computationTime, iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec);
+					iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec);
 
 			//fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
 			//TODO How best to handle situation where timestep has exceeded computationTime?
+			//usleep(timestep);
 		}
 		else
 		{
+			//fprintf(stderr,"[DEBUG]: Computation time less than timestep\n");
 			usleep(timestep - computationTime);
 		}
 
@@ -768,6 +768,7 @@ void csp3(void *arg)
 		else if (errorCode==-1)
 		{
 			fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
+			//endProgram();
 			exit(EXIT_FAILURE);
 		}
 
@@ -775,6 +776,7 @@ void csp3(void *arg)
 		if (numBytesRead==-1)
 		{
 			fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
+			//TODO See if it is possible to implement this instead of just exit()
 			exit(EXIT_FAILURE);
 
 		}
@@ -800,6 +802,7 @@ void csp3(void *arg)
 				else
 				{
 					fprintf(stderr,"Misaligned packet\n");
+					//TODO Does this have a range error?
 					for (i = 1; i<B; i++) packet[i-1] = packet[i];
 					numBytesPreviouslyRead--;
 				}
