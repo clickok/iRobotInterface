@@ -388,7 +388,6 @@ int main(int argc, char *argv[])
 	while (TRUE)
 	{
 		// Check if maximum number of iterations has been reached
-		gettimeofday(&timeEnd, NULL);
 		if (iteration > maxIterations)
 		{
 			gettimeofday(&timeEnd, NULL);
@@ -403,9 +402,10 @@ int main(int argc, char *argv[])
 			pthread_mutex_unlock(&logFileMutex);
 			endProgram();
 		}
-		//gettimeofday(&timeEnd, NULL);
+		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
+		gettimeofday(&timeStart, NULL);
 		// Print iteration data every so often to indicate progress
 		++iteration;
 		if (((iteration % 50) == 0) || TRUE)
@@ -432,8 +432,6 @@ int main(int argc, char *argv[])
 			usleep(timestep - computationTime);
 		}
 
-
-		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
 		if (myPktNum - prevPktNum > M)
 		{
