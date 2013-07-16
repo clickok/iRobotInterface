@@ -565,7 +565,9 @@ void driveWheels(int left, int right) {
   bytes[2] = right & 0x00FF;
   bytes[3] = (left >> 8) & 0x00FF;
   bytes[4] = left & 0x00FF;
-  fprintf(agentLog,"[DEBUG] driveWheels: left = %d right = %d\n",left,right);
+  struct timeval tv;
+  gettimeofday(&tv,NULL);
+  fprintf(agentLog,"[DEBUG] %d.%d driveWheels: left = %d right = %d\n",tv.tv_sec, tv.tv_usec, left,right);
   sendBytesToRobot(bytes, 5);
 }
 

@@ -86,7 +86,7 @@ pthread_t tid;                // Thread for csp3()
 
 int terminationFlag = FALSE;  // A flag set when the program should end
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
-pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex, endFlagMutex; // locks
+pthread_mutex_t pktNumMutex, serialMutex, lastActionMutex, endFlagMutex, logFileMutex; // locks
 int lastAction = 0;           // last action sent to Create by agent
 struct timeval lastPktTime;   // time of last packet
 int fd = 0;                   // file descriptor for serial port
@@ -337,6 +337,7 @@ int main(int argc, char *argv[])
 	pthread_mutex_init(&serialMutex, NULL);
 	pthread_mutex_init(&lastActionMutex, NULL);
 	pthread_mutex_init(&endFlagMutex, NULL);
+	pthread_mutex_init(&logFileMutex, NULL);
 	
 	/* Install signal handler */
 	struct sigaction act;                   // The new sigaction
@@ -347,10 +348,11 @@ int main(int argc, char *argv[])
 	sigaction(SIGINT, &act, &oldact);       // Set act to respond to SIGINT
 
 
-	/* Set up serial port and begin receiving data */
+	/* Set up serial port and CSP3 thread, begin receiving data */
 
 	if (portName != NULL) setupSerialPort(portName);
 	usleep(20000); // wait for at least one packet to have arrived
+
 	if (0 != pthread_create(&tid, NULL, (void *) &csp3, NULL))
 	{
 		perror("Could not create thread");
@@ -385,7 +387,7 @@ int main(int argc, char *argv[])
 	 * ***********************************************************************/
 	while (TRUE)
 	{
-		printf("Iteration number: %6d\n",++iteration);
+		// Check if maximum number of iterations has been reached
 		if (iteration > maxIterations)
 		{
 			gettimeofday(&timeEnd, NULL);
@@ -393,16 +395,24 @@ int main(int argc, char *argv[])
 			fprintf(stderr,"[DEBUG] Total seconds taken: %lf\n",
 							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
 							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
+			pthread_mutex_lock(&logFileMutex);
 			fprintf(logFile,"#TotalTime=%lf\n",
 							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
 							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
+			pthread_mutex_unlock(&logFileMutex);
 			endProgram();
 		}
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
-		printf("Time for iteration (in microseconds): %ld\n", computationTime);
-		//TODO This is a potential problem, and also a source of timestep drift; fix it
+		// Print iteration data every so often to indicate progress
+		if (iteration % 50 == 0)
+		{
+			printf("Iteration number: %6d\n",++iteration);
+			printf("Time for iteration (in microseconds): %ld\n", computationTime);
+		}
+
+		//TODO Currently experiencing timing "drift", investigate fixes
 		if ((timestep - computationTime) < 0)
 		{
 			fprintf(stderr,"[ERROR]: Computation time exceeded timestep!\n");
@@ -410,7 +420,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			fprintf(stderr,"[DEBUG]: Computation time less than timestep\n");
+			//fprintf(stderr,"[DEBUG]: Computation time less than timestep\n");
 			usleep(timestep - computationTime);
 		}
 		timeStart = timeEnd; //TODO Is this needed?
@@ -465,13 +475,15 @@ int main(int argc, char *argv[])
 	    	}
 	    }
 
-		/* Log reward, timestep, and iteration */
+		/* Log reward, timestep, and iteration to file*/
+	    pthread_mutex_lock(&logFileMutex);
 		fprintf(logFile,"%5d %d.%d %d %6.12lf\n",
 						iteration,
 						(int)timeStart.tv_sec,
 						(int)timeStart.tv_usec,
 						reward,
 						avgReward);
+		pthread_mutex_unlock(&logFileMutex);
 
 	    /* Prepare for next loop */
 	    s = sprime;
@@ -767,6 +779,10 @@ void csp3(void *arg)
 			if (numBytesPreviouslyRead==B) {  //packet complete!
 				if (checkPacket())
 				{
+					//Log when packet successfully received
+					pthread_mutex_lock(&logFileMutex);
+					fprintf(logFile,"#[DEBUG] Received complete packet\n");
+					pthread_mutex_unlock(&logFileMutex);
 					extractPacket();
 					reflexes();
 					ensureTransmitted();
@@ -777,7 +793,7 @@ void csp3(void *arg)
 				}
 				else
 				{
-					printf("misaligned packet.\n");
+					fprintf(stderr,"Misaligned packet\n");
 					//TODO Does this have a range error?
 					for (i = 1; i<B; i++) packet[i-1] = packet[i];
 					numBytesPreviouslyRead--;
