@@ -399,9 +399,11 @@ int main(int argc, char *argv[])
 			fprintf(logFile,"#TotalTime=%lf\n",
 							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
 							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
+			fprintf(logFile,"#FinalPktNum=%d\n",getPktNum());
 			pthread_mutex_unlock(&logFileMutex);
 			endProgram();
 		}
+
 		// Print iteration data every so often to indicate progress
 		if (((iteration % 50) == 0) || TRUE)
 		{
@@ -423,12 +425,12 @@ int main(int argc, char *argv[])
 
 			//fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
 			//TODO How best to handle situation where timestep has exceeded computationTime?
-			//usleep(timestep);
 		}
 		else
 		{
 			usleep(timestep - computationTime);
 		}
+
 		// Begin timing AFTER usleep()
 		gettimeofday(&timeStart, NULL);
 		myPktNum = getPktNum();
