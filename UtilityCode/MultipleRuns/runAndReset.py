@@ -178,7 +178,7 @@ def removeUnfinishedLogs(minEntries, expDir=None,printOnly=False):
                 
 def getLogsInDir(dir):
     logRegex = re.compile("logSarsa.*\.txt")
-    flst = [f for f in os.listdir(dir) if os.isfile(os.join(dir,f))]
+    flst = [f for f in os.listdir(dir) if os.path.isfile(os.join(dir,f))]
     return flst
     
 
