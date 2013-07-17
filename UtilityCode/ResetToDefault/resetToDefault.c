@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 	int s, sprime;                          // State
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
-	long computationTime; 					// Timing related
+	long computationTime = 0; 				// Timing related
 
 	/* Load cliff thresholds, seed RNG */
 	loadCliffThresholds();
@@ -254,11 +254,16 @@ int main(int argc, char *argv[])
 	 * ***********************************************************************/
 	while (TRUE)
 	{
-		printf("Iteration number: %6d\n",++iteration);
+		++iteration;
+		if((iteration%100)==0)
+		{
+			printf("Iteration number: %6d\n",++iteration);
+			printf("Time for iteration (in microseconds): %ld\n", computationTime);
+		}
 		gettimeofday(&timeEnd, NULL);
 		computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
 						+ (timeEnd.tv_usec-timeStart.tv_usec);
-		printf("Time for iteration (in microseconds): %ld\n", computationTime);
+
 		usleep(timestep - computationTime);
 		timeStart = timeEnd; //TODO Is this needed?
 		gettimeofday(&timeStart, NULL);
@@ -518,14 +523,14 @@ int actionChooser(int s)
 	int s_FL = sCliffFLB[p];
 	int s_FR = sCliffFRB[p];
 	int s_R  = sCliffRB[p];
-	printf("%d %d %d %d\n",s_FL, s_L,s_FR,s_R);
+	//printf("[DEBUG] Sensor states: %d %d %d %d\n",s_FL, s_L,s_FR,s_R);
 
 	pthread_mutex_lock(&resetPhaseMutex);
 
 	// Go forward until an edge is reached
 	if (resetPhase == 0)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 0\n");
+		//fprintf(stderr,"[DEBUG]: Phase 0\n");
 		if (s_FL && s_FR)
 		{
 			if (resetCount > 1)
@@ -553,7 +558,7 @@ int actionChooser(int s)
 	// Turn until BOTH front sensors are off
 	else if (resetPhase == 1)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 1\n");
+		//fprintf(stderr,"[DEBUG]: Phase 1\n");
 		if (s_FL && s_FR)
 		{
 			resetPhase = 2;
@@ -570,7 +575,7 @@ int actionChooser(int s)
 	// Go backwards until BOTH side sensors are off
 	else if (resetPhase == 2)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 2\n");
+		//fprintf(stderr,"[DEBUG]: Phase 2\n");
 		if(s_L && s_R)
 		{
 			resetPhase = 0;
@@ -590,7 +595,7 @@ int actionChooser(int s)
 	}
 	else if (resetPhase == 3)
 	{
-		fprintf(stderr,"[DEBUG]: Phase 3\n");
+		//fprintf(stderr,"[DEBUG]: Phase 3\n");
 		if (resetCount > resetCountLimit)
 		{
 			fprintf(stderr,"[DEBUG] Completed resetting!\n");
