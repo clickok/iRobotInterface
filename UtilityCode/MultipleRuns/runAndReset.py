@@ -113,7 +113,7 @@ def performTimestepTrials(trials=1,portname="/dev/ttyUSB0",
 
 
 def differentValueTimestep(trials=1,portname="/dev/ttyUSB0",
-                          Alpha=[0.5],Epsilon=0.01,Lambda=0.9,Iterations=1200,Timestep=100000,
+                          Alpha=[0.5],Epsilon=0.01,Lambda=0.9,Iterations=1200,Timestep=[100000],
                           robotname="<Unknown>",microname="<Unknown>",batteryname="<Unknown>"):
     '''
     A modification of the code so that we can perform a series of trials
@@ -124,9 +124,10 @@ def differentValueTimestep(trials=1,portname="/dev/ttyUSB0",
     performReset(portname)
     for i in range(trials):
         for a in list(Alpha):
-            performRun(portname,a,\
-                       Epsilon,Lambda,Iterations,Timestep,robotname,microname,batteryname)
-            performReset(portname)
+            for t in list(Timestep):
+                performRun(portname,a,\
+                           Epsilon,Lambda,Iterations,t,robotname,microname,batteryname)
+                performReset(portname)
 
             
             
