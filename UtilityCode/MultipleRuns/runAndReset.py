@@ -80,7 +80,7 @@ def performReset(portname):
     resetArgString ="./" + resetFile + " " + " ".join(["--"+str(key)+" "+str(val) for key, val in resetParameters.items()])
     try:
         os.chdir(os.path.expanduser(resetDir))
-        p = subprocess.Popen(shlex.split(resetArgString),stdout=subprocess.DEVNULL)
+        p = subprocess.Popen(shlex.split(resetArgString))
         p.wait()
     except:
         os.chdir(origWD)
