@@ -155,7 +155,7 @@ def removeUnfinishedLogs(minEntries, expDir=None,printOnly=False):
     badSplitExp = re.compile("\.\s+")
     try:
         os.chdir(os.path.expanduser(expDir))
-        flst = getAllLogs(".")
+        flst = getLogsInDir(".")
         for fpath in flst:
             count = 0
             f = open(fpath,"r")
@@ -168,13 +168,18 @@ def removeUnfinishedLogs(minEntries, expDir=None,printOnly=False):
                     if tmp[0].isdigit():
                         count +=1
             print(fpath,count)
-            if count < minEntries and not printOnly:
-                os.remove(fpath)
+            if count < minEntries:
+                if printOnly:
+                    os.remove(fpath)
                 print("DELETING")
     finally:
         os.chdir(origWD)
 
                 
+def getLogsInDir(directory):
+    logRegex = re.compile("logSarsa.*\.txt")
+    flst = [f for f in os.listdir(directory) if isfile(os.join(directory,f))]
+    return lst
     
 
 def getAllLogs(parentDir):
