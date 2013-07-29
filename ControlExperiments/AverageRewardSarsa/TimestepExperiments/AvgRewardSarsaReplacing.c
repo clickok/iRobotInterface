@@ -489,10 +489,10 @@ int main(int argc, char *argv[])
 
 		/* Log reward, timestep, and iteration to file*/
 	    pthread_mutex_lock(&logFileMutex);
-		fprintf(logFile,"%5d %d.%d %d %6.12lf\n",
+		fprintf(logFile,"%5d %ld.%06ld %d %6.12lf\n",
 						iteration,
-						(int)timeStart.tv_sec,
-						(int)timeStart.tv_usec,
+						(long int)timeStart.tv_sec,
+						(long int)timeStart.tv_usec,
 						reward,
 						avgReward);
 		pthread_mutex_unlock(&logFileMutex);
