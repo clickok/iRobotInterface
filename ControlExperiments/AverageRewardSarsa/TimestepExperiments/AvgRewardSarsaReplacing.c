@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
 					"Iteration = %d, "
 					"Time = %d.%d, "
 					"computationTime = %ld\n",
-					iteration,(int) timeEnd.tv_sec,(int) timeEnd.tv_usec,computationTime);
+					iteration, (long int)timeEnd.tv_sec, (long int)timeEnd.tv_usec,computationTime);
 
 			//fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
 			//TODO How best to handle situation where timestep has exceeded computationTime?
