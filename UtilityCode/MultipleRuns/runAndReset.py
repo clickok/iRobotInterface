@@ -69,6 +69,7 @@ def performRun(portname="/dev/ttyUSB0",
 
 
 def performReset(portname):
+    print("Performing reset to default position")
     print("Ensure that the calibration is correct in all source directories!")
 
     origWD = os.getcwd()

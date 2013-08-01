@@ -28,12 +28,18 @@ def findBadOrdering(filename):
     path = os.path.expanduser(filename)
     with open(path,"r") as f:
         lines  = f.readlines()
-        numLst = [int(x.split()[0] if x[0] 
+        numLst = [int(x.split()[0]) for x in lines if (len(x) > 0 and x[0]!="#")]
 
 def findBadLines(filename):
-    """ Finds lines that do not satisfy our formatting conventions for log files"""
+    """ Finds lines not satisfying our formatting conventions for log files"""
     pass
 
+
+
+
+################################################################################
+#                           Data printing functions
+################################################################################
         
 def printLineRange(filename,start,stop):
     """ Prints all lines within specified iterations """
@@ -57,5 +63,33 @@ def printCommentLines(filename):
             if len(line) > 0 and line[0] == "#":
                 print(line.strip())
 
-
+def printRunCount(logDirPath,param="Alpha"):
+    """ Finds how many runs of each type (for the given parameter) there are 
+        in the given directory """
+    filenames = getLogFileNames(logDirPath)
+    metaDataCount = {}
+    
+    commentRegex  = re.compile(".*#")
+    metadataRegex = re.compile("([\w\-]*)=(\S*)")
+    for name in filenames:
+        with open(name,"r") as f:
+            for line in f:
+                if commentRegex.match(line):
+                    tmp = metadataRegex.findall(line)
+                    for i in tmp:
+                        if i[0] == param:
+                            if i[1] in metaDataCount.keys():
+                                metaDataCount[i[1]] += 1
+                            else:
+                                metaDataCount[i[1]] = 1
+    return metaDataCount
+                
+def getLogFileNames(logDirPath):
+    lst = []
+    logRegex = re.compile("logSarsa.*\.txt")
+    for (dirpath, dirnames, filenames) in os.walk(logDirPath):
+        for name in filenames:
+            if logRegex.match(name):
+                lst.append(os.path.join(dirpath,name))
+    return lst
 
