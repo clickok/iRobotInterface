@@ -21,30 +21,6 @@ import sys
 #                            Feature Generation
 ################################################################################
 
-def historyFeatures(data,k=1,stepsize=1):
-    """Returns an array containing feature vectors for each timestep
-       containing the current observations as well as additional 
-       'history' of past observations. The parameter "k" specifies how 
-       many additional observations to include, while stepsize determines
-       how many 'steps' to take between the observations.
-
-       Improvements: Could use np.copyto()
-    """
-    rows, cols = data.shape
-    hcols = k*cols
-
-    hist = np.zeros((rows,hcols))
-    
-    # Create the array of feature vectors
-    # Default to the initial value of hist if there would be a range error
-    for i in range(rows):
-        for j in range(k):
-            if (i-(j*stepsize)) >= 0:
-                for c in range(cols):
-                    hist[i,((j*cols)+c)] = data[i-(j*stepsize),c]
-            else:
-                continue
-    return hist
 
 def initHistoryFeature(obs,k=1):
     """Take an initial (1-D) observation and the number of histories 
