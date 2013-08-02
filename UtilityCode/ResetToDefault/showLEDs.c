@@ -298,11 +298,6 @@ void endProgram()
 	pthread_mutex_unlock( &endFlagMutex);
 	pthread_join(tid,NULL);
 	fprintf(stderr,"\n[DEBUG] Threads successfully joined\n");
-	/* Stop the robot */
-	driveWheels(0, 0);
-	ensureTransmitted();
-	fprintf(stderr,"[DEBUG] driveWheels() stop successfully sent\n");
-	/* Pause stream, return robot to passive mode */
 	bytes[count++] = 150;
 	bytes[count++] = 0;
 	bytes[count++] = 128;
