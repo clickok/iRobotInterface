@@ -17,46 +17,47 @@ import os
 import sys
 
 
-################################################################################
-#                            Feature Generation
-################################################################################
 
-
-def initHistoryFeature(obs,k=1):
-    """Take an initial (1-D) observation and the number of histories 
-       to remember and create a history feature vector."""
+def basicHistory(data,h,alpha):
+    # Determine size of feature vector and initialize weights, traces
+    shape = data.shape
+    fsize  = data.shape[1]*h
+    w = np.zeros((fsize,))
+    e = np.zeros((fsize,))
+    pred = np.zeros(len(data))
     
-    if 1 < obs.ndim:
-        raise ValueError("obs cannot have dimension greater than 1")
-    elif k <= 1:
-        return np.atleast_1d(obs)
-    else:
-        tmp = np.atleast_1d(obs)
-        placeholder = np.zeros(((k-1)*tmp.size,))
-        return np.concatenate([tmp,placeholder])
+    alpha = alpha/h
 
-def newHistoryFeature(obs,F):
-    """newHistoryFeature(obs[],F[]) --> newF[]
-       Given two one dimensional arrays (an observation of current state
-       and the previous feature vector), return a new feature vector of the 
-       same length. Can be thought of as 'forgetting' the oldest state."""
-    tmp = np.atleast_1d(obs)
-    newF = (np.concatenate([tmp,F])[:F.size])
-    return newF
+    F = np.zeros(fsize)
+    for i in range(len(data)):
+        obs   = data[i]
+        R     = getReward(obs)
+        newF  = np.append(obs,F)[:fsize]
 
+        pred[i] = np.dot(w,F)
+        alpha = getAlpha(alpha,F,i)
+        gamma = getGamma()
+        delta = alpha*(R + gamma*np.dot(newF,w) - np.dot(F,w))
+    
 
-################################################################################
-#                                Learning
-################################################################################
+        # Update weights
+        w += delta*F
+        
+        # Copy newF to F
+        np.copyto(F,newF)
+    return [w,pred]
 
-def learn(reward,weight,F,newF):
-    """learn(reward,weight[],F[],newF[]) --> updatedWeight[]
-       Learns according to TD update rule"""
-    # Set parameters (ultimately these should be either arguments or globals)
-    alpha = 0.5
-    gamma = 0.85
-    weight = weight + alpha*(reward-gamma*np.dot(weight,newF)-np.dot(weight,F))
-    return weight
+def getReward(obs):
+    return obs
+
+def getAlpha(alpha,F,i):
+    return alpha
+
+def getLambda():
+    return 0
+
+def getGamma():
+    return 0.85
 
 
 
@@ -64,7 +65,7 @@ def learn(reward,weight,F,newF):
 #                                Testing
 ################################################################################
 
-data = np.loadtxt("turnrobot.dat")
+data = np.loadtxt("turnrobot.dat")[:,3:]
     
 def main():
     if len(sys.argv) < 2:
