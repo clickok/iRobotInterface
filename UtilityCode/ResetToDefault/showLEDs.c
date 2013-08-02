@@ -245,10 +245,6 @@ int main(int argc, char *argv[])
 
 	/* Get first state-action pair */
 	gettimeofday(&timeStart, NULL);
-	myPktNum = getPktNum();
-	p = (myPktNum + M - 1) % M;
-
-	prevPktNum = myPktNum;
 
 	/* ************************************************************************
 	 * Control loop
@@ -267,15 +263,6 @@ int main(int argc, char *argv[])
 
 		usleep(timestep - computationTime);
 		gettimeofday(&timeStart, NULL);
-		myPktNum = getPktNum();
-		if (myPktNum - prevPktNum > M)
-		{
-			fprintf(stderr, "Buffer overflow!\n");
-			exit(EXIT_FAILURE);
-		}
-
-		/* Update */
-		p = (myPktNum + M - 1) % M;
 
 	}
 	return 0;
