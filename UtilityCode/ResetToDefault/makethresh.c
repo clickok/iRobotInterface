@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 
   // INSIDE
   if ((fd = fopen(insidefile, "r"))==NULL) {
-    printf("Error opening inside file: %s, error: %s\n", 
+    printf("Error opening inside file: %s, error: %s \n",
 	   insidefile, strerror(errno));
     exit(EXIT_FAILURE);
   }

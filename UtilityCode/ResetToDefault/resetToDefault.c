@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 
 	if (argc < 2)
 	{
-		fprintf(stderr, "Portname argument required -- something like -p /dev/tty.usbserial\n");
+		fprintf(stderr, "Portname argument required -- something like -p /dev/tty.usbserial \n");
 	    return 0;
 	}
 	while (1)

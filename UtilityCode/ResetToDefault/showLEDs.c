@@ -153,9 +153,6 @@ void endProgram();
 int main(int argc, char *argv[])
 {
 	/* Initialize variables */
-	unsigned int myPktNum;                  // Packet number variable
-	unsigned int prevPktNum = 0;		    // Previous packet number
-	int p;									// Byte tracking variable
 	int iteration = 0;                      // Control loop counter
 	int timestep = 100000;                  // Timestep in microseconds
 	struct timeval timeBegin;               // Control loop start time
