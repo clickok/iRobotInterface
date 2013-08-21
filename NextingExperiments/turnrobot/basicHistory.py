@@ -19,6 +19,9 @@ import sys
 
 
 def basicHistory(data,h,alpha):
+    """basicHistory(array,int,float) --> array
+       Returns the weights and prediction values for a given data set, history
+       size, and stepsize (alpha)"""
     # Determine size of feature vector and initialize weights, traces
     shape = data.shape
     fsize  = data.shape[1]*h
@@ -38,14 +41,13 @@ def basicHistory(data,h,alpha):
         alpha = getAlpha(alpha,F,i)
         gamma = getGamma()
         delta = alpha*(R + gamma*np.dot(newF,w) - np.dot(F,w))
-    
 
         # Update weights
         w += delta*F
         
         # Copy newF to F
         np.copyto(F,newF)
-    return [w,pred]
+    return w,pred
 
 def getReward(obs):
     return obs
@@ -64,10 +66,9 @@ def getGamma():
 ################################################################################
 #                                Testing
 ################################################################################
-
-data = np.loadtxt("turnrobot.dat")[:,3:]
     
 def main():
+    data = np.loadtxt("turnrobot.dat")[:,3:]
     if len(sys.argv) < 2:
         pass
     else:

@@ -11,7 +11,21 @@ import numpy as np
 #                          Graph Plotting Functions
 ################################################################################
 
-
+def plotTimeDeltas(path):
+    """Calculates and plots the time difference between each timestep for a
+       given run (passed as a file path)"""
+    fig, ax = plt.subplots(1)
+    with open(path) as f:
+        lines   = f.readlines()
+        tstamps = [x.split()[1].split(".") for x in lines if x[0] != "#"]
+        times   = [int(x[0])+0.000001*int(x[1]) for x in tstamps]
+        deltas  = np.array([times[i+1]-times[i] for i in range(len(times)-1)])
+        ax.plot(np.array(deltas/max(deltas)))
+        # Also show the moving average of the rewards
+        rewards = makeMovingAvg(path,10)
+        ax.plot(rewards/max(rewards))
+        fig.show()
+        
     
     
 
@@ -183,6 +197,57 @@ def plotRunningAvgRewVsTimestep():
         fig.set_size_inches(newFigSize)
         plt.savefig(outputDirectory+outputFileName,bbox_inches="tight")
 
+def plotAllAvgRewVsTimestep():
+    '''
+    Plots the average reward (averaged for each value of alpha)
+    vs. the timestep. It should provide a quick way to look at how
+    each value is doing, and how quickly they converge/what they
+    converge to.
+    '''
+    outputDirectory = "./Graphs/"
+    outputFilename = "logPlotAllAlphas.pdf"
+    parentdir = "."
+    logFileLst = getAllLogs(parentdir)
+    logData = separateByAlpha(logFileLst)
+    fig, ax = plt.subplots(1)
+    ax.set_title("Average Reward vs. Timestep for Varying Alpha")
+    ax.set_ylabel("Average Reward")
+    ax.set_xlabel("Timestep")
+    for key in logData.keys():
+        if key < 2**-6:
+            continue
+        avgData = makeAvgArray(logData[key])
+        xdata = avgData[:,0]
+        ydata = np.cumsum(avgData[:,2])/avgData[:,0]
+        ax.plot(xdata,ydata,label="$\\alpha = %f$"%key)
+    #ax.set_ylim([0,20])
+    ax.set_xlim([min(xdata),max(xdata)])
+    leg = plt.legend(loc="upper left",bbox_to_anchor=(1,1))
+    defaultFigSize = (fig.get_size_inches())
+    newFigSize = (defaultFigSize[0]+2,defaultFigSize[1])
+    fig.set_size_inches(newFigSize)
+    plt.savefig(outputDirectory+outputFilename,bbox_inches="tight",dpi=600)
+
+
+################################################################################
+#                         Intermediate Calculations
+################################################################################
+
+def makeMovingAvg(path,n):
+    runLines = getRunLines(path)
+    data  = (np.array([float(x.split()[2]) for x in runLines]))
+    data  = np.append(np.zeros((n-1,)),data)
+    ydata = movingAvg(data,n)
+    return ydata
+    
+
+def movingAvg(array,n):
+    tmp = np.cumsum(array)
+    ret = (tmp[n-1:] - tmp[:1-n])/n
+    return ret
+    
+
+
 #################################################################################
 #                      Miscellaneous Helper Functions
 #################################################################################
@@ -263,6 +328,12 @@ def parseFile(path):
     
     return np.array(runData), metaData
 
+
+def getRunLines(path):
+    with open(path) as f:
+        lines = f.readlines()
+        lst = [x for x in lines if x[0] != "#"]
+    return lst
 
 def separateByAlpha(flst):
     """

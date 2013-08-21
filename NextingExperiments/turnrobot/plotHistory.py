@@ -17,7 +17,7 @@ def getSquaredDiff(pred1,pred2):
     return diff
 
 def normalize(pred):
-    return pred/np.max(pred)
+    return pred/(np.max(pred)-np.min(pred))
 
 def plotAndShow(*plst):
     ax, fig = plt.subplots(1)
@@ -26,9 +26,17 @@ def plotAndShow(*plst):
     plt.show()
 
 
+def normalHistory(data,h,alpha):
+    w,pred = basicHistory.basicHistory(data,h,alpha)
+    normPred = normalize(pred)
+    return normPred
+
+    
 data  = np.loadtxt("turnrobot.dat")
 ideal = makeIdealPred(data[:,3:],0.85)
 w,pred  = basicHistory.basicHistory(data[:,3:],100,0.5)
 normIdeal= normalize(ideal)
 normPred = normalize(pred)
+
+
 

@@ -83,8 +83,14 @@ def printRunCount(logDirPath,param="Alpha"):
                             else:
                                 metaDataCount[i[1]] = 1
     return metaDataCount
-                
+
+
+################################################################################
+#                            Generally Useful
+################################################################################
 def getLogFileNames(logDirPath):
+    """Get the names of log files in subdirectories of the given path, return
+       the paths as a list"""
     lst = []
     logRegex = re.compile("logSarsa.*\.txt")
     for (dirpath, dirnames, filenames) in os.walk(logDirPath):
@@ -92,4 +98,6 @@ def getLogFileNames(logDirPath):
             if logRegex.match(name):
                 lst.append(os.path.join(dirpath,name))
     return lst
+
+
 
