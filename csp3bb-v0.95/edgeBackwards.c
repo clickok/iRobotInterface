@@ -276,6 +276,8 @@ int customPolicy(double Q[16][4], int s)
   // Store the values for the bumpers, whether on (1) or off (0)
   int LB_ON, FLB_ON, FRB_ON, RB_ON;
 
+  int FORWARD = 0, LEFT = 1, RIGHT = 2, BACK = 3, STOP =4;
+
   // Should this bother with getting the packet number at all?
   // Possibly would prefer to have state information in terms of a struct...
   p = ((getPktNum() + M) % M);
@@ -287,7 +289,10 @@ int customPolicy(double Q[16][4], int s)
   RB_ON  = (sCliffRB[p]  != 0);
 
   printf("LB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
-  return epsilonGreedy(Q, s, 0.01);
+  if (FLB_ON)
+  {
+    return BACK;
+  }
   
 
 
