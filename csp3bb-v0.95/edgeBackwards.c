@@ -275,6 +275,7 @@ int customPolicy(double Q[16][4], int s)
 
   // Store the values for the bumpers, whether on (1) or off (0)
   int LB_ON, FLB_ON, FRB_ON, RB_ON;
+  int LB_OFF, FLB_OFF, FRB_OFF, RB_OFF;
 
   int FORWARD = 0, LEFT = 1, RIGHT = 2, BACK = 3, STOP =4;
 
@@ -283,16 +284,38 @@ int customPolicy(double Q[16][4], int s)
   p = ((getPktNum() + M) % M);
 
   // Determine whether the bumpers are on or off
-  LB_ON  = (sCliffLB[p]  != 0);
-  FLB_ON = (sCliffFLB[p] != 0);
-  FRB_ON = (sCliffFRB[p] != 0);
-  RB_ON  = (sCliffRB[p]  != 0);
+  LB_ON  = (sCliffLB[p]  == 0);
+  FLB_ON = (sCliffFLB[p] == 0);
+  FRB_ON = (sCliffFRB[p] == 0);
+  RB_ON  = (sCliffRB[p]  == 0);
 
-  printf("LB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
-  if (FLB_ON)
+  LB_OFF  = (sCliffLB[p]  != 0);
+  FLB_OFF = (sCliffFLB[p] != 0);
+  FRB_OFF = (sCliffFRB[p] != 0);
+  RB_OFF  = (sCliffRB[p]  != 0);
+
+  printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
+  printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
+  if (FLB_ON && FRB_OFF)
   {
     return BACK;
   }
+  else if (FLB_OFF && FRB_OFF)
+  {
+    return RIGHT;
+  }
+  else if (FLB_OFF && FRB_ON)
+  {
+    return RIGHT;
+  }
+  else if (FRB_ON && FLB_OFF)
+  {
+    return BACK;
+  }
+
+  printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
+  return RIGHT;
+
   
 
 
