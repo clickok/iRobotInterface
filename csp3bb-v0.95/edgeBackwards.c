@@ -273,6 +273,7 @@ int customPolicy(double Q[16][4], int s)
 {
 
   // Store the values for the bumpers, whether on (1) or off (0)
+  int p;
   int LB_ON, FLB_ON, FRB_ON, RB_ON;
   int LB_OFF, FLB_OFF, FRB_OFF, RB_OFF;
 
