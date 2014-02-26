@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
     }
     if (reward < 0)
     {
-      reward = 0;
+      reward = -1;
     }
 
     rewardReport += reward;
