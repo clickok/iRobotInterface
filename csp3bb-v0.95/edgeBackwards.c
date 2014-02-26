@@ -55,7 +55,7 @@ typedef unsigned char ubyte;
 //------------------------------------------------------------------
 // ---------          Global Names and Variables           ---------
 //------------------------------------------------------------------
-#define SPEED 300
+#define SPEED 100
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, actionMutex, rewardMusicMutex; // locks
 int action = 0;           // current action selected by agent (initially forward)
