@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
       reward = 0;
     }*/
     // Add a negative reward for being off the edge
-    reward -= 5 * (sCliffLB[p] + sCliffFLB[p] + sCliffFRB[p] + sCliffRB[p]);
+    reward -= 5 * (sCliffLB[p] | sCliffFLB[p]) + (sCliffFRB[p] | sCliffRB[p]);
     printf("Cliff Sensors: %u \t %u \t %u \t %u\n", sCliffLB[p], sCliffFLB[p], sCliffFRB[p], sCliffRB[p]);
 
     rewardReport += reward;
