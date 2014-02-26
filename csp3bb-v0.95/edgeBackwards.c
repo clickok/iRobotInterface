@@ -281,7 +281,7 @@ int customPolicy(double Q[16][4], int s)
 
   // Should this bother with getting the packet number at all?
   // Possibly would prefer to have state information in terms of a struct...
-  p = ((getPktNum() + M - 6) % M);
+  p = ((getPktNum() + M - 7) % M);
 
   // Determine whether the bumpers are "on" the allowed terrain or "off"
   /*LB_ON   = (sCliffLB[p]  == 0);
@@ -320,7 +320,7 @@ int customPolicy(double Q[16][4], int s)
   }
   else if (FLB_OFF && FRB_ON)
   {
-    return RIGHT;
+    return BACK;
   }
   else if (FLB_ON && FRB_OFF)
   {
