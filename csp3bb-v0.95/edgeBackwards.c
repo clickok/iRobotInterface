@@ -304,8 +304,8 @@ int customPolicy(double Q[16][4], int s)
 
   LB_OFF  = (LB_ON  == FALSE);
   FLB_OFF = (FLB_ON == FALSE);
-  FRB_OFF = (sCliffFRB[p] == FALSE);
-  RB_OFF  = (sCliffRB[p]  == FALSE);
+  FRB_OFF = (FRB_ON == FALSE);
+  RB_OFF  = (RB_ON  == FALSE);
 
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
