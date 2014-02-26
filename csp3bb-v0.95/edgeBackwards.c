@@ -179,10 +179,7 @@ int main(int argc, char *argv[]) {
       reward = -5;
     }
     // Add a negative reward for being off the edge
-    if (sCliffL[p] | sCliffLB[p] | sCliffRB[p] | sCliffR[p])
-    {
-      reward -= 10;
-    }
+    reward -= 5 * (sCliffLB[p] + sCliffFLB[p] + sCliffFRB[p] + sCliffRB[p])
 
     rewardReport += reward;
     if (rewardReport > 50) {
