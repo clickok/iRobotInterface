@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
     // Modify negative reward (so it's not gigantic) for going forwards
     if (reward < -5)
     {
-      reward = -5;
+      reward = 0;
     }
     // Add a negative reward for being off the edge
     reward -= 5 * (sCliffLB[p] + sCliffFLB[p] + sCliffFRB[p] + sCliffRB[p]);
