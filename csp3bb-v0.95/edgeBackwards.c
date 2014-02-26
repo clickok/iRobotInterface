@@ -309,7 +309,7 @@ int customPolicy(double Q[16][4], int s)
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
   
-  if (FLB_ON && FRB_OFF)
+  if (FLB_ON && FRB_ON)
   {
     return BACK;
   }
@@ -321,7 +321,7 @@ int customPolicy(double Q[16][4], int s)
   {
     return RIGHT;
   }
-  else if (FLB_ON && FRB_ON)
+  else if (FLB_ON && FRB_OFF)
   {
     return BACK;
   }
