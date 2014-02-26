@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
     for (j = 0; j < 4; j++)
       e[s][j] = 0;
     e[s][a] = 1;
-    printf("s a r s' a': %d\t%d\t%d\t%d\t%d\n", s, a, reward, sprime, aprime);
+    printf("s a r s' a': %d \t %d \t %d \t %d \t %d\n", s, a, reward, sprime, aprime);
     for (i = 0; i < 16; i++) {
       printf("Action values for state %d: %f %f %f %f\n",i, Q[i][0], Q[i][1], Q[i][2], Q[i][3]);
       printf("Eligibility traces for state %d: %f %f %f %f\n", i, e[i][0], e[i][1], e[i][2], e[i][3]);
