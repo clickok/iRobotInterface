@@ -533,8 +533,8 @@ void reflexes() {
       sDrive[p] = 4;
   }*/
 
-  // Shouldn't this be separated (as is it resends the data otherwise...)
-  //takeAction(sDrive[p]);
+  // Shouldn't this be separated and in the main code?
+  takeAction(sDrive[p]);
 
   ubyte bytes[2];
   ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
