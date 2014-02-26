@@ -303,7 +303,6 @@ int main(int argc, char *argv[]) {
   int reward;
   int i, j;
   double delta;
-  ubyte bytes[2];
   int rewardReport;
   struct timeval timeStart, timeEnd, incrementBy;
   long computationTime;
@@ -367,7 +366,7 @@ int main(int argc, char *argv[]) {
     reward = 0;
     for (pn = prevPktNum; pn < myPktNum; pn++) {
       p = pn % M;
-      reward += sDistance[p];
+      reward -= sDistance[p];
       printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
 	     sDeltaT[p],
 	     sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
@@ -375,12 +374,12 @@ int main(int argc, char *argv[]) {
 	     (short) sDistance[p]);
       if (sIRbyte[p]==137) endProgram(); // quit on remote pause
     }
-    rewardReport += reward;
+    rewardReport -= reward;
     if (rewardReport > 50) {
       pthread_mutex_lock( &rewardMusicMutex );
       rewardMusic = 1;
       pthread_mutex_unlock( &rewardMusicMutex );    
-      rewardReport -= 50;
+      rewardReport += 50;
     }
     p = (myPktNum - 1) % M;
     sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
