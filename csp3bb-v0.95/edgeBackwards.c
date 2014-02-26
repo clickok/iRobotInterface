@@ -161,6 +161,7 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "Buffer overflow!\n");
       exit(EXIT_FAILURE);
     }
+
     reward = 0;
     for (pn = prevPktNum; pn < myPktNum; pn++) {
       p = pn % M;
@@ -172,6 +173,11 @@ int main(int argc, char *argv[]) {
 	     (short) sDistance[p]);
       if (sIRbyte[p]==137) endProgram(); // quit on remote pause
     }
+    if (reward < 0)
+    {
+      reward = 0;
+    }
+
     rewardReport += reward;
     if (rewardReport > 50) {
       pthread_mutex_lock( &rewardMusicMutex );
@@ -179,6 +185,7 @@ int main(int argc, char *argv[]) {
       pthread_mutex_unlock( &rewardMusicMutex );    
       rewardReport -= 50;
     }
+
     p = (myPktNum - 1) % M;
     sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
     aprime = epsilonGreedy(Q, sprime, epsilon);
@@ -186,6 +193,7 @@ int main(int argc, char *argv[]) {
     action = aprime; // sets up action to be taken by csp thread
     pthread_mutex_unlock( &actionMutex );    
     delta = reward + gamma*Q[sprime][aprime] - Q[s][a];
+    
     for (j = 0; j < 4; j++)
       e[s][j] = 0;
     e[s][a] = 1;
@@ -416,7 +424,8 @@ void* csp3(void *arg) {
       for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
       numBytesPreviouslyRead += numBytesRead;
       if (numBytesPreviouslyRead==B) {  //packet complete!
-	if (checkPacket()) {
+	
+  if (checkPacket()) {
 	  extractPacket();
 	  reflexes();
 	  ensureTransmitted();
