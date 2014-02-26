@@ -82,7 +82,7 @@ void setupSerialPort(char serialPortName[]);
 void* csp3(void *arg);void loadCliffThresholds();
 void takeAction(int action);
 int epsilonGreedy(double Q[16][4], int s, double epsilon);
-int customPolicy(doubleQ[16][4], int s);
+int customPolicy(double Q[16][4], int s);
 void endProgram();
 void driveWheels(int left, int right);
 void sendBytesToRobot(ubyte* bytes, int numBytes);
