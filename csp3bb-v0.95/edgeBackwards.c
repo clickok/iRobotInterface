@@ -294,12 +294,13 @@ int customPolicy(double Q[16][4], int s)
   FRB_OFF = (sCliffFRB[p] != 0);
   RB_OFF  = (sCliffRB[p]  != 0);*/
 
+  int tmp = 0;
+  tmp = s;
 
-
-  LB_ON   = CHECK_BIT(s, 3);
-  FLB_ON  = CHECK_BIT(s, 2);
-  FRB_ON  = CHECK_BIT(s, 1);
-  RB_ON   = CHECK_BIT(s, 0);
+  LB_ON   = CHECK_BIT(tmp, 3);
+  FLB_ON  = CHECK_BIT(tmp, 2);
+  FRB_ON  = CHECK_BIT(tmp, 1);
+  RB_ON   = CHECK_BIT(tmp, 0);
 
   LB_OFF  = (LB_ON  == FALSE);
   FLB_OFF = (FLB_ON == FALSE);
