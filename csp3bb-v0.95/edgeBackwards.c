@@ -18,6 +18,7 @@ the robot to follow the edge going backwards.
 
 #define FALSE 0
 #define TRUE 1
+#define CHECK_BIT(var, pos) ((var) & (1 <<(pos)))
 
 typedef unsigned char ubyte;
 
@@ -270,8 +271,6 @@ int epsilonGreedy(double Q[16][4], int s, double epsilon)
 
 int customPolicy(double Q[16][4], int s)
 {
-  int max, i, p;
-  int firstAction, lastAction;
 
   // Store the values for the bumpers, whether on (1) or off (0)
   int LB_ON, FLB_ON, FRB_ON, RB_ON;
@@ -284,7 +283,7 @@ int customPolicy(double Q[16][4], int s)
   p = ((getPktNum() + M - 4) % M);
 
   // Determine whether the bumpers are "on" the allowed terrain or "off"
-  LB_ON   = (sCliffLB[p]  == 0);
+  /*LB_ON   = (sCliffLB[p]  == 0);
   FLB_ON  = (sCliffFLB[p] == 0);
   FRB_ON  = (sCliffFRB[p] == 0);
   RB_ON   = (sCliffRB[p]  == 0);
@@ -292,7 +291,19 @@ int customPolicy(double Q[16][4], int s)
   LB_OFF  = (sCliffLB[p]  != 0);
   FLB_OFF = (sCliffFLB[p] != 0);
   FRB_OFF = (sCliffFRB[p] != 0);
-  RB_OFF  = (sCliffRB[p]  != 0);
+  RB_OFF  = (sCliffRB[p]  != 0);*/
+
+
+
+  LB_ON   = CHECK_BIT(s, 3);
+  FLB_ON  = CHECK_BIT(s, 2);
+  FRB_ON  = CHECK_BIT(s, 1);
+  RB_ON   = CHECK_BIT(s, 0);
+
+  LB_OFF  = (LB_ON  == FALSE);
+  FLB_OFF = (FLB_ON == FALSE);
+  FRB_OFF = (sCliffFRB[p] == FALSE);
+  RB_OFF  = (sCliffRB[p]  == FALSE);
 
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
@@ -315,7 +326,7 @@ int customPolicy(double Q[16][4], int s)
   }
 
   printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
-  return RIGHT;
+  return STOP;
 
   
 
