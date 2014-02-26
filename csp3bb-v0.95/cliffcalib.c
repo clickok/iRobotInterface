@@ -185,7 +185,7 @@ void extractPacket() {
 
 
 void* csp3(void *arg) {
-  int errorCode, numBytesRead, i, j;
+  int errorCode, numBytesRead, i;
   ubyte bytes[B];
   int numBytesPreviouslyRead = 0;
   struct timeval timeout;
@@ -309,4 +309,6 @@ int main(int argc, char *argv[]) {
   bytes[0] = CREATE_STREAM_PAUSE;
   bytes[1] = 0;
   sendBytesToRobot(bytes, 2, TRUE);
+
+  return 0;
 }
