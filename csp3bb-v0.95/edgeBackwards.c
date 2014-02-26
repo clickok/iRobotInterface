@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
       if (sIRbyte[p]==137) endProgram(); // quit on remote pause
     }
     // Modify negative reward (so it's not gigantic) for going forwards
-    if (reward < -5)
+    if (reward < 5)
     {
       reward = -1;
     }
