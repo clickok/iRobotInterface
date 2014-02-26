@@ -18,7 +18,7 @@ the robot to follow the edge going backwards.
 
 #define FALSE 0
 #define TRUE 1
-#define CHECK_BIT(var, pos) ((var) & (1 <<(pos)))
+#define CHECK_BIT(var, pos) (((var) & (1 <<(pos))) == 0)
 
 typedef unsigned char ubyte;
 
