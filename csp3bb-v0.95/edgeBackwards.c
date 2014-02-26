@@ -173,9 +173,15 @@ int main(int argc, char *argv[]) {
 	     (short) sDistance[p]);
       if (sIRbyte[p]==137) endProgram(); // quit on remote pause
     }
+    // Modify negative reward (so it's not gigantic) for going forwards
     if (reward < 0)
     {
-      reward = -1;
+      reward = -5;
+    }
+    // Add a negative reward for being off the edge
+    if (sCliffL[p] | sCliffLB[p] | sCliffRB[p] | sCliffR[p])
+    {
+      reward -= 3;
     }
 
     rewardReport += reward;
