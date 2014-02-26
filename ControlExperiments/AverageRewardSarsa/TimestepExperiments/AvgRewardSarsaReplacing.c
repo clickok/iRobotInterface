@@ -718,7 +718,8 @@ int epsilonGreedy(double Q[16][4], int s, double epsilon)
 	int firstAction, lastAction;
 
 	myPktNum = getPktNum();
-	p = (myPktNum + M - 1) % M;
+	//TODO Ensure that this is getting the right packet number
+	p = (myPktNum + M) % M;
 
 	//TODO Shouldn't this be handled by reflexes() instead?
 	firstAction = sCliffFLB[p] || sCliffFRB[p];
