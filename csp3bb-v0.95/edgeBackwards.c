@@ -459,12 +459,16 @@ void reflexes() {
   {
       sDrive[p] = 4;
   }
+  else if (sDrive[p]==3 && (sCliffFLB[p] || sCliffFRB[p])) // or backward over cliff
+  {
+      sDrive[p] = 4;
+  }
   /*else if (sDrive[p]==3 && (sCliffLB[p] || sCliffRB[p])) // or backward over cliff
   {
       sDrive[p] = 4;
   }*/
 
-  
+
   takeAction(sDrive[p]);
 
   ubyte bytes[2];
