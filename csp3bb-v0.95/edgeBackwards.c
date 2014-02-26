@@ -454,9 +454,17 @@ void reflexes() {
   pthread_mutex_lock( &actionMutex );
   sDrive[p] = action;
   pthread_mutex_unlock( &actionMutex );
-  if ((sDrive[p]==0 && (sCliffFLB[p] || sCliffFRB[p])) || // if forward over cliff
-      (sDrive[p]==3 && (sCliffLB[p] || sCliffRB[p])))    // or backward over cliff
-    sDrive[p] = 4;                            // then stop instead
+  // If forward over the cliff, stop instead
+  if ((sDrive[p]==0 && (sCliffFLB[p] || sCliffFRB[p]))) // if forward over cliff
+  {
+      sDrive[p] = 4;
+  }
+  /*else if (sDrive[p]==3 && (sCliffLB[p] || sCliffRB[p])) // or backward over cliff
+  {
+      sDrive[p] = 4;
+  }*/
+
+  
   takeAction(sDrive[p]);
 
   ubyte bytes[2];
