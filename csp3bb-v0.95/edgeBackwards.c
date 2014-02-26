@@ -82,6 +82,7 @@ void setupSerialPort(char serialPortName[]);
 void* csp3(void *arg);void loadCliffThresholds();
 void takeAction(int action);
 int epsilonGreedy(double Q[16][4], int s, double epsilon);
+int customPolicy(doubleQ[16][4], int s);
 void endProgram();
 void driveWheels(int left, int right);
 void sendBytesToRobot(ubyte* bytes, int numBytes);
@@ -111,6 +112,7 @@ int main(int argc, char *argv[]) {
   sigemptyset(&act.sa_mask);
   act.sa_flags = 0;
   sigaction(SIGINT, &act, &oldact);
+
   if (argc < 2) {
     fprintf(stderr, "Portname argument required -- something like /dev/tty.usbserial\n");
     return 0;
@@ -140,10 +142,15 @@ int main(int argc, char *argv[]) {
   myPktNum = getPktNum();
   p = (myPktNum + M - 1) % M;
   s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
-  a = epsilonGreedy(Q, s, epsilon);
+  //a = epsilonGreedy(Q, s, epsilon);
+
+  // Perform action according to custom policy instead
+  a = customPolicy(Q, s); 
+
   pthread_mutex_lock( &actionMutex );
   action = a; // sets up action to be taken by csp thread
-  pthread_mutex_unlock( &actionMutex );  
+  pthread_mutex_unlock( &actionMutex ); 
+
   prevPktNum = myPktNum;
   rewardReport = 0;
   while (TRUE) { // main agent loop
@@ -192,10 +199,13 @@ int main(int argc, char *argv[]) {
 
     p = (myPktNum - 1) % M;
     sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
-    aprime = epsilonGreedy(Q, sprime, epsilon);
+    //aprime = epsilonGreedy(Q, sprime, epsilon);
+    aprime = customPolicy(Q, sprime);
+
     pthread_mutex_lock( &actionMutex );
     action = aprime; // sets up action to be taken by csp thread
     pthread_mutex_unlock( &actionMutex );    
+
     delta = reward + gamma*Q[sprime][aprime] - Q[s][a];
     
     for (j = 0; j < 4; j++)
@@ -256,6 +266,30 @@ int epsilonGreedy(double Q[16][4], int s, double epsilon)
         max = i;
     return max;
   }
+}
+
+int customPolicy(double Q[16][4], int s)
+{
+  int max, i, p;
+  int firstAction, lastAction;
+
+  // Store the values for the bumpers, whether on (1) or off (0)
+  int LB_ON, FLB_ON, FRB_ON, LB_ON;
+
+  // Should this bother with getting the packet number at all?
+  // Possibly would prefer to have state information in terms of a struct...
+  p = ((getPktNum() + M) % M);
+
+  // Determine whether the bumpers are on or off
+  LB_ON  = (sCliffLB[p]  != 0);
+  FLB_ON = (sCliffFLB[p] != 0);
+  FRB_ON = (sCliffFRB[p] != 0);
+  RB_ON  = (sCliffRB[p]  != 0);
+
+  return epsilonGreedy(Q, s, epsilon);
+  
+
+
 }
 
 void takeAction(int action) {
