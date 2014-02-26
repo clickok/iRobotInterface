@@ -286,6 +286,7 @@ int customPolicy(double Q[16][4], int s)
   FRB_ON = (sCliffFRB[p] != 0);
   RB_ON  = (sCliffRB[p]  != 0);
 
+  printf("LB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   return epsilonGreedy(Q, s, 0.01);
   
 
