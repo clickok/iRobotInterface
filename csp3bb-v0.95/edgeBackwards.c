@@ -519,6 +519,7 @@ void reflexes() {
   sDrive[p] = action;
   pthread_mutex_unlock( &actionMutex );
   // If forward over the cliff, stop instead
+  /*
   if ((sDrive[p]==0 && (sCliffFLB[p] || sCliffFRB[p]))) // if forward over cliff
   {
       sDrive[p] = 4;
@@ -527,13 +528,13 @@ void reflexes() {
   {
       sDrive[p] = 4;
   }
-  /*else if (sDrive[p]==3 && (sCliffLB[p] || sCliffRB[p])) // or backward over cliff
+  else if (sDrive[p]==3 && (sCliffLB[p] || sCliffRB[p])) // or backward over cliff
   {
       sDrive[p] = 4;
   }*/
 
-
-  takeAction(sDrive[p]);
+  // Shouldn't this be separated (as is it resends the data otherwise...)
+  //takeAction(sDrive[p]);
 
   ubyte bytes[2];
   ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
