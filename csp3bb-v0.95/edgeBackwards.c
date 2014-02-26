@@ -283,16 +283,16 @@ int customPolicy(double Q[16][4], int s)
   // Possibly would prefer to have state information in terms of a struct...
   p = ((getPktNum() + M) % M);
 
-  // Determine whether the bumpers are on or off
-  LB_ON   = (sCliffLB[p]  != 0);
-  FLB_ON  = (sCliffFLB[p] != 0);
-  FRB_ON  = (sCliffFRB[p] != 0);
-  RB_ON   = (sCliffRB[p]  != 0);
+  // Determine whether the bumpers are "on" the allowed terrain or "off"
+  LB_ON   = (sCliffLB[p]  == 0);
+  FLB_ON  = (sCliffFLB[p] == 0);
+  FRB_ON  = (sCliffFRB[p] == 0);
+  RB_ON   = (sCliffRB[p]  == 0);
 
-  LB_OFF  = (sCliffLB[p]  == 0);
-  FLB_OFF = (sCliffFLB[p] == 0);
-  FRB_OFF = (sCliffFRB[p] == 0);
-  RB_OFF  = (sCliffRB[p]  == 0);
+  LB_OFF  = (sCliffLB[p]  != 0);
+  FLB_OFF = (sCliffFLB[p] != 0);
+  FRB_OFF = (sCliffFRB[p] != 0);
+  RB_OFF  = (sCliffRB[p]  != 0);
 
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
