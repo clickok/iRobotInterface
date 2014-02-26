@@ -303,7 +303,7 @@ int customPolicy(double Q[16][4], int s)
   }
   else if (FLB_OFF && FRB_OFF)
   {
-    return BACK;
+    return RIGHT;
   }
   else if (FLB_OFF && FRB_ON)
   {
@@ -311,7 +311,7 @@ int customPolicy(double Q[16][4], int s)
   }
   else if (FLB_ON && FRB_ON)
   {
-    return RIGHT;
+    return BACK;
   }
 
   printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
