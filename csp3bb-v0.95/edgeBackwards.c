@@ -373,14 +373,11 @@ int customPolicy(double Q[16][4], int s)
     customAction = STOP;
   }
 
-  return customAction;
   printf("customAction: %d\n", customAction);
+  return customAction;
+  
   printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
   return STOP;
-
-  
-
-
 }
 
 void takeAction(int action) {
