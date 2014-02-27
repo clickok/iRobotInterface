@@ -134,6 +134,7 @@ int main(int argc, char *argv[]) {
 
   loadCliffThresholds();
   srand(0);
+  pthread_mutex_init(&pktNumMutex, NULL);
 
   setupSerialPort(argv[1]);
   usleep(20000); // wait for at least one packet to have arrived
