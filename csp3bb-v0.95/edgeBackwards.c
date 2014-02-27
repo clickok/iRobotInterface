@@ -353,10 +353,19 @@ int customPolicy(double Q[16][4], int s)
 }
 
 void takeAction(int action) {
-    switch (action) {
+    /*switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
     case 1  : driveWheels(-SPEED, SPEED); break;   // left
     case 2  : driveWheels(SPEED, -SPEED); break;   // right
+    case 3  : driveWheels(-SPEED, -SPEED); break;  // backward
+    case 4  : driveWheels(0, 0); break;            // stop
+    default : printf("Bad action\n");
+    }
+*/
+    switch (action) {
+    case 0  : driveWheels(SPEED, SPEED); break;    // forward
+    case 1  : driveWheels(0, SPEED); break;   // left
+    case 2  : driveWheels(SPEED, 0); break;   // right
     case 3  : driveWheels(-SPEED, -SPEED); break;  // backward
     case 4  : driveWheels(0, 0); break;            // stop
     default : printf("Bad action\n");
