@@ -388,34 +388,38 @@ void* csp3(void *arg) {
     }
 
     numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
-    if (numBytesRead==-1) {
-      fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    } else {
-      for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
-      numBytesPreviouslyRead += numBytesRead;
-      if (numBytesPreviouslyRead==B) {  //packet complete!
-	
-  if (checkPacket()) 
-  {
-      extractPacket();
-      ensureTransmitted();
-  	  pthread_mutex_lock( &pktNumMutex );
-  	  pktNum++;
-  	  pthread_mutex_unlock( &pktNumMutex );
-  	  numBytesPreviouslyRead = 0;
-	} 
-  else 
-  {
-      printf("misaligned packet.\n");
-      for (i = 1; i<B; i++) 
-      {
-          packet[i-1] = packet[i];
-          numBytesPreviouslyRead--;
-      }
-  }
-  }
-  }
+    if (numBytesRead==-1) 
+    {
+        fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    } 
+    else 
+    {
+        for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
+        numBytesPreviouslyRead += numBytesRead;
+        if (numBytesPreviouslyRead==B) 
+        {  //packet complete!
+            printf("Packet Complete!\n");
+        if (checkPacket())
+        {
+          extractPacket();
+          ensureTransmitted();
+      	  pthread_mutex_lock( &pktNumMutex );
+      	  pktNum++;
+      	  pthread_mutex_unlock( &pktNumMutex );
+      	  numBytesPreviouslyRead = 0;
+        } 
+        else 
+        {
+            printf("misaligned packet.\n");
+            for (i = 1; i<B; i++) 
+            {
+                packet[i-1] = packet[i];
+                numBytesPreviouslyRead--;
+            }
+        }
+        }
+    }
   return NULL;
 }
 }
