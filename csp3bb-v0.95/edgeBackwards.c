@@ -356,7 +356,7 @@ int customPolicy(double Q[16][4], int s)
   {
     if (LB_OFF && RB_OFF)
     {
-      customAction = FORWARD;
+      customAction = LEFT;
     }
     else if (LB_OFF)
     {
@@ -371,7 +371,7 @@ int customPolicy(double Q[16][4], int s)
   {
     if (LB_OFF && RB_OFF)
     {
-      customAction = FORWARD;
+      customAction = RIGHT;
     }
     else if (LB_OFF)
     {
