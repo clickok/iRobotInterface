@@ -335,7 +335,6 @@ void extractPacket() {
   lastPktTime = currentTime;
 }
 
-void reflexes();
 
 void* csp3(void *arg) {
   int errorCode, numBytesRead, i;
@@ -368,7 +367,6 @@ void* csp3(void *arg) {
 	
   if (checkPacket()) {
 	  extractPacket();
-	  reflexes();
 	  ensureTransmitted();
 	  pthread_mutex_lock( &pktNumMutex );
 	  pktNum++;
