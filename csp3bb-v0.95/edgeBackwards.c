@@ -542,23 +542,28 @@ void * csp3(void *arg)
           packet[numBytesPreviouslyRead+i] = bytes[i];
         }
         numBytesPreviouslyRead += numBytesRead;
-      if (numBytesPreviouslyRead==B) {  //packet complete!
-	
-    if (checkPacket()) {
-	  extractPacket();
-	  reflexes();
-	  ensureTransmitted();
-	  pthread_mutex_lock( &pktNumMutex );
-	  pktNum++;
-	  pthread_mutex_unlock( &pktNumMutex );
-	  numBytesPreviouslyRead = 0;
-	} else {
-	  printf("misaligned packet.\n");
-	  for (i = 1; i<B; i++) packet[i-1] = packet[i];
-	  numBytesPreviouslyRead--;
-	}
+      if (numBytesPreviouslyRead==B)  //packet complete!
+      {
+        if (checkPacket()) 
+        {
+          extractPacket();
+      	  reflexes();
+      	  ensureTransmitted();
+          pthread_mutex_lock( &pktNumMutex );
+      	  pktNum++;
+          pthread_mutex_unlock( &pktNumMutex );
+      	  numBytesPreviouslyRead = 0;
+	       } 
+         else
+         {
+            printf("misaligned packet.\n");
+            for (i = 1; i<B; i++) packet[i-1] = packet[i];
+            {
+              numBytesPreviouslyRead--;
+            }
+          }
+        }
       }
-    }
   }
   return NULL;
 }

@@ -181,6 +181,7 @@ int main(int argc, char *argv[]) {
     FRB_OFF = (FRB_ON == FALSE);
     RB_OFF  = (RB_ON  == FALSE);
 
+    printf("Cliff Sensors: %u \t %u \t %u \t %u\n", sCliffLB[p], sCliffFLB[p], sCliffFRB[p], sCliffRB[p]);
     printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
     printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
   
