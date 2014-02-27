@@ -342,7 +342,7 @@ int checkPacket()
 void extractPacket() {
   struct timeval currentTime;
   int p = pktNum%M;
-  printf("Extract packet\n");
+  printf("extractPacket() called\n");
   sCliffL[p]   = packet[3]<<8 | packet[4];
   sCliffLB[p]  = sCliffL[p]>cliffThresholds[0] ? cliffHighValue : 1-cliffHighValue;
   sCliffFL[p]  = packet[6]<<8 | packet[7];
@@ -359,6 +359,7 @@ void extractPacket() {
   sDeltaT[p] = (currentTime.tv_sec - lastPktTime.tv_sec)*1000
     + ((double) currentTime.tv_usec - lastPktTime.tv_usec)/1000;
   lastPktTime = currentTime;
+    printf("extractPacket() complete\n");
 }
 
 
