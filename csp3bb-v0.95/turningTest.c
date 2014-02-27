@@ -335,6 +335,7 @@ int checkPacket() {
 void extractPacket() {
   struct timeval currentTime;
   int p = pktNum%M;
+  printf("Extract packet\n");
   sCliffL[p]   = packet[3]<<8 | packet[4];
   sCliffLB[p]  = sCliffL[p]>cliffThresholds[0] ? cliffHighValue : 1-cliffHighValue;
   sCliffFL[p]  = packet[6]<<8 | packet[7];
