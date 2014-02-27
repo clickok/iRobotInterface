@@ -364,8 +364,8 @@ void takeAction(int action) {
 */
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
-    case 1  : driveWheels(-SPEED, SPEED/2); break;   // left
-    case 2  : driveWheels(SPEED/2, -SPEED); break;   // right
+    case 1  : driveWheels(SPEED/2, SPEED); break;   // left
+    case 2  : driveWheels(SPEED, SPEED/2); break;   // right
     case 3  : driveWheels(-SPEED, -SPEED); break;  // backward
     case 4  : driveWheels(0, 0); break;            // stop
     default : printf("Bad action\n");
