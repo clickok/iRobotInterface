@@ -19,6 +19,8 @@ the robot to follow the edge going backwards.
 #define FALSE 0
 #define TRUE 1
 #define CHECK_BIT(var, pos) (((var) & (1 <<(pos))) == 0)
+#define MAX(a,b) (a > b?a:b)
+#define MIN(a,b) (a < b?a:b)
 
 typedef unsigned char ubyte;
 
@@ -310,17 +312,33 @@ int customPolicy(double Q[16][4], int s)
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
   
+  // Find the edge
   if (FLB_ON && FRB_ON)
   {
-    return BACK;
+    return FORWARD;
   }
+  // If the front is completely off the terrain
   else if (FLB_OFF && FRB_OFF)
   {
-    return RIGHT;
+    // If all sensors are off the terrain
+    if (LB_OFF && RB_OFF)
+    {
+      return BACK;
+    }
+    // If only the left, left front, and right front are off
+    else if (LB_OFF)
+    {
+      return LEFT;
+    }
+    else
+    {
+      return RIGHT;
+    }
   }
+  // If the robot is half on edge and half not...
   else if (FLB_OFF && FRB_ON)
   {
-    return BACK;
+    return FORWARD;
   }
   else if (FLB_ON && FRB_OFF)
   {
@@ -374,8 +392,6 @@ void ensureTransmitted() {
   }
 }
 
-#define MAX(a,b) (a > b?a:b)
-#define MIN(a,b) (a < b?a:b)
 
 void driveWheels(int left, int right) {
   ubyte bytes[5];
