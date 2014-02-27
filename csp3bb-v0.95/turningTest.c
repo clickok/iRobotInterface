@@ -108,11 +108,14 @@ void sendBytesToRobot(ubyte* bytes, int numBytes);
 void ensureTransmitted();
 int getPktNum();
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
+  int i;
   pthread_t tid;
   int t_err;
   unsigned int prevPktNum;
   unsigned int myPktNum;
+  unsigned int pktOffset;
   int pktsReceived;
   int p;
   int rotationSum = 0;
@@ -197,7 +200,11 @@ int main(int argc, char *argv[]) {
     {
       pktsReceived = myPktNum - prevPktNum;
     }
-    for(i = prevPktNum; i  )
+    for(i = 0; i < pktsReceived; i++)
+    {
+      pktOffset    = (prevPktNum - pktsReceived ) % M ;
+      rotationSum += sRotate[pktOffset]; 
+    }
 
     // Print robot status information
     printf("Cliff Sensors: %u \t %u \t %u \t %u\n", sCliffL[p], sCliffFL[p], sCliffFR[p], sCliffR[p]);
