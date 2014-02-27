@@ -328,68 +328,28 @@ int customPolicy(double Q[16][4], int s)
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
   
+  // Assume that the robot is started with left sensors OFF, right sensors ON
   // Find the edge
   if (FLB_ON && FRB_ON)
   {
-    customAction = BACKWARD;
+    customAction = LEFT;
   }
-  // If the front is completely off the terrain
-  else if (FLB_OFF && FRB_OFF)
-  {
-    // If all sensors are off the terrain
-    if (LB_OFF && RB_OFF)
-    {
-      customAction = randomAction(FORWARD, 0.05);
-    }
-    // If only the left, left front, and right front are off
-    else if (LB_OFF)
-    {
-      customAction = RIGHT;
-    }
-    else
-    {
-      customAction = BACKWARD;
-    }
-  }
-  // If the front left is off and front right is on...
   else if (FLB_OFF && FRB_ON)
   {
-    if (LB_OFF && RB_OFF)
-    {
-      customAction = LEFT;
-    }
-    else if (LB_OFF)
-    {
-      customAction = BACKWARD;
-    }
-    else
-    {
-      customAction = RIGHT;
-    }
+    customAction = BACKWARD;
   }
-  else if (FLB_ON && FRB_OFF)
+  else if (FLB_OFF && FRB_OFF)
   {
-    if (LB_OFF && RB_OFF)
-    {
-      customAction = RIGHT;
-    }
-    else if (LB_OFF)
-    {
-      customAction = LEFT;
-    }
-    else
-    {
-      customAction = BACKWARD;
-    }
+    customAction = RIGHT;
+  }
+  else
+  {
     // TESTING
     customAction = STOP;
   }
 
   printf("customAction: %d\n", customAction);
   return customAction;
-  
-  printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
-  return STOP;
 }
 
 void takeAction(int action) {
