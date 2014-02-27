@@ -297,7 +297,7 @@ void setupSerialPort(char serialPortName[]) {
   sendBytesToRobot(&byte, 1);
   // Request stream mode:
   bytes[0] = CREATE_STREAM;
-  bytes[1] = 6;
+  bytes[1] = 7;
   bytes[2] = SENSOR_CLIFF_LEFT;
   bytes[3] = SENSOR_CLIFF_FRONT_LEFT;
   bytes[4] = SENSOR_CLIFF_FRONT_RIGHT;
