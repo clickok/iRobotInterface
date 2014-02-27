@@ -206,6 +206,7 @@ int getPktNum() {
   pthread_mutex_lock( &pktNumMutex );
   myPktNum = pktNum;
   pthread_mutex_unlock( &pktNumMutex );
+  printf("getPktNum() complete\n");
   return myPktNum;  
 }
 
@@ -316,7 +317,9 @@ void setupSerialPort(char serialPortName[]) {
 }
 
 // expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
-int checkPacket() {
+int checkPacket() 
+{
+    printf("checkPacket() called\n");
   int i, sum;
   if (packet[0]  ==19 &&
       packet[1]  ==B-3 &&
@@ -332,6 +335,7 @@ int checkPacket() {
     for (i = 0; i < B; i++) sum += packet[i];
     if ((sum & 0xFF) == 0) return 1;
   }
+    printf("checkPacket() complete\n");
   return 0;
 }
 
