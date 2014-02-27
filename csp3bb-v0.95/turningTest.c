@@ -343,6 +343,7 @@ void extractPacket() {
   sCliffRB[p]  = sCliffR[p]>cliffThresholds[3] ? cliffHighValue : 1-cliffHighValue;
   sDistance[p] = packet[15]<<8 | packet[16];
   sIRbyte[p] = packet[18];
+  sRotate[p] = packet[20]<<8 | packet[21];
 
   gettimeofday(&currentTime, NULL);
   sDeltaT[p] = (currentTime.tv_sec - lastPktTime.tv_sec)*1000
