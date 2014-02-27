@@ -338,7 +338,7 @@ int customPolicy(double Q[16][4], int s)
     // If all sensors are off the terrain
     if (LB_OFF && RB_OFF)
     {
-      return randProb(BACK, 0.1);
+      return randomAction(BACKWARD, 0.1);
     }
     // If only the left, left front, and right front are off
     else if (LB_OFF)
