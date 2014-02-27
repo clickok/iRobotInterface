@@ -406,7 +406,9 @@ void* csp3(void *arg) {
             fprintf(stdout, "Packet Complete!\n");
         if (checkPacket())
         {
+          fprintf(stdout, "csp3() about to extract packet\n");
           extractPacket();
+          fprintf(stdout, "csp3() done extracting packet\n");
           ensureTransmitted();
       	  pthread_mutex_lock( &pktNumMutex );
       	  pktNum++;
