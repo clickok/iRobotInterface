@@ -102,15 +102,7 @@ int main(int argc, char *argv[]) {
   int t_err;
   unsigned int prevPktNum;
   unsigned int myPktNum;
-  int p, pn;
-  double Q[16][4], e[16][4];
-  double stepsize = 0.1, lambda = 0.9, gamma = 0.98;
-  int a, aprime;
-  int s, sprime;
-  int reward;
-  int i, j;
-  double delta;
-  int rewardReport;
+  int p;
   struct timeval timeStart, timeEnd, incrementBy;
   long computationTime;
   struct sigaction act;
@@ -166,6 +158,8 @@ int main(int argc, char *argv[]) {
 
     // Determine whether IR cliff sensors are on terrain or off
     int tmp = 0;
+    int LB_ON, FLB_ON, FRB_ON, RB_ON;
+    int LB_OFF, FLB_OFF, FRB_OFF, RB_OFF;
     tmp = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 
     LB_ON   = CHECK_BIT(tmp, 3);
