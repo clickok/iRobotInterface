@@ -294,7 +294,7 @@ int customPolicy(double Q[16][4], int s)
   int LB_ON, FLB_ON, FRB_ON, RB_ON;
   int LB_OFF, FLB_OFF, FRB_OFF, RB_OFF;
 
-  int FORWARD = 0, LEFT = 1, RIGHT = 2, BACK = 3, STOP =4;
+  int FORWARD = 0, LEFT = 1, RIGHT = 2, BACKWARD = 3, STOP =4;
 
   // Should this bother with getting the packet number at all?
   // Possibly would prefer to have state information in terms of a struct...
@@ -368,7 +368,7 @@ int customPolicy(double Q[16][4], int s)
   }
   else if (FLB_ON && FRB_OFF)
   {
-    return BACK;
+    return BACKWARD;
   }
 
   printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
