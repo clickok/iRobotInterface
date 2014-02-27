@@ -360,11 +360,11 @@ int customPolicy(double Q[16][4], int s)
     }
     else if (LB_OFF)
     {
-      customAction = LEFT;
+      customAction = BACKWARD;
     }
     else
     {
-      customAction = BACKWARD;
+      customAction = RIGHT;
     }
   }
   else if (FLB_ON && FRB_OFF)
