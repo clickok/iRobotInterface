@@ -59,7 +59,7 @@ typedef unsigned char ubyte;
 // ---------          Global Names and Variables           ---------
 //------------------------------------------------------------------
 #define SPEED 50
-#define TURN_SPEED 37
+#define TURN_SPEED 62
 
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, actionMutex, rewardMusicMutex; // locks
