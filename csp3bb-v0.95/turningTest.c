@@ -320,10 +320,6 @@ void setupSerialPort(char serialPortName[]) {
 int checkPacket() 
 {
   int i, sum;
-  for (i=0; i< B; i++)
-  {
-      printf("%d \t %d\n", i, packet[i]);
-  }
   if (packet[0]  == 19 &&
       packet[1]  == B-3 &&
       packet[2]  == SENSOR_CLIFF_LEFT &&
