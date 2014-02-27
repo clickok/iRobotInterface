@@ -79,7 +79,7 @@ struct timeval lastPktTime;   // time of last packet
 int rewardMusic = 0;
 int fd = 0;                   // file descriptor for serial port
 
-#define B 23                  // number of bytes in a packet
+#define B 22                  // number of bytes in a packet
 ubyte packet[B];              // packet is constructed here
 
 //sensory arrays:
@@ -321,7 +321,7 @@ int checkPacket() {
       packet[11] == SENSOR_CLIFF_RIGHT &&
       packet[14] == SENSOR_DISTANCE &&
       packet[17] == SENSOR_IRBYTE &&
-      packet[20] == SENSOR_ROTATION)
+      packet[19] == SENSOR_ROTATION)
   {
     sum = 0;
     for (i = 0; i < B; i++) sum += packet[i];
@@ -365,12 +365,16 @@ void* csp3(void *arg) {
     timeout.tv_sec = 2;
     timeout.tv_usec = 0;
     errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
-    if (errorCode==0) {
-      printf("Timed out at select()\n");
-    } else if (errorCode==-1) {
-      fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
+    if (errorCode==0) 
+    {
+        printf("Timed out at select()\n");
+    } 
+    else if (errorCode==-1) 
+    {
+        fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
+
     numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
     if (numBytesRead==-1) {
       fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
@@ -380,20 +384,25 @@ void* csp3(void *arg) {
       numBytesPreviouslyRead += numBytesRead;
       if (numBytesPreviouslyRead==B) {  //packet complete!
 	
-  if (checkPacket()) {
-	  extractPacket();
-	  ensureTransmitted();
-	  pthread_mutex_lock( &pktNumMutex );
-	  pktNum++;
-	  pthread_mutex_unlock( &pktNumMutex );
-	  numBytesPreviouslyRead = 0;
-	} else {
-	  printf("misaligned packet.\n");
-	  for (i = 1; i<B; i++) packet[i-1] = packet[i];
-	  numBytesPreviouslyRead--;
-	}
+  if (checkPacket()) 
+  {
+      extractPacket();
+      ensureTransmitted();
+  	  pthread_mutex_lock( &pktNumMutex );
+  	  pktNum++;
+  	  pthread_mutex_unlock( &pktNumMutex );
+  	  numBytesPreviouslyRead = 0;
+	} 
+  else 
+  {
+      printf("misaligned packet.\n");
+      for (i = 1; i<B; i++) 
+      {
+          packet[i-1] = packet[i];
+          numBytesPreviouslyRead--;
       }
-    }
+  }
+  }
   }
   return NULL;
 }
