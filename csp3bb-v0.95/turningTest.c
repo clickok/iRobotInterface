@@ -397,11 +397,11 @@ void* csp3(void *arg) {
     } 
     else 
     {
-        checkPacket();
         fprintf(stdout, "csp3() about to put bytes into array\n");
         for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
         numBytesPreviouslyRead += numBytesRead;
         fprintf(stdout, "csp3() done putting bytes into array\n");
+        printf("numBytesPreviouslyRead: %d\n", numBytesPreviouslyRead);
         if (numBytesPreviouslyRead==B) 
         {  //packet complete!
             fprintf(stdout, "Packet Complete!\n");
