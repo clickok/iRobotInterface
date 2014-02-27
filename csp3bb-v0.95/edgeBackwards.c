@@ -363,7 +363,7 @@ int customPolicy(double Q[16][4], int s)
     }
     else
     {
-      return LEFT;
+      return RIGHT;
     }
   }
   else if (FLB_ON && FRB_OFF)
