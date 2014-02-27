@@ -79,7 +79,7 @@ struct timeval lastPktTime;   // time of last packet
 int rewardMusic = 0;
 int fd = 0;                   // file descriptor for serial port
 
-#define B 21                  // number of bytes in a packet
+#define B 23                  // number of bytes in a packet
 ubyte packet[B];              // packet is constructed here
 
 //sensory arrays:
