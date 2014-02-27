@@ -202,6 +202,7 @@ int main(int argc, char *argv[]) {
 
 int getPktNum() {
   int myPktNum;
+  printf("getPktNum() called\n");
   pthread_mutex_lock( &pktNumMutex );
   myPktNum = pktNum;
   pthread_mutex_unlock( &pktNumMutex );
