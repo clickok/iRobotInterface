@@ -166,6 +166,7 @@ int main(int argc, char *argv[]) {
 
     // Begin executing turn
     p = ((getPktNum() + M - 1) % M);
+    printf("p = %d\n");
 
     // Determine whether IR cliff sensors are on terrain or off
     int tmp = 0;
