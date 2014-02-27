@@ -282,6 +282,8 @@ int randomAction(int defaultAction, double randProb)
   {
     return defaultAction;
   }
+  fprintf(stderr, "Error: randomAction() reached end of function unexpectedly\n");
+  return -1;
 }
 
 int customPolicy(double Q[16][4], int s)
@@ -351,7 +353,18 @@ int customPolicy(double Q[16][4], int s)
   // If the robot is half on edge and half not...
   else if (FLB_OFF && FRB_ON)
   {
-    return FORWARD;
+    if (LB_OFF && RB_OFF)
+    {
+      return FORWARD;
+    }
+    else if (LB_OFF)
+    {
+      return FORWARD;
+    }
+    else
+    {
+      return BACKWARD;
+    }
   }
   else if (FLB_ON && FRB_OFF)
   {
