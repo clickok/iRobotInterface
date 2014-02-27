@@ -402,6 +402,7 @@ void* csp3(void *arg) {
         numBytesPreviouslyRead += numBytesRead;
         fprintf(stdout, "csp3() done putting bytes into array\n");
         printf("numBytesPreviouslyRead: %d\n", numBytesPreviouslyRead);
+        printf("B: %d\n", B);
         if (numBytesPreviouslyRead==B) 
         {  //packet complete!
             fprintf(stdout, "Packet Complete!\n");
@@ -427,6 +428,7 @@ void* csp3(void *arg) {
         }
         }
     }
+  fprintf(stdout, "csp3() about to return\n");
   return NULL;
 }
 }
