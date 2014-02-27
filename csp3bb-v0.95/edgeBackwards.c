@@ -339,7 +339,7 @@ int customPolicy(double Q[16][4], int s)
     // If all sensors are off the terrain
     if (LB_OFF && RB_OFF)
     {
-      customAction = randomAction(FORWARD, 0.1);
+      customAction = randomAction(FORWARD, 0.01);
     }
     // If only the left, left front, and right front are off
     else if (LB_OFF)
@@ -348,7 +348,7 @@ int customPolicy(double Q[16][4], int s)
     }
     else
     {
-      customAction = LEFT;
+      customAction = BACKWARD;
     }
   }
   // If the robot is half on edge and half not...
