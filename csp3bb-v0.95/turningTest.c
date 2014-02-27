@@ -374,6 +374,7 @@ void* csp3(void *arg) {
   FD_SET(fd, &readfs);
 
   while (TRUE) {
+    fprintf(stdout, "csp3() while loop start\n");
     timeout.tv_sec = 2;
     timeout.tv_usec = 0;
     errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
