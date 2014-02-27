@@ -319,7 +319,6 @@ void setupSerialPort(char serialPortName[]) {
 // expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
 int checkPacket() 
 {
-    printf("checkPacket() called\n");
   int i, sum;
   for (i=0; i< B; i++)
   {
@@ -342,14 +341,12 @@ int checkPacket()
     }
     if ((sum & 0xFF) == 0) return 1;
   }
-    printf("checkPacket() complete\n");
   return 0;
 }
 
 void extractPacket() {
   struct timeval currentTime;
   int p = pktNum%M;
-  printf("extractPacket() called\n");
   sCliffL[p]   = packet[3]<<8 | packet[4];
   sCliffLB[p]  = sCliffL[p]>cliffThresholds[0] ? cliffHighValue : 1-cliffHighValue;
   sCliffFL[p]  = packet[6]<<8 | packet[7];
@@ -366,7 +363,6 @@ void extractPacket() {
   sDeltaT[p] = (currentTime.tv_sec - lastPktTime.tv_sec)*1000
     + ((double) currentTime.tv_usec - lastPktTime.tv_usec)/1000;
   lastPktTime = currentTime;
-    printf("extractPacket() complete\n");
 }
 
 
@@ -381,7 +377,6 @@ void* csp3(void *arg) {
   FD_SET(fd, &readfs);
 
   while (TRUE) {
-    fprintf(stdout, "csp3() while loop start\n");
     timeout.tv_sec = 2;
     timeout.tv_usec = 0;
     errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
@@ -413,7 +408,6 @@ void* csp3(void *arg) {
         //printf("B: %d\n", B);
         if (numBytesPreviouslyRead==B) 
         {  //packet complete!
-            fprintf(stdout, "Packet Complete!\n");
         if (checkPacket())
         {
           //fprintf(stdout, "csp3() about to extract packet\n");
@@ -437,7 +431,6 @@ void* csp3(void *arg) {
         }
     }
 }
-  fprintf(stdout, "csp3() about to return\n");
   return NULL;
 }
 
