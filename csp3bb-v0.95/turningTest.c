@@ -335,7 +335,7 @@ int checkPacket()
     for (i = 0; i < B; i++) 
     {
       sum += packet[i];
-      printf("%d \t %d\n", packet[i]);
+      printf("%d \t %d\n", i, packet[i]);
     }
     if ((sum & 0xFF) == 0) return 1;
   }
