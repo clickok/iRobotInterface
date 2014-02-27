@@ -344,11 +344,11 @@ int customPolicy(double Q[16][4], int s)
     // If only the left, left front, and right front are off
     else if (LB_OFF)
     {
-      customAction = LEFT;
+      customAction = RIGHT;
     }
     else
     {
-      customAction = RIGHT;
+      customAction = LEFT;
     }
   }
   // If the robot is half on edge and half not...
