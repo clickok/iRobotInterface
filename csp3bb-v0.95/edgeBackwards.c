@@ -381,6 +381,8 @@ int customPolicy(double Q[16][4], int s)
     {
       customAction = BACKWARD;
     }
+    // TESTING
+    customAction = STOP;
   }
 
   printf("customAction: %d\n", customAction);
