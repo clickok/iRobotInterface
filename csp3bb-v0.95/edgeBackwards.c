@@ -379,7 +379,7 @@ int customPolicy(double Q[16][4], int s)
     }
     else
     {
-      customAction = RIGHT;
+      customAction = FORWARD;
     }
   }
 
