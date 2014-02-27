@@ -320,8 +320,8 @@ int checkPacket() {
       packet[8]  == SENSOR_CLIFF_FRONT_RIGHT &&
       packet[11] == SENSOR_CLIFF_RIGHT &&
       packet[14] == SENSOR_DISTANCE &&
-      packet[17] == SENSOR_IRBYTE) &&
-      packet[20] == SENSOR_ROTATION
+      packet[17] == SENSOR_IRBYTE &&
+      packet[20] == SENSOR_ROTATION)
   {
     sum = 0;
     for (i = 0; i < B; i++) sum += packet[i];
