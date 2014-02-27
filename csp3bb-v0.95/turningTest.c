@@ -1,6 +1,15 @@
 /*
-Implementation of SARSA algorithm, but with modifications to allow 
-the robot to follow the edge going backwards.
+A simple command line program (which is, frankly, a bit of a kludge)
+to allow the user to command an iRobot Create to drive its wheels as 
+specified by the command line arguments.
+
+Usage:
+  ./turningTest.out <device> <leftWheel> <rightWheel>
+
+Example:
+  ./turningTest.out /dev/ttyUSB0 100 -100
+
+  The above executes a turn to the right.
 */
 
 #include <stdio.h>

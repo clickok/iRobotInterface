@@ -94,6 +94,7 @@ void driveWheels(int left, int right);
 void sendBytesToRobot(ubyte* bytes, int numBytes);
 void ensureTransmitted();
 int getPktNum();
+void reflexes();
 
 int main(int argc, char *argv[]) {
   pthread_t tid;
@@ -501,38 +502,49 @@ void extractPacket() {
   lastPktTime = currentTime;
 }
 
-void reflexes();
 
-void* csp3(void *arg) {
-  int errorCode, numBytesRead, i;
-  ubyte bytes[B];
-  int numBytesPreviouslyRead = 0;
-  struct timeval timeout;
-  fd_set readfs;
+void * csp3(void *arg) 
+{
+    int errorCode, numBytesRead, i;
+    ubyte bytes[B];
+    int numBytesPreviouslyRead = 0;
+    struct timeval timeout;
+    fd_set readfs;
 
-  gettimeofday(&lastPktTime, NULL);
-  FD_SET(fd, &readfs);
+    gettimeofday(&lastPktTime, NULL);
+    FD_SET(fd, &readfs);
 
-  while (TRUE) {
-    timeout.tv_sec = 2;
-    timeout.tv_usec = 0;
-    errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
-    if (errorCode==0) {
-      printf("Timed out at select()\n");
-    } else if (errorCode==-1) {
-      fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    }
-    numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
-    if (numBytesRead==-1) {
-      fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    } else {
-      for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
-      numBytesPreviouslyRead += numBytesRead;
+    while (TRUE) 
+    {
+      timeout.tv_sec = 2;
+      timeout.tv_usec = 0;
+      errorCode = select(fd+1, &readfs, NULL, NULL, &timeout);
+      if (errorCode==0)
+      {
+          printf("Timed out at select()\n");
+      }
+      else if (errorCode==-1) 
+      {
+          fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
+          exit(EXIT_FAILURE);
+      }
+
+      numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
+      if (numBytesRead==-1) 
+      {
+        fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+      } 
+      else 
+      {
+        for (i = 0; i < numBytesRead; i++) 
+        {
+          packet[numBytesPreviouslyRead+i] = bytes[i];
+        }
+        numBytesPreviouslyRead += numBytesRead;
       if (numBytesPreviouslyRead==B) {  //packet complete!
 	
-  if (checkPacket()) {
+    if (checkPacket()) {
 	  extractPacket();
 	  reflexes();
 	  ensureTransmitted();
