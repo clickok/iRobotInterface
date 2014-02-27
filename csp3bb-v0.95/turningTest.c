@@ -78,7 +78,8 @@ int action = 0;           // current action selected by agent (initially forward
 struct timeval lastPktTime;   // time of last packet
 int rewardMusic = 0;
 int fd = 0;                   // file descriptor for serial port
-#define B 20                  // number of bytes in a packet
+
+#define B 23                  // number of bytes in a packet
 ubyte packet[B];              // packet is constructed here
 
 //sensory arrays:
@@ -89,6 +90,7 @@ short  sDistance[M];          // wheel rotation counts (small integers, pos/neg)
 double sDeltaT[M];            // in milliseconds
 ubyte sIRbyte[M];             // Infrared byte e.g. remote
 ubyte sDrive[M];              // Drive command in {0, 1, 2, 3, 4}
+ubyte sRotate[M];             // Rotation sensor
 
 int cliffThresholds[4];       // left, front left, front right, right
 int cliffHighValue;           // binary value taken if threshold exceeded
@@ -264,7 +266,7 @@ void driveWheels(int left, int right) {
 void setupSerialPort(char serialPortName[]) {
   struct termios options;
   ubyte byte;
-  ubyte bytes[8];
+  ubyte bytes[10];
 
   // open connection
   if((fd = open(serialPortName, O_RDWR | O_NOCTTY | O_NONBLOCK))==-1) {
@@ -296,7 +298,8 @@ void setupSerialPort(char serialPortName[]) {
   bytes[5] = SENSOR_CLIFF_RIGHT;
   bytes[6] = SENSOR_DISTANCE;
   bytes[7] = SENSOR_IRBYTE;
-  sendBytesToRobot(bytes, 8);
+  bytes[8] = SENSOR_ROTATION;
+  sendBytesToRobot(bytes, 9);
   // Setup songs
   bytes[0] = CREATE_SONG;
   bytes[1] = 0;
@@ -310,14 +313,16 @@ void setupSerialPort(char serialPortName[]) {
 // expects (19) (SENSOR_SIZE-3) (SENSOR_CLIFF_LEFT) () () ... (checksum)
 int checkPacket() {
   int i, sum;
-  if (packet[0]==19 &&
-      packet[1]==B-3 &&
-      packet[2]==SENSOR_CLIFF_LEFT &&
-      packet[5]==SENSOR_CLIFF_FRONT_LEFT &&
-      packet[8]==SENSOR_CLIFF_FRONT_RIGHT &&
-      packet[11]==SENSOR_CLIFF_RIGHT &&
-      packet[14]==SENSOR_DISTANCE &&
-      packet[17]==SENSOR_IRBYTE) {
+  if (packet[0]  ==19 &&
+      packet[1]  ==B-3 &&
+      packet[2]  == SENSOR_CLIFF_LEFT &&
+      packet[5]  == SENSOR_CLIFF_FRONT_LEFT &&
+      packet[8]  == SENSOR_CLIFF_FRONT_RIGHT &&
+      packet[11] == SENSOR_CLIFF_RIGHT &&
+      packet[14] == SENSOR_DISTANCE &&
+      packet[17] == SENSOR_IRBYTE) &&
+      packet[20] == SENSOR_ROTATION
+  {
     sum = 0;
     for (i = 0; i < B; i++) sum += packet[i];
     if ((sum & 0xFF) == 0) return 1;
