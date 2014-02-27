@@ -113,7 +113,9 @@ int main(int argc, char *argv[]) {
   int t_err;
   unsigned int prevPktNum;
   unsigned int myPktNum;
+  int pktsReceived;
   int p;
+  int rotationSum = 0;
   struct timeval timeStart, timeEnd, incrementBy;
   long computationTime;
   struct sigaction act;
@@ -160,6 +162,7 @@ int main(int argc, char *argv[]) {
     incrementBy.tv_usec = 100000;
     timeradd(&timeStart, &incrementBy, &timeStart);
     myPktNum = getPktNum();
+    // Not sure if this would catch *all* buffer overflows...
     if (myPktNum - prevPktNum > M) {
       fprintf(stderr, "Buffer overflow!\n");
       exit(EXIT_FAILURE);
@@ -185,9 +188,21 @@ int main(int argc, char *argv[]) {
     FRB_OFF = (FRB_ON == FALSE);
     RB_OFF  = (RB_ON  == FALSE);
 
+    // Add together some running totals...
+    if (prevPktNum > myPktNum)
+    {
+      pktsReceived = myPktNum + prevPktNum;
+    }
+    else
+    {
+      pktsReceived = myPktNum - prevPktNum;
+    }
+    for(i = prevPktNum; i  )
+
+    // Print robot status information
     printf("Cliff Sensors: %u \t %u \t %u \t %u\n", sCliffL[p], sCliffFL[p], sCliffFR[p], sCliffR[p]);
     printf("Distance Sensor: %hd\n", (short)sDistance[p]);
-    printf("Rotation Sensor: %hd\n", (short)sRotate[p]);
+    printf("Rotation Sensor: %hd \t Rotation Total: \n", (short)sRotate[p], rotationSum);
     printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
     printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
   
