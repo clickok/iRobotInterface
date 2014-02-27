@@ -332,7 +332,10 @@ int checkPacket()
       packet[19] == SENSOR_ROTATION)
   {
     sum = 0;
-    for (i = 0; i < B; i++) sum += packet[i];
+    for (i = 0; i < B; i++) 
+    {
+      sum += packet[i];
+    }
     if ((sum & 0xFF) == 0) return 1;
   }
     printf("checkPacket() complete\n");
@@ -352,8 +355,8 @@ void extractPacket() {
   sCliffR[p]   = packet[12]<<8 | packet[13];
   sCliffRB[p]  = sCliffR[p]>cliffThresholds[3] ? cliffHighValue : 1-cliffHighValue;
   sDistance[p] = packet[15]<<8 | packet[16];
-  sIRbyte[p] = packet[18];
-  sRotate[p] = packet[20]<<8 | packet[21];
+  sIRbyte[p]   = packet[18];
+  sRotate[p]   = packet[20]<<8 | packet[21];
 
   gettimeofday(&currentTime, NULL);
   sDeltaT[p] = (currentTime.tv_sec - lastPktTime.tv_sec)*1000
@@ -398,12 +401,12 @@ void* csp3(void *arg) {
     else 
     {
         //fprintf(stdout, "csp3() about to put bytes into array\n");
-        // This is not thread safe...
+        // Thead safety issues?
         for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
         numBytesPreviouslyRead += numBytesRead;
         //fprintf(stdout, "csp3() done putting bytes into array\n");
-        printf("numBytesPreviouslyRead: %d\n", numBytesPreviouslyRead);
-        printf("B: %d\n", B);
+        //printf("numBytesPreviouslyRead: %d\n", numBytesPreviouslyRead);
+        //printf("B: %d\n", B);
         if (numBytesPreviouslyRead==B) 
         {  //packet complete!
             fprintf(stdout, "Packet Complete!\n");
