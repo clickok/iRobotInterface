@@ -274,7 +274,7 @@ int epsilonGreedy(double Q[16][4], int s, double epsilon)
 
 int randomAction(int defaultAction, double randProb)
 {
-  if (rand() / (double)(RAND_MAX+1) < epsilon)
+  if (rand() / (double)(RAND_MAX+1) < randProb)
   {
     return (rand() % 4);
   }
