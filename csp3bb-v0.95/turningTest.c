@@ -428,9 +428,9 @@ void* csp3(void *arg) {
         }
         }
     }
+}
   fprintf(stdout, "csp3() about to return\n");
   return NULL;
-}
 }
 
 
