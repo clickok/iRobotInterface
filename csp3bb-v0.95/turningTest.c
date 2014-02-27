@@ -387,8 +387,9 @@ void* csp3(void *arg) {
         fprintf(stderr, "Problem with select(): %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-
+    fprintf(stdout, "csp3() about to read bytes\n");
     numBytesRead = read(fd, &bytes, B-numBytesPreviouslyRead);
+    fprintf(stdout, "csp3() done reading bytes\n");
     if (numBytesRead==-1) 
     {
         fprintf(stderr, "Problem with read(): %s\n", strerror(errno));
@@ -396,8 +397,10 @@ void* csp3(void *arg) {
     } 
     else 
     {
+        fprintf(stdout, "csp3() about to put bytes into array\n");
         for (i = 0; i < numBytesRead; i++) packet[numBytesPreviouslyRead+i] = bytes[i];
         numBytesPreviouslyRead += numBytesRead;
+        fprintf(stdout, "csp3() done putting bytes into array\n");
         if (numBytesPreviouslyRead==B) 
         {  //packet complete!
             fprintf(stdout, "Packet Complete!\n");
