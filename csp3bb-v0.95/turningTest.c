@@ -399,7 +399,7 @@ void* csp3(void *arg) {
         numBytesPreviouslyRead += numBytesRead;
         if (numBytesPreviouslyRead==B) 
         {  //packet complete!
-            printf("Packet Complete!\n");
+            fprintf(stdout, "Packet Complete!\n");
         if (checkPacket())
         {
           extractPacket();
