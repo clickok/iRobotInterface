@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   unsigned int myPktNum;
   int p, pn;
   double Q[16][4], e[16][4];
-  double stepsize = 0.1, lambda = 0.9, gamma = 0.98, epsilon = 0.01;
+  double stepsize = 0.1, lambda = 0.9, gamma = 0.98;
   int a, aprime;
   int s, sprime;
   int reward;
@@ -364,7 +364,7 @@ int customPolicy(double Q[16][4], int s)
     }
     else
     {
-      customAction = BACKWARD;
+      customAction = RIGHT;
     }
   }
   else if (FLB_ON && FRB_OFF)
