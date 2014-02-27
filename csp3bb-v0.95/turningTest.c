@@ -321,8 +321,12 @@ int checkPacket()
 {
     printf("checkPacket() called\n");
   int i, sum;
-  if (packet[0]  ==19 &&
-      packet[1]  ==B-3 &&
+  for (i=0; i< B; i++)
+  {
+      printf("%d \t %d\n", i, packet[i]);
+  }
+  if (packet[0]  == 19 &&
+      packet[1]  == B-3 &&
       packet[2]  == SENSOR_CLIFF_LEFT &&
       packet[5]  == SENSOR_CLIFF_FRONT_LEFT &&
       packet[8]  == SENSOR_CLIFF_FRONT_RIGHT &&
@@ -335,7 +339,6 @@ int checkPacket()
     for (i = 0; i < B; i++) 
     {
       sum += packet[i];
-      printf("%d \t %d\n", i, packet[i]);
     }
     if ((sum & 0xFF) == 0) return 1;
   }
