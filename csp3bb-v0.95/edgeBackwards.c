@@ -331,7 +331,7 @@ int customPolicy(double Q[16][4], int s)
   // Find the edge
   if (FLB_ON && FRB_ON)
   {
-    customAction = FORWARD;
+    customAction = BACKWARD;
   }
   // If the front is completely off the terrain
   else if (FLB_OFF && FRB_OFF)
@@ -339,7 +339,7 @@ int customPolicy(double Q[16][4], int s)
     // If all sensors are off the terrain
     if (LB_OFF && RB_OFF)
     {
-      customAction = randomAction(BACKWARD, 0.1);
+      customAction = randomAction(FORWARD, 0.1);
     }
     // If only the left, left front, and right front are off
     else if (LB_OFF)
@@ -360,7 +360,7 @@ int customPolicy(double Q[16][4], int s)
     }
     else if (LB_OFF)
     {
-      customAction = FORWARD;
+      customAction = BACKWARD;
     }
     else
     {
@@ -379,7 +379,7 @@ int customPolicy(double Q[16][4], int s)
     }
     else
     {
-      customAction = FORWARD;
+      customAction = BACKWARD;
     }
   }
 
