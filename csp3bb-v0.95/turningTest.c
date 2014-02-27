@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
   gettimeofday(&timeStart, NULL);
   while (TRUE) { // main agent loop
-
+    printf("\n"); // Start your day with a fresh cup of newline
     gettimeofday(&timeEnd, NULL);
     computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
       + (timeEnd.tv_usec-timeStart.tv_usec);
