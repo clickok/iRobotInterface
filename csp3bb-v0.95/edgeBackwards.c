@@ -291,6 +291,7 @@ int customPolicy(double Q[16][4], int s)
 
   // Store the values for the bumpers, whether on (1) or off (0)
   int p;
+  int customAction;
   int LB_ON, FLB_ON, FRB_ON, RB_ON;
   int LB_OFF, FLB_OFF, FRB_OFF, RB_OFF;
 
@@ -330,7 +331,7 @@ int customPolicy(double Q[16][4], int s)
   // Find the edge
   if (FLB_ON && FRB_ON)
   {
-    return FORWARD;
+    customAction = FORWARD;
   }
   // If the front is completely off the terrain
   else if (FLB_OFF && FRB_OFF)
@@ -338,16 +339,16 @@ int customPolicy(double Q[16][4], int s)
     // If all sensors are off the terrain
     if (LB_OFF && RB_OFF)
     {
-      return randomAction(BACKWARD, 0.1);
+      customAction = randomAction(BACKWARD, 0.1);
     }
     // If only the left, left front, and right front are off
     else if (LB_OFF)
     {
-      return LEFT;
+      customAction = LEFT;
     }
     else
     {
-      return RIGHT;
+      customAction = RIGHT;
     }
   }
   // If the robot is half on edge and half not...
@@ -355,23 +356,25 @@ int customPolicy(double Q[16][4], int s)
   {
     if (LB_OFF && RB_OFF)
     {
-      return FORWARD;
+      customAction = FORWARD;
     }
     else if (LB_OFF)
     {
-      return FORWARD;
+      customAction = FORWARD;
     }
     else
     {
-      return RIGHT;
+      customAction = RIGHT;
     }
   }
   else if (FLB_ON && FRB_OFF)
   {
 
-    return STOP;
+    customAction = STOP;
   }
 
+  return customAction;
+  printf("customAction: %d\n", customAction);
   printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
   return STOP;
 
