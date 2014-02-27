@@ -59,6 +59,8 @@ typedef unsigned char ubyte;
 // ---------          Global Names and Variables           ---------
 //------------------------------------------------------------------
 #define SPEED 50
+#define TURN_SPEED 37
+
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, actionMutex, rewardMusicMutex; // locks
 int action = 0;           // current action selected by agent (initially forward)
@@ -364,8 +366,8 @@ void takeAction(int action) {
 */
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
-    case 1  : driveWheels(SPEED/(3/4), SPEED); break;   // left
-    case 2  : driveWheels(SPEED, SPEED/(3/4)); break;   // right
+    case 1  : driveWheels(TURN_SPEED, SPEED); break;   // left
+    case 2  : driveWheels(SPEED, TURN_SPEED); break;   // right
     case 3  : driveWheels(-SPEED, -SPEED); break;  // backward
     case 4  : driveWheels(0, 0); break;            // stop
     default : printf("Bad action\n");
