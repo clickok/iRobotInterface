@@ -351,7 +351,7 @@ int customPolicy(double Q[16][4], int s)
       customAction = BACKWARD;
     }
   }
-  // If the robot is half on edge and half not...
+  // If the front left is off and front right is on...
   else if (FLB_OFF && FRB_ON)
   {
     if (LB_OFF && RB_OFF)
@@ -360,7 +360,7 @@ int customPolicy(double Q[16][4], int s)
     }
     else if (LB_OFF)
     {
-      customAction = BACKWARD;
+      customAction = LEFT;
     }
     else
     {
