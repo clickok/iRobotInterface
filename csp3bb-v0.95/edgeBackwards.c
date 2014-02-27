@@ -363,12 +363,13 @@ int customPolicy(double Q[16][4], int s)
     }
     else
     {
-      return BACKWARD;
+      return LEFT;
     }
   }
   else if (FLB_ON && FRB_OFF)
   {
-    return BACKWARD;
+
+    return STOP;
   }
 
   printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
