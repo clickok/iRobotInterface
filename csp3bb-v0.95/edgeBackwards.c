@@ -369,8 +369,18 @@ int customPolicy(double Q[16][4], int s)
   }
   else if (FLB_ON && FRB_OFF)
   {
-
-    customAction = STOP;
+    if (LB_OFF && RB_OFF)
+    {
+      customAction = FORWARD;
+    }
+    else if (LB_OFF)
+    {
+      customAction = FORWARD;
+    }
+    else
+    {
+      customAction = RIGHT;
+    }
   }
 
   printf("customAction: %d\n", customAction);
