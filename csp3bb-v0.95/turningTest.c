@@ -202,11 +202,11 @@ int main(int argc, char *argv[]) {
 
 int getPktNum() {
   int myPktNum;
-  printf("getPktNum() called\n");
+  //printf("getPktNum() called\n");
   pthread_mutex_lock( &pktNumMutex );
   myPktNum = pktNum;
   pthread_mutex_unlock( &pktNumMutex );
-  printf("getPktNum() complete\n");
+  //printf("getPktNum() complete\n");
   return myPktNum;  
 }
 
@@ -408,9 +408,9 @@ void* csp3(void *arg) {
             fprintf(stdout, "Packet Complete!\n");
         if (checkPacket())
         {
-          fprintf(stdout, "csp3() about to extract packet\n");
+          //fprintf(stdout, "csp3() about to extract packet\n");
           extractPacket();
-          fprintf(stdout, "csp3() done extracting packet\n");
+          //fprintf(stdout, "csp3() done extracting packet\n");
           ensureTransmitted();
       	  pthread_mutex_lock( &pktNumMutex );
       	  pktNum++;
