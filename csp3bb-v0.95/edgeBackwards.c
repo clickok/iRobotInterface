@@ -626,28 +626,30 @@ void extractPacket() {
 }
 
 
-void reflexes() {
-  int a;
-  int p = pktNum%M;
-  pthread_mutex_lock( &lastActionMutex );
-  a = lastAction;
-  pthread_mutex_unlock( &lastActionMutex );
-  if ((a==0 && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
-      (a==3 && (sCliffLB[p] || sCliffRB[p]))) {   // attempt to go backward over cliff
-    driveWheels(0, 0);                            // then interrupt motion
-  }
+void reflexes() 
+{
+ 	int a;
+	int p = pktNum % M;
+	pthread_mutex_lock( &lastActionMutex );
+	a = lastAction;
+	pthread_mutex_unlock( &lastActionMutex );
+	if ((((a % 4) ==0) && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
+       (((a % 4) ==3)  && (sCliffLB[p]  || sCliffRB[p])))      // attempt to go backward over cliff
+    {
+    	driveWheels(0, 0);                            // then interrupt motion
+  	}
 
-  // Consider adding something to tell if to go the opposite way if it
-  // turns completely off the edge
+  	// Consider adding something to tell if to go the opposite way if it  
+  	// turns completely off the edge
 
-  // Consider adding something to protect it if wheel drop sensors activate
+  	// Consider adding something to protect it if wheel drop sensors activate
 
-  ubyte bytes[2];
-  ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
-  ubyte ledbits = (sCliffLB[p] << 2) | (frontbit << 1) | sCliffRB[p];
-  bytes[0] = CREATE_DIGITAL_OUTS;
-  bytes[1] = ledbits;
-  sendBytesToRobot(bytes, 2);
+	ubyte bytes[2];
+	ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
+	ubyte ledbits = (sCliffLB[p] << 2) | (frontbit << 1) | sCliffRB[p];
+	bytes[0] = CREATE_DIGITAL_OUTS;
+	bytes[1] = ledbits;
+  	sendBytesToRobot(bytes, 2);
 }
 
 
