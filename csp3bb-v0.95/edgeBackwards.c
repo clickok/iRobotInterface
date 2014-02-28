@@ -288,6 +288,7 @@ int customPolicy(int s)
   // For determining how far back a certain state was
   int searchDepth;
   int onWorldState = 0;
+  int halfOnState  = 3;
 
   // Determine whether the bumpers are "on" the allowed terrain or "off"
   // State information might be out of date when passed to this file, so use
@@ -333,7 +334,7 @@ int customPolicy(int s)
       }
       else
       {
-        searchDepth = lastGoodState(onWorldState, p);
+        searchDepth = lastGoodState(halfOnState, p);
         printf("lastGoodState was at packet: %d\n", searchDepth);
         customAction = STOP;
       }
