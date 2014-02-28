@@ -365,12 +365,12 @@ int customPolicy(int s)
     if (FLB_ON && FRB_OFF)
     {
       policyMode  = 2;
-      policySteps = 0;
+      policyStep = 0;
     }
     else if (FLB_ON && FRB_ON)
     {
       policyMode  = 2;
-      policySteps = 0;
+      policyStep = 0;
     }
     else
     {
@@ -379,15 +379,21 @@ int customPolicy(int s)
   }
   else if (policyMode == 2) // The turning phase of the policy
   {
-    if (policySteps < 5)
+    // Combine turning backwards and forwards in some ratio
+    if (policyStep % 2)
     {
       customAction = 2;
-      policySteps++; 
     }
     else
     {
       customAction = 3;
-      policySteps  = 0;
+    }
+    policyStep++;
+    // Change policy on some condition
+    if ((policyStep > 10) && (FLB_ON && FRB_OFF))
+    {
+      policyMode = 1;
+      policyStep = 0;
     }
   }
 
