@@ -341,6 +341,7 @@ int customPolicy(int s)
         {
           printf("lastGoodState was at packet: %d\n", searchDepth);
           avgAction   = tracjectoryTrace(searchDepth, p);
+          printf("avgAction: %d\n", avgAction);
         }
 
         customAction = STOP;
