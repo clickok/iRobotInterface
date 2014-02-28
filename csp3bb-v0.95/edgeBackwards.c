@@ -412,7 +412,7 @@ int tracjectoryTrace(int low, int high)
     default : printf("Bad action\n");
     }
   }
-  for(i = 0; i < 5; i++)
+  for(i = 0; i < 4; i++)
   {
     if (count[i] > max)
     {
