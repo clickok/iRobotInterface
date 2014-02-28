@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
 	double alpha = 0.1;						// Stepsize (alpha) parameter
-	double alphaR = 0.001;                  // Average Reward Stepsize
+	double beta = 0.001;                  // Average Reward Stepsize
 	double lambda = 0.9;					// Trace decay parameter
 	double epsilon = 0.01;                  // Exploration parameter
 	int timestep = 100000;                  // Timestep in microseconds
@@ -315,8 +315,8 @@ int main(int argc, char *argv[])
 	prevPktNum = myPktNum;
 
 	/*  ----------------------- Print Setup Information --------------------- */
-	printf("alpha: %lf alphaR: %lf \t epsilon: %lf \t lambda: %lf \n",
-	 	   alpha, alphaR, epsilon, lambda);
+	printf("alpha: %lf beta: %lf \t epsilon: %lf \t lambda: %lf \n",
+	 	   alpha, beta, epsilon, lambda);
 
 	/* ************************************************************************
 	 * Control loop
@@ -415,7 +415,7 @@ int main(int argc, char *argv[])
 	    	{
 	    		Q[i][j] = Q[i][j] + (alpha * delta * e[i][j]);
 	    		e[i][j] = lambda*e[i][j];
-	    		avgReward += alphaR*delta;
+	    		avgReward += beta*delta;
 	    	}
 	    }
 
