@@ -143,6 +143,8 @@ void ensureTransmitted();
 int  getPktNum();
 void endProgram();
 
+void array2dPrint(size_t s1, size_t s2, double *array);
+
 /* ****************************************************************************
  * Main function (implements the actual SARSA algorithm)
  * ***************************************************************************/
@@ -433,11 +435,11 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-/* void 2dArrayPrint(size_t s1, size_t s2, double *array)
+/* void array2dPrint(size_t s1, size_t s2, double *array)
  * Print a 2-D array of doubles
  *
  */
- void 2dArrayPrint(size_t s1, size_t s2, double *array)
+ void array2dPrint(size_t s1, size_t s2, double *array)
  {
  	for (size_t i = 0; i < s1, i++)
  	{
