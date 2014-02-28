@@ -187,7 +187,6 @@ int main(int argc, char *argv[])
 		static struct option long_options[] =
 		{
 			{"port",            required_argument,   0, 'p'},
-			{"logname",         required_argument,   0, 'f'},
 			{"alpha",           required_argument,   0, 'a'},
 			{"epsilon",         required_argument,   0, 'e'},
 			{"lambda",          required_argument,   0, 'l'},
@@ -212,9 +211,6 @@ int main(int argc, char *argv[])
 		{
 		case 'p':
 			portName = optarg;
-			break;
-		case 'f':
-			logName = optarg;
 			break;
 		case 'm':
 			microworldName = optarg;
@@ -282,49 +278,8 @@ int main(int argc, char *argv[])
 	int t_year  = (*timeinfo).tm_year + 1900;
 
 
-	/* Open log file (or use stdout if unspecified) */
-	if (logName != NULL)
-	{
-		printf("Opening log file with name: %s\n",logName);
-		logFile = fopen(logName,"w"); // Open log file
-	}
-	else
-	{
-		/* Name the log file with the current date & time in file name */
-		strftime(strbuf,80,"logSarsa-%Y-%b-%d-%H-%M-%S.txt",timeinfo);
-		printf("Creating log file with name: %s\n",strbuf);
-		logFile = fopen(strbuf,"w");
-	}
-	if (logFile == NULL)          // Ensure log file opened properly
-	{
-		perror("Failed to open log file");
-	}
-
 	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 
-	/* ********************** Write start of log file ************************/
-	/* Date and time of run */
-	fprintf(logFile,"#Year=%d Month=%d Day=%d Hour=%d Minute=%d Second=%d\n",t_year,t_month,t_day,t_hour,t_min,t_sec);
-	/* Robot, battery and microworld used */
-	fprintf(logFile,"#RobotUsed=%s BatteryUsed=%s Microworld=%s\n",
-					robotName,batteryName,microworldName);
-	/* Cliff Thresholds */
-	fprintf(logFile,"#CliffHighValue=%d "
-					"CliffLeftThreshold=%d "
-					"CliffFrontLeftThreshold=%d "
-					"CliffFrontRightThreshold=%d "
-					"CliffRightThreshold=%d\n",
-					cliffHighValue,
-					cliffThresholds[0],
-					cliffThresholds[1],
-					cliffThresholds[2],
-					cliffThresholds[3]);
-	fprintf(logFile,"#Algorithm=AverageRewardSarsaReplacing\n");
-	fprintf(logFile,"#Alpha=%lf Lambda=%lf Epsilon=%lf Alpha-R=%lf Timestep=%d\n",
-					alpha,lambda,epsilon,alphaR,timestep);
-
-	fprintf(logFile,"#Iteration Timestamp Reward  AverageReward\n");
-	fflush(logFile);
 
 
 
@@ -397,16 +352,13 @@ int main(int argc, char *argv[])
 							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
 			fprintf(stderr,"[DEBUG] Final PktNum Value: %d\n",getPktNum());
 			pthread_mutex_lock(&logFileMutex);
-			fprintf(logFile,"#TotalTime=%lf\n",
-							(double)(timeEnd.tv_sec  - timeBegin.tv_sec)
-							+((double)(timeEnd.tv_usec - timeBegin.tv_usec))/1000000);
-			fprintf(logFile,"#FinalPktNum=%d\n",getPktNum());
+			// REMOVED
 			pthread_mutex_unlock(&logFileMutex);
 			endProgram();
 		}
 
 		// Print iteration data every so often to indicate progress
-		if (((iteration % 50) == 0))
+		if (((iteration % 1) == 0))
 		{
 			printf("Iteration number: %6d\n",iteration);
 			printf("Time for iteration (in microseconds): %ld\n", computationTime);
@@ -427,7 +379,6 @@ int main(int argc, char *argv[])
 					"computationTime = %ld\n",
 					iteration, (long int)timeEnd.tv_sec, (long int)timeEnd.tv_usec,computationTime);
 
-			fprintf(logFile,"#[DEBUG] Computation time exceeded timestep!\n");
 			//TODO How best to handle situation where timestep has exceeded computationTime?
 		}
 		else
@@ -489,12 +440,7 @@ int main(int argc, char *argv[])
 
 		/* Log reward, timestep, and iteration to file*/
 	    pthread_mutex_lock(&logFileMutex);
-		fprintf(logFile,"%5d %ld.%06ld %d %6.12lf\n",
-						iteration,
-						(long int)timeStart.tv_sec,
-						(long int)timeStart.tv_usec,
-						reward,
-						avgReward);
+	    // Removed
 		pthread_mutex_unlock(&logFileMutex);
 
 	    /* Prepare for next loop */
