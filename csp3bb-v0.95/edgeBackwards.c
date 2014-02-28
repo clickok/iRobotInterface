@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
   //a = epsilonGreedy(Q, s, epsilon);
 
   // Perform action according to custom policy instead
-  a = customPolicy(Q, s); 
+  a = customPolicy(s); 
 
   pthread_mutex_lock( &actionMutex );
   action = a; // sets up action to be taken by csp thread
