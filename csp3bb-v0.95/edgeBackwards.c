@@ -364,8 +364,15 @@ int customPolicy(int s)
     // up until that point, in order to calculate an inverse
     if (FLB_ON && FRB_OFF)
     {
-      policyMode  = 2;
-      policyStep = 0;
+      if (policyStep > 5)
+      {
+        policyMode  = 2;
+        policyStep = 0;
+      }
+      else
+      {
+        policyStep++;
+      }
     }
     else if (FLB_ON && FRB_ON)
     {
@@ -380,7 +387,7 @@ int customPolicy(int s)
   else if (policyMode == 2) // The turning phase of the policy
   {
     // Combine turning backwards and forwards in some ratio
-    if (policyStep % 2)
+    if (policyStep % 3)
     {
       customAction = 2;
     }
