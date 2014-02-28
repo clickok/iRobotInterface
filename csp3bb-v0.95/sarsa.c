@@ -303,7 +303,6 @@ int main(int argc, char *argv[]) {
   int reward;
   int i, j;
   double delta;
-  ubyte bytes[2];
   int rewardReport;
   struct timeval timeStart, timeEnd, incrementBy;
   long computationTime;

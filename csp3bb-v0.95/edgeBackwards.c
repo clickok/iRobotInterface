@@ -343,23 +343,23 @@ int customPolicy(int s)
   return customAction;
 }
 
-// int lastGoodState(int state, int curPkt)
-// {
-//   int i;
-//   int tmpState;
-//   for(i = curPkt; i > 0; i++)
-//   {
-//     // Figure out what the state was at that point in time
-//     tmpState = ((sCliffLB[i]<<3) | (sCliffFLB[i]<<2) | (sCliffFRB[i]<<1) | (sCliffRB[i]));
-//     if (tmpState == state)
-//     {
-//       return i;
-//     }
-//   }
-//   // If cannot find the last good state, return -1
-//   fprintf(stderr, "lastGoodState() could not find state %d\n before packet:%d", state, curPkt);
-//   return -1;
-// }
+int lastGoodState(int state, int curPkt)
+{
+  int i;
+  int tmpState;
+  for(i = curPkt; i > 0; i++)
+  {
+    // Figure out what the state was at that point in time
+    tmpState = ((sCliffLB[i]<<3) | (sCliffFLB[i]<<2) | (sCliffFRB[i]<<1) | (sCliffRB[i]));
+    if (tmpState == state)
+    {
+      return i;
+    }
+  }
+  // If cannot find the last good state, return -1
+  fprintf(stderr, "lastGoodState() could not find state %d\n before packet:%d", state, curPkt);
+  return -1;
+}
 
 int shouldSwitch(int curPkt)
 {
