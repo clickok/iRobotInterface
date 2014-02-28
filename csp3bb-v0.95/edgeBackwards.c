@@ -50,7 +50,7 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 #define N_STATES  16
-#define N_ACTS 4
+#define N_ACTS 5
 
 /*****************************************************************************
  *                                Macros
@@ -353,6 +353,7 @@ int main(int argc, char *argv[])
 			{
 				printf("%2.6lf ", Q[i][j]);
 			}
+			printf("\n");
 		}
 
 		gettimeofday(&timeEnd, NULL);
