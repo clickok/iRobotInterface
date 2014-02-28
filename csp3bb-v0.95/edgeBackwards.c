@@ -337,7 +337,11 @@ int customPolicy(int s)
       else
       {
         searchDepth = lastGoodState(halfOnState, p);
-        printf("lastGoodState was at packet: %d\n", searchDepth);
+        if (searchDepth >= -1)
+        {
+          printf("lastGoodState was at packet: %d\n", searchDepth);
+          avgAction   = tracjectoryTrace(searchDepth, p);
+        }
 
         customAction = STOP;
       }
