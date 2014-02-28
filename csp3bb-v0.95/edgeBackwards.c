@@ -357,12 +357,12 @@ int customPolicy(int s)
 //   return -1;
 // }
 
-// int shouldSwitch(int curPkt);
-// {
-//   // int i;
-//   policyMode = 1;
-//   return 0;
-// }
+int shouldSwitch(int curPkt);
+{
+  // int i;
+  policyMode = 1;
+  return 0;
+}
 
 int getPktNum() {
   int myPktNum;
