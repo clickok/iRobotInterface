@@ -360,7 +360,7 @@ int customPolicy(int s)
   {
     // NEED TO KNOW when the last good state was, what the history has been
     // up until that point, in order to calculate an inverse
-    customAction = ;
+    customAction = actionInverse(avgAction);
   }
   else if (policyMode == 2) // The turning phase of the policy
   {
