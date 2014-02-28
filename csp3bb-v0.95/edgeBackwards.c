@@ -680,38 +680,57 @@ void takeAction(int action) {
 int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
 {
 	int max, i;
-	int myPktNum, p;
-	int firstAction, lastAction;
-
-	myPktNum = getPktNum();
-	//TODO Ensure that this is getting the right packet number
-	p = (myPktNum + M - 1) % M;
-
-	//TODO Shouldn't this be handled by reflexes() instead?
-	firstAction = sCliffFLB[p] || sCliffFRB[p];
-	if (sCliffLB[p] || sCliffRB[p])
-	{
-		lastAction = 2;
-	}
-	else
-	{
-		lastAction = 3;
-	}
 
 	if (rand()/((double)RAND_MAX+1) < epsilon)
 	{
-		return firstAction + rand()%(lastAction + 1 - firstAction);
+		return (rand() % N_ACTS);
 	}
 	else
 	{
 		max = lastAction;
-		for (i = firstAction; i < lastAction; i++)
+		for (i = 0; i < N_ACTS; i++)
 		{
 			if (Q[s][i] > Q[s][max]) max = i;
 		}
     return max;
   }
 }
+
+// int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
+// {
+// 	int max, i;
+// 	int myPktNum, p;
+// 	int firstAction, lastAction;
+
+// 	myPktNum = getPktNum();
+// 	//TODO Ensure that this is getting the right packet number
+// 	p = (myPktNum + M - 1) % M;
+
+// 	//TODO Shouldn't this be handled by reflexes() instead?
+// 	firstAction = sCliffFLB[p] || sCliffFRB[p];
+// 	if (sCliffLB[p] || sCliffRB[p])
+// 	{
+// 		lastAction = 2;
+// 	}
+// 	else
+// 	{
+// 		lastAction = 3;
+// 	}
+
+// 	if (rand()/((double)RAND_MAX+1) < epsilon)
+// 	{
+// 		return firstAction + rand()%(lastAction + 1 - firstAction);
+// 	}
+// 	else
+// 	{
+// 		max = lastAction;
+// 		for (i = firstAction; i < lastAction; i++)
+// 		{
+// 			if (Q[s][i] > Q[s][max]) max = i;
+// 		}
+//     return max;
+//   }
+// }
 
 void csp3(void *arg)
 {
