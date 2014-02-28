@@ -330,6 +330,7 @@ int customPolicy(int s)
       else
       {
         searchDepth = lastGoodState(onWorldState, p);
+        printf("lastGoodState was at packet: %d\n", searchDepth);
         customAction = STOP;
       }
     }
