@@ -129,9 +129,9 @@ int main(int argc, char *argv[])
   act.sa_flags = 0;
   sigaction(SIGINT, &act, &oldact);
 
-  if (argc < 4) {
-    fprintf(stderr, "Missing arguments -- need something like:\n
-                     \t/dev/ttyUSB0 100 -100\n");
+  if (argc < 4) 
+  {
+    fprintf(stderr, "Missing arguments -- need something like:\n\t/dev/ttyUSB0 100 -100\n");
     return 0;
   }
   // Get the value of the left and right wheel turning amounts
