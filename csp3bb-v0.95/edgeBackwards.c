@@ -312,6 +312,10 @@ int main(int argc, char *argv[])
 	ensureTransmitted();
 	prevPktNum = myPktNum;
 
+	/*  ----------------------- Print Setup Information --------------------- */
+	printf("alpha: %lf alphaR: %lf \t epsilon: %lf \t lambda: %lf \n",
+	 	   alpha, alphaR, epsilon, lambda);
+
 	/* ************************************************************************
 	 * Control loop
 	 * ***********************************************************************/
@@ -428,6 +432,22 @@ int main(int argc, char *argv[])
 	}
 	return 0;
 }
+
+/* void 2dArrayPrint(size_t s1, size_t s2, double *array)
+ * Print a 2-D array of doubles
+ *
+ */
+ void 2dArrayPrint(size_t s1, size_t s2, double *array)
+ {
+ 	for (size_t i = 0; i < s1, i++)
+ 	{
+ 		for (size_t j = 0; j < s2; j++)
+ 		{
+ 			printf("%2.5lf ", array[i][j]);
+ 		}
+ 		printf("\n");
+ 	}
+ }
 
 
 
@@ -604,6 +624,11 @@ void reflexes() {
     driveWheels(0, 0);                            // then interrupt motion
   }
 
+  // Consider adding something to tell if to go the opposite way if it
+  // turns completely off the edge
+
+  // Consider adding something to protect it if wheel drop sensors activate
+
   ubyte bytes[2];
   ubyte frontbit = sCliffFLB[p] || sCliffFRB[p];
   ubyte ledbits = (sCliffLB[p] << 2) | (frontbit << 1) | sCliffRB[p];
@@ -627,11 +652,13 @@ void takeAction(int action) {
     case 1  : driveWheels( -SPEED_1, SPEED_1);  break;   // left
     case 2  : driveWheels( SPEED_1, -SPEED_1);  break;   // right
     case 3  : driveWheels( -SPEED_1, -SPEED_1); break;   // backward
-    
+
     case 4  : driveWheels( SPEED_2,  SPEED_2);  break;   // 2nd set of actions
     case 5  : driveWheels( -SPEED_2, SPEED_2);  break; 
     case 6  : driveWheels( SPEED_2,  -SPEED_2); break;
     case 7  : driveWheels( -SPEED_2, -SPEED_2); break;
+
+    case -1 : driveWheels(0, 0);                break;   // Stop
     default : printf("Bad action\n");
     }
 }
