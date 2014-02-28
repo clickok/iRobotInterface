@@ -131,8 +131,8 @@ int main(int argc, char *argv[])
 
   if (argc < 4) 
   {
-    fprintf(stderr, "Missing arguments -- need something like:\n
-      \t./driveRobot.out /dev/ttyUSB0 100 -100\n");
+    fprintf(stderr, "Missing arguments -- need something like:\n"
+                    "\t./driveRobot.out /dev/ttyUSB0 100 -100\n");
     return 0;
   }
   // Get the value of the left and right wheel turning amounts
