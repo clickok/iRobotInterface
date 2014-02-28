@@ -258,8 +258,6 @@ void loadCliffThresholds() {
   fclose(fd);
 }
 
-}
-
 int randomAction(int defaultAction, double randProb)
 {
   if ((rand() / (double)(RAND_MAX)) < randProb)
