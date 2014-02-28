@@ -33,11 +33,22 @@
  */
 typedef unsigned char ubyte;
 
+/*****************************************************************************
+ *                        iRobot Create Parameters
+ *****************************************************************************/
+
 /* The speed at which the Create drives its wheels */
 #define SPEED 300
 
 /* The reward threshold for the Create to "sing"   */
 #define SONG_REWARD_THRESHOLD  100
+
+ /*****************************************************************************
+ *                        State Space Parameters
+ *****************************************************************************/
+
+#define N_STATES  16
+#define N_ACTS 4
 
 /*****************************************************************************
  *                                Macros
@@ -123,7 +134,7 @@ int cliffHighValue;           // binary value taken if threshold exceeded
 void setupSerialPort(char serialPortName[]);
 void csp3(void *arg);
 void loadCliffThresholds();
-int  epsilonGreedy(double Q[16][4], int s, double epsilon);
+int  epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon);
 void takeAction(int action);
 void driveWheels(int left, int right);
 void sendBytesToRobot(ubyte* bytes, int numBytes);
@@ -143,8 +154,8 @@ int main(int argc, char *argv[])
 	int p;									// Byte tracking variable
 	int iteration = 0;                      // Control loop counter
 	int maxIterations = 1200;               // Limit for number of iterations
-	double Q[16][4];						// State-Action value array
-	double e[16][4];						// Eligibility trace array
+	double Q[N_STATES][N_ACTS];				// State-Action value array
+	double e[N_STATES][N_ACTS];				// Eligibility trace array
 	double alpha = 0.1;						// Stepsize (alpha) parameter
 	double alphaR = 0.001;                  // Average Reward Stepsize
 	double lambda = 0.9;					// Trace decay parameter
@@ -278,9 +289,9 @@ int main(int argc, char *argv[])
 	}
 
 	/* Initialize state-action values and eligibility trace */
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < N_STATES; i++)
 	{
-		for (j = 0; j < 4; j++)
+		for (j = 0; j < N_ACTS; j++)
 		{
 			Q[i][j] = 5 + 0.001*( rand()/((double) RAND_MAX) - 0.5);
 			e[i][j] = 0;
@@ -391,9 +402,9 @@ int main(int argc, char *argv[])
 
 		/* Replacing traces */
 		e[s][a] = 1;
-	    for (i = 0; i < 16; i++)
+	    for (i = 0; i < N_STATES; i++)
 	    {
-	    	for (j = 0; j < 4; j++)
+	    	for (j = 0; j < N_ACTS; j++)
 	    	{
 	    		Q[i][j] = Q[i][j] + (alpha * delta * e[i][j]);
 	    		e[i][j] = lambda*e[i][j];
@@ -620,7 +631,7 @@ void takeAction(int action) {
 }
 
 
-int epsilonGreedy(double Q[16][4], int s, double epsilon)
+int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
 {
 	int max, i;
 	int myPktNum, p;
