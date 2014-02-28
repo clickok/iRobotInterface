@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime = 0; 				// Timing related
-	char strbuf[1000];                      // String buffer for use w/ logging
+	char * portName = NULL;                 // Name of serial port
 
 	/* Load cliff thresholds, seed RNG */
 	loadCliffThresholds();
@@ -187,9 +187,6 @@ int main(int argc, char *argv[])
 			{"lambda",          required_argument,   0, 'l'},
 			{"timestep",        required_argument,   0, 't'},
 			{"iterations",      required_argument,   0, 'i'},
-			{"microworldname",  required_argument,   0, 'm'},
-			{"batteryname",     required_argument,   0, 'b'},
-			{"robotname",       required_argument,   0, 'r'},
 			{"help",            no_argument,         0, 'h'},
 			{0, 0, 0, 0}
 		};
@@ -197,7 +194,7 @@ int main(int argc, char *argv[])
 		int option_index = 0;
 
 		//TODO Alphabetize the command line arguments
-		c = getopt_long(argc, argv, "p:f:a:r:m:b:t:i:e:l:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:a:t:i:e:l:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
