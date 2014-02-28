@@ -109,6 +109,7 @@ int customPolicy(int s);
 int randomAction(int defaultAction, double randProb);
 int lastGoodState(int state, int curPkt);
 int shouldSwitch(int curPkt);
+int tracjectoryTrace(int low, int high);
 void printLastPackets(int n);
 
 int main(int argc, char *argv[]) {
@@ -286,7 +287,8 @@ int customPolicy(int s)
   int FORWARD = 0, LEFT = 1, RIGHT = 2, BACKWARD = 3, STOP =4;
 
   // For determining how far back a certain state was
-  int searchDepth;
+  int searchDepth;       // How many packets back a good state was
+  int avgAction;         // The average of the actions between then and now
   int onWorldState = 0;
   int halfOnState  = 3;
 
@@ -336,6 +338,7 @@ int customPolicy(int s)
       {
         searchDepth = lastGoodState(halfOnState, p);
         printf("lastGoodState was at packet: %d\n", searchDepth);
+
         customAction = STOP;
       }
     }
@@ -366,12 +369,13 @@ int customPolicy(int s)
 
 int lastGoodState(int state, int curPkt)
 {
-  int i;
+  int i, p;
   int tmpState;
   for(i = curPkt-1; i > 0; i--)
   {
+    p = i % M;
     // Figure out what the state was at that point in time
-    tmpState = ((sCliffLB[i]<<3) | (sCliffFLB[i]<<2) | (sCliffFRB[i]<<1) | (sCliffRB[i]));
+    tmpState = ((sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | (sCliffRB[p]));
     if (tmpState == state)
     {
       return i;
@@ -381,6 +385,36 @@ int lastGoodState(int state, int curPkt)
   fprintf(stderr, "ERROR: lastGoodState() could not find state"
                   " %d\t before packet:%d\n", state, curPkt);
   return -1;
+}
+
+int tracjectoryTrace(int low, int high)
+{
+  // Determine how many time each particular action was taken from sDrive
+  int i, p;
+  int max = 0, maxIndex = 0;
+  ubyte tmp;
+  int count[5]=0;
+  for(i = low; i < high; i++)
+  {
+    p = i % M;
+    tmp = sDrive[p];
+    switch (tmp) {
+    case 0  : count[0]++; break;    // forward
+    case 1  : count[1]++;    break;   // left
+    case 2  : count[2]++;   break;   // right
+    case 3  : count[3]++;    break;  // backward
+    case 4  : count[4]++;    break;            // stop
+    default : printf("Bad action\n");
+    }
+  }
+  for(i = 0; i < 5; i++)
+  {
+    if (count[i] > max)
+    {
+      maxIndex = i;
+    }
+  }
+  return maxIndex;
 }
 
 int shouldSwitch(int curPkt)
@@ -411,15 +445,6 @@ void loadCliffThresholds() {
 }
 
 void takeAction(int action) {
-    /*switch (action) {
-    case 0  : driveWheels(SPEED, SPEED); break;    // forward
-    case 1  : driveWheels(-SPEED, SPEED); break;   // left
-    case 2  : driveWheels(SPEED, -SPEED); break;   // right
-    case 3  : driveWheels(-SPEED, -SPEED); break;  // backward
-    case 4  : driveWheels(0, 0); break;            // stop
-    default : printf("Bad action\n");
-    }
-*/
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
     case 1  : driveWheels(TURN_SPEED, SPEED); break;   // left
