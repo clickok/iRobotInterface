@@ -360,7 +360,7 @@ int customPolicy(int s)
   {
     // NEED TO KNOW when the last good state was, what the history has been
     // up until that point, in order to calculate an inverse
-    customAction = STOP;
+    customAction = ;
   }
   else if (policyMode == 2) // The turning phase of the policy
   {
@@ -390,6 +390,17 @@ int lastGoodState(int state, int curPkt)
   fprintf(stderr, "ERROR: lastGoodState() could not find state"
                   " %d\t before packet:%d\n", state, curPkt);
   return -1;
+}
+
+int actionInverse(int action)
+{
+  switch (action){
+    case 0 : return 3;
+    case 1 : return 2;
+    case 2 : return 1;
+    case 3 : return 0;
+    default: printf("Bad actionInverse\n"); return 4;
+  }
 }
 
 int tracjectoryTrace(int low, int high)
