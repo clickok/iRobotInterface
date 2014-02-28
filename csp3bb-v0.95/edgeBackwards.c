@@ -109,6 +109,7 @@ int customPolicy(int s);
 int randomAction(int defaultAction, double randProb);
 int lastGoodState(int state, int curPkt);
 int shouldSwitch(int curPkt);
+void printLastPackets(n);
 
 int main(int argc, char *argv[]) {
   pthread_t tid;
@@ -198,15 +199,18 @@ int main(int argc, char *argv[]) {
 
     reward = 0;
     printf("prevPktNum: %5d \t myPktNum: %5d\n", prevPktNum, myPktNum);
-    for (pn = prevPktNum; pn < myPktNum; pn++) {
-      reward -= sDistance[p];
-      printf("packet: %5d deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
-       p,
-	     sDeltaT[p],
-	     sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
-	     sCliffFR[p],sCliffFRB[p],sCliffR[p],sCliffRB[p],
-	     (short) sDistance[p]);
-      if (sIRbyte[p]==137) endProgram(); // quit on remote pause
+    for (pn = prevPktNum; pn < myPktNum; pn++) 
+    {
+        p = pn % M;
+        reward -= sDistance[p];
+        printf("packet: %5d deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
+        p,
+	       sDeltaT[p],
+  	     sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
+  	     sCliffFR[p],sCliffFRB[p],sCliffR[p],sCliffRB[p],
+  	     (short) sDistance[p]);
+        
+        if (sIRbyte[p]==137) endProgram(); // quit on remote pause
     }
     // Modify negative reward (so it's not gigantic) for going forwards
     if (reward < 5)
@@ -422,6 +426,19 @@ void takeAction(int action) {
     case 4  : driveWheels(0, 0); break;            // stop
     default : printf("Bad action\n");
     }
+}
+
+void printLastPackets(n)
+{
+  int i;
+  p = getPktNum();
+  for(i=0; i<n; i++)
+  {
+    printf("%7d\t %u %u %u %u %u %u %u %u", 
+      (p -i), 
+      sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
+      sCliffFR[p],sCliffFRB[p],sCliffR[p],sCliffRB[p]);
+  }
 }
 
 void endProgram() {
