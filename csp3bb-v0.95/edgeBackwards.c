@@ -281,8 +281,9 @@ int customPolicy(int s)
   int customAction;
   int FORWARD = 0, LEFT = 1, RIGHT = 2, BACKWARD = 3, STOP =4;
 
-  // For determining how far back it is necessary to go
+  // For determining how far back a certain state was
   int searchDepth;
+  int onWorldState = 0;
 
   // Determine whether the bumpers are "on" the allowed terrain or "off"
   // State information might be out of date when passed to this file, so use
@@ -326,7 +327,8 @@ int customPolicy(int s)
       }
       else
       {
-        searchDepth = lastGoodState(0);
+        searchDepth = lastGoodState(onWorldState, p);
+        customAction = STOP;
       }
     }
     else if (FLB_ON && FRB_ON)
