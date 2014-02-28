@@ -391,9 +391,9 @@ int tracjectoryTrace(int low, int high)
 {
   // Determine how many time each particular action was taken from sDrive
   int i, p;
-  int max = 0, maxIndex = {0};
+  int max = 0, maxIndex = 0;
   ubyte tmp;
-  int count[5]=0;
+  int count[5]= {0};
   for(i = low; i < high; i++)
   {
     p = i % M;
