@@ -204,15 +204,6 @@ int main(int argc, char *argv[])
 		case 'p':
 			portName = optarg;
 			break;
-		case 'm':
-			microworldName = optarg;
-			break;
-		case 'b':
-			batteryName = optarg;
-			break;
-		case 'r':
-			robotName = optarg;
-			break;
 		case 't':
 			timestep = strtol(optarg, (char **) NULL, 10);
 			break;
