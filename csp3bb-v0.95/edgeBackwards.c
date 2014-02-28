@@ -392,7 +392,7 @@ int customPolicy(int s)
     // Change policy on some condition
     if ((policyStep > 10) && (FLB_ON && FRB_OFF))
     {
-      policyMode = 1;
+      policyMode = 0;
       policyStep = 0;
     }
   }
