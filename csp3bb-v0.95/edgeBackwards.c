@@ -377,7 +377,8 @@ int lastGoodState(int state, int curPkt)
     }
   }
   // If cannot find the last good state, return -1
-  fprintf(stderr, "lastGoodState() could not find state %d\n before packet:%d", state, curPkt);
+  fprintf(stderr, "ERROR: lastGoodState() could not find state"
+                  "%d\n before packet:%d\n", state, curPkt);
   return -1;
 }
 
