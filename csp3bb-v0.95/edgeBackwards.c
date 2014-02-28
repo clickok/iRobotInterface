@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
     for (pn = prevPktNum; pn < myPktNum; pn++) {
       p = pn % M;
       reward -= sDistance[p];
-      printf("packet: %5d deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
+      printf("packet: %d deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
        p,
 	     sDeltaT[p],
 	     sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
@@ -293,6 +293,7 @@ int customPolicy(int s)
   // Possibly would prefer to have state information in terms of a struct...
   int p;
   p = ((getPktNum() + M - 1) % M);
+
   int tmp = 0;
   tmp = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 
