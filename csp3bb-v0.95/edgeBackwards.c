@@ -59,9 +59,12 @@ typedef unsigned char ubyte;
 // ---------          Global Names and Variables           ---------
 //------------------------------------------------------------------
 #define SPEED 50
-#define TURN_SPEED 62
+#define TURN_SPEED -50
+#define sDepth 10
+#define aDepth 10
 
 int policyMode = 0;           // The current mode of the robot's policy
+int policyStep = 0;           // The policy's current step in its execution
 
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, actionMutex, rewardMusicMutex; // locks
@@ -71,6 +74,8 @@ int rewardMusic = 0;
 int fd = 0;                   // file descriptor for serial port
 #define B 20                  // number of bytes in a packet
 ubyte packet[B];              // packet is constructed here
+
+// state & action history
 
 //sensory arrays:
 #define M 1000
@@ -98,18 +103,25 @@ void ensureTransmitted();
 int getPktNum();
 void reflexes();
 
+int lastGoodState(int state, int curPkt);
+
 int main(int argc, char *argv[]) {
   pthread_t tid;
   int t_err;
+  
   unsigned int prevPktNum;
   unsigned int myPktNum;
   int p, pn;
+  
+
   double Q[16][4], e[16][4];
   double stepsize = 0.1, lambda = 0.9, gamma = 0.98;
   int a, aprime;
   int s, sprime;
   int reward;
+  
   int i, j;
+  int iterCount = 0;
   double delta;
   int rewardReport;
   struct timeval timeStart, timeEnd, incrementBy;
@@ -163,6 +175,7 @@ int main(int argc, char *argv[]) {
   prevPktNum = myPktNum;
   rewardReport = 0;
   while (TRUE) { // main agent loop
+    iterCount++;
     gettimeofday(&timeEnd, NULL);
     computationTime = (timeEnd.tv_sec-timeStart.tv_sec)*1000000
       + (timeEnd.tv_usec-timeStart.tv_usec);
@@ -328,6 +341,17 @@ int customPolicy(int s)
       customAction = STOP;
     }
   }
+  else if (policyMode == 1) // Attempt to find the world again
+  {
+
+  }
+  else if (policyMode == 2) // The turning phase of the policy
+  {
+    customAction == STOP;
+
+  }
+
+
   // Assume that the robot is started with left sensors OFF, right sensors ON
   // Find the edge
   /*if (FLB_ON && FRB_ON)
@@ -351,6 +375,13 @@ int customPolicy(int s)
   printf("customAction: %d\n", customAction);
   return customAction;
 }
+
+int lastGoodState(int state, int curPkt)
+{
+  return lastPkt;
+}
+
+//int shouldSwitch(int curPkt);
 
 void takeAction(int action) {
     /*switch (action) {
