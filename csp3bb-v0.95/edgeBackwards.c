@@ -109,7 +109,7 @@ int customPolicy(int s);
 int randomAction(int defaultAction, double randProb);
 int lastGoodState(int state, int curPkt);
 int shouldSwitch(int curPkt);
-void printLastPackets(n);
+void printLastPackets(int n);
 
 int main(int argc, char *argv[]) {
   pthread_t tid;
@@ -367,7 +367,7 @@ int lastGoodState(int state, int curPkt)
 {
   int i;
   int tmpState;
-  for(i = curPkt; i > 0; i++)
+  for(i = curPkt - 1; i > 0; i++)
   {
     // Figure out what the state was at that point in time
     tmpState = ((sCliffLB[i]<<3) | (sCliffFLB[i]<<2) | (sCliffFRB[i]<<1) | (sCliffRB[i]));
