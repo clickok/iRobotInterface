@@ -327,6 +327,7 @@ int customPolicy(int s)
   {
     // NEED TO KNOW when the last good state was, what the history has been
     // up until that point, in order to calculate an inverse
+    customAction = STOP;
   }
   else if (policyMode == 2) // The turning phase of the policy
   {
@@ -334,55 +335,34 @@ int customPolicy(int s)
 
   }
 
-
-  // Assume that the robot is started with left sensors OFF, right sensors ON
-  // Find the edge
-  /*if (FLB_ON && FRB_ON)
-  {
-    customAction = RIGHT;
-  }
-  else if (FLB_OFF && FRB_ON)
-  {
-    customAction = BACKWARD;
-  }
-  else if (FLB_OFF && FRB_OFF)
-  {
-    customAction = LEFT;
-  }
-  else
-  {
-    // TESTING
-    customAction = STOP;
-  }*/
-
   printf("customAction: %d\n", customAction);
   return customAction;
 }
 
-int lastGoodState(int state, int curPkt)
-{
-  int i;
-  int tmpState;
-  for(i = curPkt; i > 0; i++)
-  {
-    // Figure out what the state was at that point in time
-    tmpState = ((sCliffLB[i]<<3) | (sCliffFLB[i]<<2) | (sCliffFRB[i]<<1) | (sCliffRB[i]));
-    if (tmpState == state)
-    {
-      return i;
-    }
-  }
-  // If cannot find the last good state, return -1
-  fprintf(stderr, "lastGoodState() could not find state %d\n before packet:%d", state, curPkt);
-  return -1;
-}
+// int lastGoodState(int state, int curPkt)
+// {
+//   int i;
+//   int tmpState;
+//   for(i = curPkt; i > 0; i++)
+//   {
+//     // Figure out what the state was at that point in time
+//     tmpState = ((sCliffLB[i]<<3) | (sCliffFLB[i]<<2) | (sCliffFRB[i]<<1) | (sCliffRB[i]));
+//     if (tmpState == state)
+//     {
+//       return i;
+//     }
+//   }
+//   // If cannot find the last good state, return -1
+//   fprintf(stderr, "lastGoodState() could not find state %d\n before packet:%d", state, curPkt);
+//   return -1;
+// }
 
-int shouldSwitch(int curPkt);
-{
-  // int i;
-  policyMode = 1;
-  return 0;
-}
+// int shouldSwitch(int curPkt);
+// {
+//   // int i;
+//   policyMode = 1;
+//   return 0;
+// }
 
 int getPktNum() {
   int myPktNum;
