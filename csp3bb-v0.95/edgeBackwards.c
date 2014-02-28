@@ -211,7 +211,7 @@ int main(int argc, char *argv[]) {
     p = (myPktNum - 1) % M;
     sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
     //aprime = epsilonGreedy(Q, sprime, epsilon);
-    aprime = customPolicy(Q, sprime);
+    aprime = customPolicy(sprime);
 
     pthread_mutex_lock( &actionMutex );
     action = aprime; // sets up action to be taken by csp thread
