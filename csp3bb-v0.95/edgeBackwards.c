@@ -198,6 +198,7 @@ int main(int argc, char *argv[])
 		{
 			{"port",            required_argument,   0, 'p'},
 			{"alpha",           required_argument,   0, 'a'},
+			{"beta"             required_argument,   0, 'b'}
 			{"epsilon",         required_argument,   0, 'e'},
 			{"lambda",          required_argument,   0, 'l'},
 			{"timestep",        required_argument,   0, 't'},
@@ -209,7 +210,7 @@ int main(int argc, char *argv[])
 		int option_index = 0;
 
 		//TODO Alphabetize the command line arguments
-		c = getopt_long(argc, argv, "p:a:t:i:e:l:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:a:b:t:i:e:l:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
@@ -230,6 +231,13 @@ int main(int argc, char *argv[])
 				exit(EXIT_FAILURE);
 			}
 			break;
+		case 'b':
+			beta = strtod(optarg, NULL);
+			if ((beta > 1 ) || (beta < 0))
+			{
+				fprintf(stderr, "ERROR: Invalid beta. Choose a beta within [0,1]\n");
+				exit(EXIT_FAILURE);
+			}
 		case 'e':
 			epsilon = strtod(optarg, NULL);
 			if ((epsilon > 1) || (epsilon < 0))
