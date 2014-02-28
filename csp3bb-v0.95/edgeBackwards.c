@@ -331,7 +331,7 @@ int customPolicy(int s)
     {
       if (policyStep < 4)
       {
-        customAction = RIGHT;
+        customAction = LEFT;
         policyStep ++;
       }
       else
@@ -350,7 +350,7 @@ int customPolicy(int s)
     }
     else if (FLB_ON && FRB_ON)
     {
-      customAction = LEFT;
+      customAction = RIGHT;
     }
     else
     {
