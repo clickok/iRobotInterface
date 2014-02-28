@@ -364,11 +364,13 @@ int customPolicy(int s)
     // up until that point, in order to calculate an inverse
     if (FLB_ON && FRB_OFF)
     {
-      policyMode = 0;
+      policyMode  = 2;
+      policySteps = 0;
     }
     else if (FLB_ON && FRB_ON)
     {
-      policyMode = 2;
+      policyMode  = 2;
+      policySteps = 0;
     }
     else
     {
@@ -377,7 +379,16 @@ int customPolicy(int s)
   }
   else if (policyMode == 2) // The turning phase of the policy
   {
-    customAction == STOP;
+    if (policySteps < 5)
+    {
+      customAction = 2;
+      policySteps++; 
+    }
+    else
+    {
+      customAction = 3;
+      policySteps  = 0;
+    }
   }
 
   printf("customAction: %d\n", customAction);
@@ -452,7 +463,8 @@ int shouldSwitch(int n)
   {
     if (n > 10)
     {
-      policyMode = 1;
+      policyMode  = 1;
+      policySteps = 0;
       return TRUE;
     }
     else
@@ -464,8 +476,8 @@ int shouldSwitch(int n)
   {
     policyMode = 0;
   }
-  policyMode = 1;
-  return 0;
+  // May want to flesh this out...
+  return FALSE;
 }
 
 int getPktNum() {
