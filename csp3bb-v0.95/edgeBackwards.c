@@ -63,6 +63,7 @@ typedef unsigned char ubyte;
 #define sDepth 10
 #define aDepth 10
 
+// If you modify this, you may have to ensure thread safety
 int policyMode = 0;           // The current mode of the robot's policy
 int policyStep = 0;           // The policy's current step in its execution
 
@@ -250,25 +251,6 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-int getPktNum() {
-  int myPktNum;
-  pthread_mutex_lock( &pktNumMutex );
-  myPktNum = pktNum;
-  pthread_mutex_unlock( &pktNumMutex );
-  return myPktNum;  
-}
-
-void loadCliffThresholds() {
-  FILE *fd;
-  if ((fd = fopen("cliffThresholds.dat", "r"))==NULL) {
-    fprintf(stderr, "Error opening cliffThresholds.dat file: %s\n", strerror(errno));
-    exit(EXIT_FAILURE);
-  }
-  fscanf(fd, "%d%d%d%d%d", &cliffHighValue, 
-	 &cliffThresholds[0], &cliffThresholds[1], 
-	 &cliffThresholds[2], &cliffThresholds[3]);
-  fclose(fd);
-}
 
 int randomAction(int defaultAction, double randProb)
 {
@@ -343,7 +325,8 @@ int customPolicy(int s)
   }
   else if (policyMode == 1) // Attempt to find the world again
   {
-
+    // NEED TO KNOW when the last good state was, what the history has been
+    // up until that point, in order to calculate an inverse
   }
   else if (policyMode == 2) // The turning phase of the policy
   {
@@ -378,10 +361,48 @@ int customPolicy(int s)
 
 int lastGoodState(int state, int curPkt)
 {
-  return curPkt;
+  int i;
+  int tmpState;
+  for(i = curPkt; i > 0; i++)
+  {
+    // Figure out what the state was at that point in time
+    tmpState = ((sCliffLB[i]<<3) | (sCliffFLB[i]<<2) | (sCliffFRB[i]<<1) | (sCliffRB[i]));
+    if (tmpState == state)
+    {
+      return i;
+    }
+  }
+  // If cannot find the last good state, return -1
+  fprintf(stderr, "lastGoodState() could not find state %d\n before packet:%d", state, curPkt);
+  return -1;
 }
 
-//int shouldSwitch(int curPkt);
+int shouldSwitch(int curPkt);
+{
+  // int i;
+  policyMode = 1;
+  return 0;
+}
+
+int getPktNum() {
+  int myPktNum;
+  pthread_mutex_lock( &pktNumMutex );
+  myPktNum = pktNum;
+  pthread_mutex_unlock( &pktNumMutex );
+  return myPktNum;  
+}
+
+void loadCliffThresholds() {
+  FILE *fd;
+  if ((fd = fopen("cliffThresholds.dat", "r"))==NULL) {
+    fprintf(stderr, "Error opening cliffThresholds.dat file: %s\n", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+  fscanf(fd, "%d%d%d%d%d", &cliffHighValue, 
+   &cliffThresholds[0], &cliffThresholds[1], 
+   &cliffThresholds[2], &cliffThresholds[3]);
+  fclose(fd);
+}
 
 void takeAction(int action) {
     /*switch (action) {
