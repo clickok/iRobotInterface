@@ -347,6 +347,14 @@ int main(int argc, char *argv[])
 			printf("action: %d\n", a);
 		}
 		++iteration;
+		for (i = 0; i < N_STATES; i++)
+		{
+			for (j = 0; j < N_ACTS; j++)
+			{
+				printf("%2.6lf ", Q[i][j]);
+			}
+		}
+
 		gettimeofday(&timeEnd, NULL);
 
 		/*------------------- Code is not timed within! ------------------*/
