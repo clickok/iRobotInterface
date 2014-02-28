@@ -180,10 +180,11 @@ int main(int argc, char *argv[]) {
 
     reward = 0;
     // A modular arithmetic bug here?
+    printf("prevPktNum: %5d \t myPktNum: %5d\n", prevPktNum, myPktNum);
     for (pn = prevPktNum; pn < myPktNum; pn++) {
       p = pn % M;
       reward -= sDistance[p];
-      printf("packet: %d deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
+      printf("packet: %5d deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
        p,
 	     sDeltaT[p],
 	     sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
