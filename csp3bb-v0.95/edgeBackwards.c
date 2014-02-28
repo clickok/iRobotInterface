@@ -96,7 +96,6 @@ void* csp3(void *arg);void loadCliffThresholds();
 void takeAction(int action);
 int epsilonGreedy(double Q[16][4], int s, double epsilon);
 int customPolicy(int s);
-int randomAction(int defaultAction, double randProb);
 void endProgram();
 void driveWheels(int left, int right);
 void sendBytesToRobot(ubyte* bytes, int numBytes);
@@ -104,7 +103,12 @@ void ensureTransmitted();
 int getPktNum();
 void reflexes();
 
+
+// My additional functions
+int customPolicy(int s);
+int randomAction(int defaultAction, double randProb);
 int lastGoodState(int state, int curPkt);
+int shouldSwitch(int curPkt);
 
 int main(int argc, char *argv[]) {
   pthread_t tid;
@@ -357,7 +361,7 @@ int customPolicy(int s)
 //   return -1;
 // }
 
-int shouldSwitch(int curPkt);
+int shouldSwitch(int curPkt)
 {
   // int i;
   policyMode = 1;
