@@ -416,9 +416,12 @@ int main(int argc, char *argv[])
 
 		/* Update action values and  eligibility trace */
 		delta = reward - avgReward + Q[sprime][aprime] - Q[s][a];
+		avgReward += beta * delta;
+		
 		// DEBUG: Print the update algorithm's values
 		printf("S: %d\t A: %d\t R: %d\t S': %d\t A': %d\n", s, a, reward, sprime, aprime);
-		printf("delta: %lf\n", delta);
+		printf("delta: %lf \t avgReward: %lf\n", delta, avgReward);
+		
 		/* Replacing traces */
 		e[s][a] = 1;
 	    for (i = 0; i < N_STATES; i++)
@@ -427,7 +430,6 @@ int main(int argc, char *argv[])
 	    	{
 	    		Q[i][j] = Q[i][j] + (alpha * delta * e[i][j]);
 	    		e[i][j] = lambda*e[i][j];
-	    		avgReward += beta*delta;
 	    	}
 	    }
 
