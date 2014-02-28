@@ -4,10 +4,10 @@ to allow the user to command an iRobot Create to drive its wheels as
 specified by the command line arguments.
 
 Usage:
-  ./turningTest.out <device> <leftWheel> <rightWheel>
+  ./driveRobot.out <device> <leftWheel> <rightWheel>
 
 Example:
-  ./turningTest.out /dev/ttyUSB0 100 -100
+  ./driveRobot.out /dev/ttyUSB0 100 -100
 
   The above executes a turn to the right.
 */
@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
 
   if (argc < 4) 
   {
-    fprintf(stderr, "Missing arguments -- need something like:\n\t/dev/ttyUSB0 100 -100\n");
+    fprintf(stderr, "Missing arguments -- need something like:\n
+      \t./driveRobot.out /dev/ttyUSB0 100 -100\n");
     return 0;
   }
   // Get the value of the left and right wheel turning amounts
