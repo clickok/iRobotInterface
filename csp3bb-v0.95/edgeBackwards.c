@@ -343,6 +343,7 @@ int main(int argc, char *argv[])
 		{
 			printf("Iteration number: %6d\n",iteration);
 			printf("Time for iteration (in microseconds): %ld\n", computationTime);
+			printf("action: %d\n", a);
 		}
 		++iteration;
 		gettimeofday(&timeEnd, NULL);
