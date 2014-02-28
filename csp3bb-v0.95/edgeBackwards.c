@@ -470,7 +470,7 @@ int shouldSwitch(int n)
     if (n > 10)
     {
       policyMode  = 1;
-      policySteps = 0;
+      policyStep = 0;
       return TRUE;
     }
     else
