@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <float.h>
 #include <getopt.h>
+#include <limits.h>
 #include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
@@ -156,11 +157,11 @@ int main(int argc, char *argv[])
 	unsigned int prevPktNum = 0;		    // Previous packet number
 	int p;									// Byte tracking variable
 	int iteration = 0;                      // Control loop counter
-	int maxIterations = 1200;               // Limit for number of iterations
+	int maxIterations = INT_MAX;            // Limit for number of iterations
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
 	double alpha = 0.1;						// Stepsize (alpha) parameter
-	double beta = 0.001;                  // Average Reward Stepsize
+	double beta = 0.001;                    // Average Reward Stepsize
 	double lambda = 0.9;					// Trace decay parameter
 	double epsilon = 0.01;                  // Exploration parameter
 	int timestep = 100000;                  // Timestep in microseconds

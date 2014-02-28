@@ -8,6 +8,7 @@ the robot to follow the edge going backwards.
 #include <stdlib.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <sys/time.h>
 #include <sys/select.h>
 #include <string.h>
