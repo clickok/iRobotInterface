@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
   	     sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
   	     sCliffFR[p],sCliffFRB[p],sCliffR[p],sCliffRB[p],
   	     (short) sDistance[p]);
-        
+
         if (sIRbyte[p]==137) endProgram(); // quit on remote pause
     }
     // Modify negative reward (so it's not gigantic) for going forwards
@@ -430,7 +430,7 @@ void takeAction(int action) {
 
 void printLastPackets(n)
 {
-  int i;
+  int i, p;
   p = getPktNum();
   for(i=0; i<n; i++)
   {
