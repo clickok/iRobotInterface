@@ -99,8 +99,6 @@ int cliffHighValue;           // binary value taken if threshold exceeded
 void setupSerialPort(char serialPortName[]);
 void* csp3(void *arg);void loadCliffThresholds();
 void takeAction(int action);
-int epsilonGreedy(double Q[16][4], int s, double epsilon);
-int customPolicy(double Q[16][4], int s);
 int randomAction(int defaultAction, double randProb);
 void endProgram();
 void driveWheels(int left, int right);

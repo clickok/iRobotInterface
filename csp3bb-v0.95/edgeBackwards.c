@@ -61,6 +61,8 @@ typedef unsigned char ubyte;
 #define SPEED 50
 #define TURN_SPEED 62
 
+int policyMode = 0;           // The current mode of the robot's policy
+
 unsigned int pktNum = 0;      // Number of the packet currently being constructed by csp3
 pthread_mutex_t pktNumMutex, actionMutex, rewardMusicMutex; // locks
 int action = 0;           // current action selected by agent (initially forward)
