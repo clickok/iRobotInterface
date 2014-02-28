@@ -439,17 +439,17 @@ int main(int argc, char *argv[])
  * Print a 2-D array of doubles
  *
  */
- void array2dPrint(size_t s1, size_t s2, double *array)
- {
- 	for (size_t i = 0; i < s1, i++)
- 	{
- 		for (size_t j = 0; j < s2; j++)
- 		{
- 			printf("%2.5lf ", array[i][j]);
- 		}
- 		printf("\n");
- 	}
- }
+ // void array2dPrint(size_t s1, size_t s2, double *array)
+ // {
+ // 	for (size_t i = 0; i < s1, i++)
+ // 	{
+ // 		for (size_t j = 0; j < s2; j++)
+ // 		{
+ // 			printf("%2.5lf ", array[i][j]);
+ // 		}
+ // 		printf("\n");
+ // 	}
+ // }
 
 
 
