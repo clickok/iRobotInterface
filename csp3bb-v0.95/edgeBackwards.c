@@ -161,11 +161,6 @@ int main(int argc, char *argv[])
 	struct timeval timeBegin;               // Control loop start time
 	struct timeval timeStart, timeEnd;      // Timing related
 	long computationTime = 0; 				// Timing related
-	char * logName = NULL;                  // Name of log file
-	char * portName = NULL;                 // Name of serial port
-	char * robotName = NULL;                // Name of robot
-	char * batteryName = NULL;              // Name of battery
-	char * microworldName = NULL;           // Name of microworld
 	char strbuf[1000];                      // String buffer for use w/ logging
 
 	/* Load cliff thresholds, seed RNG */
@@ -259,26 +254,6 @@ int main(int argc, char *argv[])
 
 
 
-	/* ************************************************************************
-	 *                         Set Up Log File
-	 *************************************************************************/
-
-	/* Get time in the form of a time_t value */
-
-	time_t rawtime;
-	struct tm * timeinfo;
-
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	int t_sec   = (*timeinfo).tm_sec;
-	int t_min   = (*timeinfo).tm_min;
-	int t_hour  = (*timeinfo).tm_hour;
-	int t_day   = (*timeinfo).tm_mday;
-	int t_month = (*timeinfo).tm_mon;
-	int t_year  = (*timeinfo).tm_year + 1900;
-
-
-	fprintf(stderr,"[DEBUG] Current local time and date: %s", asctime (timeinfo) );
 
 
 
