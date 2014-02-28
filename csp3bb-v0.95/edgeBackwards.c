@@ -378,7 +378,7 @@ int customPolicy(int s)
 
 int lastGoodState(int state, int curPkt)
 {
-  return lastPkt;
+  return curPkt;
 }
 
 //int shouldSwitch(int curPkt);
