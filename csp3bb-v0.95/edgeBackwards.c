@@ -337,6 +337,7 @@ int customPolicy(int s)
       else
       {
         searchDepth = lastGoodState(halfOnState, p);
+        shouldSwitch(searchDepth);
         if (searchDepth >= -1)
         {
           printf("lastGoodState was at packet: %d\n", searchDepth);
@@ -355,6 +356,7 @@ int customPolicy(int s)
     {
       customAction = STOP;
     }
+  
   }
   else if (policyMode == 1) // Attempt to find the world again
   {
@@ -433,9 +435,25 @@ int tracjectoryTrace(int low, int high)
   return maxIndex;
 }
 
-int shouldSwitch(int curPkt)
+int shouldSwitch(int n)
 {
   // int i;
+  if (policyMode == 0)
+  {
+    if (n > 10)
+    {
+      policyMode = 1;
+      return TRUE;
+    }
+    else
+    {
+      return FALSE;
+    }
+  }
+  else if (policyMode == 1)
+  {
+    
+  }
   policyMode = 1;
   return 0;
 }
