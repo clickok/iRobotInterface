@@ -50,7 +50,7 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 #define N_STATES  16
-#define N_ACTS 5
+#define N_ACTS 8
 
 /*****************************************************************************
  *                                Macros
@@ -719,6 +719,7 @@ int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
     return max;
 }
 
+// Old Epsilon Greedy Code
 // int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
 // {
 // 	int max, i;
