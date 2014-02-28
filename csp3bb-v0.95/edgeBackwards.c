@@ -160,8 +160,8 @@ int main(int argc, char *argv[])
 	int maxIterations = INT_MAX;            // Limit for number of iterations
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
-	double alpha = 0.1;						// Stepsize (alpha) parameter
-	double beta = 0.001;                    // Average Reward Stepsize
+	double alpha = 0.2;						// Stepsize (alpha) parameter
+	double beta = 0.002;                    // Average Reward Stepsize
 	double lambda = 0.9;					// Trace decay parameter
 	double epsilon = 0.01;                  // Exploration parameter
 	int timestep = 100000;                  // Timestep in microseconds
@@ -685,7 +685,7 @@ int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
 
 	myPktNum = getPktNum();
 	//TODO Ensure that this is getting the right packet number
-	p = (myPktNum + M) % M;
+	p = (myPktNum + M - 1) % M;
 
 	//TODO Shouldn't this be handled by reflexes() instead?
 	firstAction = sCliffFLB[p] || sCliffFRB[p];
