@@ -281,6 +281,8 @@ int customPolicy(int s)
   int customAction;
   int FORWARD = 0, LEFT = 1, RIGHT = 2, BACKWARD = 3, STOP =4;
 
+  // For determining how far back it is necessary to go
+  int searchDepth;
 
   // Determine whether the bumpers are "on" the allowed terrain or "off"
   // State information might be out of date when passed to this file, so use
@@ -303,6 +305,7 @@ int customPolicy(int s)
   FRB_OFF = (FRB_ON == FALSE);
   RB_OFF  = (RB_ON  == FALSE);
 
+  printf("currentState: %d\n");
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
   
@@ -316,7 +319,15 @@ int customPolicy(int s)
     }
     else if (FLB_OFF && FRB_OFF)
     {
-      customAction = RIGHT;
+      if (policyStep < 2)
+      {
+        customAction = RIGHT;
+        policyStep ++;
+      }
+      else
+      {
+        searchDepth = lastGoodState(0);
+      }
     }
     else if (FLB_ON && FRB_ON)
     {
