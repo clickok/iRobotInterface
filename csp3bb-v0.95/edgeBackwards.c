@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 		{
 			{"port",            required_argument,   0, 'p'},
 			{"alpha",           required_argument,   0, 'a'},
-			{"beta"             required_argument,   0, 'b'}
+			{"beta"             required_argument,   0, 'b'},
 			{"epsilon",         required_argument,   0, 'e'},
 			{"lambda",          required_argument,   0, 'l'},
 			{"timestep",        required_argument,   0, 't'},
