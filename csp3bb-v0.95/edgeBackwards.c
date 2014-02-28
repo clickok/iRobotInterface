@@ -89,7 +89,7 @@ void setupSerialPort(char serialPortName[]);
 void* csp3(void *arg);void loadCliffThresholds();
 void takeAction(int action);
 int epsilonGreedy(double Q[16][4], int s, double epsilon);
-int customPolicy(double Q[16][4], int s);
+int customPolicy(int s);
 int randomAction(int defaultAction, double randProb);
 void endProgram();
 void driveWheels(int left, int right);
@@ -179,10 +179,12 @@ int main(int argc, char *argv[]) {
     }
 
     reward = 0;
+    // A modular arithmetic bug here?
     for (pn = prevPktNum; pn < myPktNum; pn++) {
       p = pn % M;
       reward -= sDistance[p];
-      printf("deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
+      printf("packet: %5d deltaT: %f cliff sensors: %u(%u) %u(%u) %u(%u) %u(%u) distance: %hd\n",
+       p,
 	     sDeltaT[p],
 	     sCliffL[p],sCliffLB[p],sCliffFL[p],sCliffFLB[p],
 	     sCliffFR[p],sCliffFRB[p],sCliffR[p],sCliffRB[p],
@@ -256,25 +258,6 @@ void loadCliffThresholds() {
   fclose(fd);
 }
 
-int epsilonGreedy(double Q[16][4], int s, double epsilon)
-{
-  int max, i, p;
-  int firstAction, lastAction;
-
-  p = (getPktNum() + M - 1) % M;
-  firstAction = sCliffFLB[p] || sCliffFRB[p];
-  if (sCliffLB[p] || sCliffRB[p]) lastAction = 2;
-  else lastAction = 3;
-  if (rand()/((double)RAND_MAX+1) < epsilon) {
-    printf("random action\n\n");
-    return firstAction + rand()%(lastAction + 1 - firstAction);
-  } else {
-    max = lastAction;
-    for (i = firstAction; i < lastAction; i++)
-      if (Q[s][i] > Q[s][max])
-        max = i;
-    return max;
-  }
 }
 
 int randomAction(int defaultAction, double randProb)
@@ -291,32 +274,25 @@ int randomAction(int defaultAction, double randProb)
   return -1;
 }
 
-int customPolicy(double Q[16][4], int s)
+int customPolicy(int s)
 {
 
   // Store the values for the bumpers, whether on (1) or off (0)
-  int p;
-  int customAction;
   int LB_ON, FLB_ON, FRB_ON, RB_ON;
   int LB_OFF, FLB_OFF, FRB_OFF, RB_OFF;
 
+  // Have a custom action to return after going through the policy
+  int customAction;
   int FORWARD = 0, LEFT = 1, RIGHT = 2, BACKWARD = 3, STOP =4;
 
-  // Should this bother with getting the packet number at all?
-  // Possibly would prefer to have state information in terms of a struct...
-  p = ((getPktNum() + M - 1) % M);
 
   // Determine whether the bumpers are "on" the allowed terrain or "off"
-  /*LB_ON   = (sCliffLB[p]  == 0);
-  FLB_ON  = (sCliffFLB[p] == 0);
-  FRB_ON  = (sCliffFRB[p] == 0);
-  RB_ON   = (sCliffRB[p]  == 0);
-
-  LB_OFF  = (sCliffLB[p]  != 0);
-  FLB_OFF = (sCliffFLB[p] != 0);
-  FRB_OFF = (sCliffFRB[p] != 0);
-  RB_OFF  = (sCliffRB[p]  != 0);*/
-
+  // State information might be out of date when passed to this file, so use
+  // the newest packet instead?
+  // Should this bother with getting the packet number at all?
+  // Possibly would prefer to have state information in terms of a struct...
+  int p;
+  p = ((getPktNum() + M - 1) % M);
   int tmp = 0;
   tmp = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 
@@ -333,9 +309,26 @@ int customPolicy(double Q[16][4], int s)
   printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
   printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
   
+
+  // If in line following mode
+  if (policyMode == 0)
+  {
+    if (FLB_ON && FRB_OFF)
+    {
+      customAction = BACKWARD;
+    }
+    else if (FLB_OFF && FRB_OFF)
+    {
+      customAction = RIGHT;
+    }
+    else
+    {
+      customAction = STOP;
+    }
+  }
   // Assume that the robot is started with left sensors OFF, right sensors ON
   // Find the edge
-  if (FLB_ON && FRB_ON)
+  /*if (FLB_ON && FRB_ON)
   {
     customAction = RIGHT;
   }
@@ -351,7 +344,7 @@ int customPolicy(double Q[16][4], int s)
   {
     // TESTING
     customAction = STOP;
-  }
+  }*/
 
   printf("customAction: %d\n", customAction);
   return customAction;
