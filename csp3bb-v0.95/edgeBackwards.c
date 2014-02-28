@@ -362,12 +362,22 @@ int customPolicy(int s)
   {
     // NEED TO KNOW when the last good state was, what the history has been
     // up until that point, in order to calculate an inverse
-    customAction = actionInverse(avgAction);
+    if (FLB_ON && FRB_OFF)
+    {
+      policyMode = 0;
+    }
+    else if (FLB_ON && FRB_ON)
+    {
+      policyMode = 2;
+    }
+    else
+    {
+      customAction = actionInverse(avgAction);
+    }
   }
   else if (policyMode == 2) // The turning phase of the policy
   {
     customAction == STOP;
-
   }
 
   printf("customAction: %d\n", customAction);
@@ -450,9 +460,9 @@ int shouldSwitch(int n)
       return FALSE;
     }
   }
-  else if (policyMode == 1)
+  else
   {
-    
+    policyMode = 0;
   }
   policyMode = 1;
   return 0;
