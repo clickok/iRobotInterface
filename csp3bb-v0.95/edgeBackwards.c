@@ -238,6 +238,7 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "ERROR: Invalid beta. Choose a beta within [0,1]\n");
 				exit(EXIT_FAILURE);
 			}
+			break;
 		case 'e':
 			epsilon = strtod(optarg, NULL);
 			if ((epsilon > 1) || (epsilon < 0))
@@ -305,7 +306,7 @@ int main(int argc, char *argv[])
 	{
 		for (j = 0; j < N_ACTS; j++)
 		{
-			Q[i][j] = 5 + 0.1*( rand()/((double) RAND_MAX) - 0.5);
+			Q[i][j] = 5 + 0.001*( rand()/((double) RAND_MAX) - 0.5);
 			e[i][j] = 0;
 		}
 	}
