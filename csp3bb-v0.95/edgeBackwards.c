@@ -707,18 +707,16 @@ int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
 	p        = (myPktNum + M - 1) % M;
 	offFront = (sCliffFLB[p] || sCliffFRB[p]);
 	offBack  = (sCliffLB[p] || sCliffRB[p]);
-	else
+	
+	max = lastAction;
+	for (i = 0; i < N_ACTS; i++)
 	{
-		max = lastAction;
-		for (i = 0; i < N_ACTS; i++)
-		{
-			// Avoid considering forbidden actions
-			if (offFront && (i % 4 == 0)) continue;
-			if (offBack  && (i % 4 == 3)) continue;
-			if (Q[s][i] > Q[s][max]) max = i;
-		}
+		// Avoid considering forbidden actions
+		if (offFront && (i % 4 == 0)) continue;
+		if (offBack  && (i % 4 == 3)) continue;
+		if (Q[s][i] > Q[s][max]) max = i;
+	}
     return max;
-  }
 }
 
 // int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
