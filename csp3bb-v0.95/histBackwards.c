@@ -444,7 +444,7 @@ int main(int argc, char *argv[])
 		hSum = 0;
 		for (i=0; i< S_DEPTH; i++)
 		{
-			hIndex = (iteration - 1)%S_DEPTH;
+			hIndex = (iteration - i)%S_DEPTH;
 			printf("history[%d] = %d --> %d\n", hIndex, history[hIndex], ((history[hIndex]) << (4*i)));
 			hSum   += ((history[hIndex]) << (4*i));
 		}
