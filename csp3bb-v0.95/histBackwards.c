@@ -39,8 +39,8 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 /* The speed at which the Create drives its wheels */
-#define SPEED_1 300
-#define SPEED_2 100
+#define SPEED_1 100
+#define SPEED_2 300
 
 /* The reward threshold for the Create to "sing"   */
 #define SONG_REWARD_THRESHOLD  100
@@ -49,8 +49,9 @@ typedef unsigned char ubyte;
  *                        State Space Parameters
  *****************************************************************************/
 
-#define N_STATES  16
-#define N_ACTS 8
+#define S_DEPTH   2
+#define N_STATES  256
+#define N_ACTS    4
 
 /*****************************************************************************
  *                                Macros
@@ -105,6 +106,8 @@ struct timeval lastPktTime;   // time of last packet
 int fd = 0;                   // file descriptor for serial port
 #define B 20                  // number of bytes in a packet
 ubyte packet[B];              // packet is constructed here
+
+int history[S_DEPTH];         // State history
 
 /* Sensor Data Arrays */
 #define M 1000                /* The ring buffer size */
@@ -433,6 +436,7 @@ int main(int argc, char *argv[])
 		p = (myPktNum + M - 1) % M;
 		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 		aprime = epsilonGreedy(Q, sprime, epsilon);
+
 		takeAction(aprime);
 		ensureTransmitted();
 
