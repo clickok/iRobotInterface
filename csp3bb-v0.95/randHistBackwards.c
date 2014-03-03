@@ -446,6 +446,7 @@ int main(int argc, char *argv[])
 		{
 			history[(hOffset % S_DEPTH)] = obsv;
 			hOffset += 1;
+			printf("Updated history!\n");
 		}
 
 
