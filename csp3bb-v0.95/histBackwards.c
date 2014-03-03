@@ -362,10 +362,6 @@ int main(int argc, char *argv[])
 			printf("action: %d\n", a);
 		}
 		++iteration;
-		for (i = 0; i < S_DEPTH; i ++)
-		{
-			printf("h[%d] = %d\n",i, history[i]);
-		}
 
 		// for (i = 0; i < N_STATES; i++)
 		// {
@@ -449,6 +445,7 @@ int main(int argc, char *argv[])
 		for (i=0; i< S_DEPTH; i++)
 		{
 			hIndex = (i+iteration)%S_DEPTH;
+			printf("history[%d] = %d\n", hIndex, history[hIndex]);
 			hSum   += ((history[hIndex]) << (4*i));
 		}
 		printf("hSum: %d\n", hSum);
