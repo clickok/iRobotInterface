@@ -658,8 +658,8 @@ void reflexes()
 	pthread_mutex_lock( &lastActionMutex );
 	a = lastAction;
 	pthread_mutex_unlock( &lastActionMutex );
-	if ((((a % 4) ==0) && (sCliffFLB[p] || sCliffFRB[p])) || // attempt to go forward over cliff
-       (((a % 4) ==3)  && (sCliffLB[p]  || sCliffRB[p])))      // attempt to go backward over cliff
+	if ((((a % 4) ==0) && (sCliffFLB[p] && sCliffFRB[p])) || // attempt to go forward over cliff
+       (((a % 4) ==3)  && (sCliffLB[p]  && sCliffRB[p])))      // attempt to go backward over cliff
     {
     	driveWheels(0, 0);                            // then interrupt motion
   	}
