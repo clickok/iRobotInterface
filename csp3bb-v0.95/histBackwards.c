@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
 		}
 		printf("hSum: %d\n", hSum);
 
-		sprime = obsv;
+		sprime = (hSum % N_STATES);
 		aprime = epsilonGreedy(Q, sprime, epsilon);
 
 		takeAction(aprime);
