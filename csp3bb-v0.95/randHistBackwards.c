@@ -438,6 +438,11 @@ int main(int argc, char *argv[])
 			rewardReport = 0;
 		}
 
+
+		/*********************************************************************
+								History and State Update
+		**********************************************************************/
+
 		/* Get next state, choose action based on it */
 		p = (myPktNum + M - 1) % M;
 		obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
@@ -452,7 +457,7 @@ int main(int argc, char *argv[])
 
 		printf("Observation: %d\n", obsv);
 		hSum = 0;
-		for (i=1; i< S_DEPTH; i++)
+		for (i=0; i< S_DEPTH; i++)
 		{
 			hIndex = (hOffset - i + S_DEPTH) % S_DEPTH;
 			printf("history[%d] = %d --> %d\n", hIndex, history[hIndex], ((history[hIndex]) << (4*i)));
