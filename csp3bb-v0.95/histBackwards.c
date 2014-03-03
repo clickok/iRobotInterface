@@ -161,6 +161,7 @@ int main(int argc, char *argv[])
 	int iteration = 0;                      // Control loop counter
 	int maxIterations = INT_MAX;            // Limit for number of iterations
 	int history[S_DEPTH] = {0};             // Observation history
+	int hSum;								// For computing state via history
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
 	double alpha = 0.2;						// Stepsize (alpha) parameter
@@ -443,6 +444,15 @@ int main(int argc, char *argv[])
 		p = (myPktNum + M - 1) % M;
 		obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 		history[(iteration % S_DEPTH)] = obsv;
+
+		hSum = 0;
+		for (i=0; i< S_DEPTH; i++)
+		{
+			hIndex = (i+iteration)%S_DEPTH;
+			hSum   += ((history[hIndex]) << (4*i));
+		}
+		printf("hSum: %d\n", hSum);
+
 		sprime = obsv;
 		aprime = epsilonGreedy(Q, sprime, epsilon);
 
