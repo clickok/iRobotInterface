@@ -408,14 +408,14 @@ int main(int argc, char *argv[])
 
 		/* Apply "bonuses" for other sensory data */
 		// If one of the front sensors is off, but not both
-		if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
-		{
-			reward += 10;
-		}
-		else
-		{
-			reward -= 10;
-		}
+		// if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
+		// {
+		// 	reward += 10;
+		// }
+		// else
+		// {
+		// 	reward -= 10;
+		// }
 
 
 
@@ -471,21 +471,6 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-/* void array2dPrint(size_t s1, size_t s2, double *array)
- * Print a 2-D array of doubles
- *
- */
- // void array2dPrint(size_t s1, size_t s2, double *array)
- // {
- // 	for (size_t i = 0; i < s1, i++)
- // 	{
- // 		for (size_t j = 0; j < s2; j++)
- // 		{
- // 			printf("%2.5lf ", array[i][j]);
- // 		}
- // 		printf("\n");
- // 	}
- // }
 
 
 
@@ -658,7 +643,7 @@ void reflexes()
 	pthread_mutex_lock( &lastActionMutex );
 	a = lastAction;
 	pthread_mutex_unlock( &lastActionMutex );
-	if ((((a % 4) ==0) && (sCliffFLB[p] && sCliffFRB[p])) || // attempt to go forward over cliff
+	if ((((a % 4) ==0) && (sCliffFLB[p] && sCliffFRB[p])) ||   // attempt to go forward over cliff
        (((a % 4) ==3)  && (sCliffLB[p]  && sCliffRB[p])))      // attempt to go backward over cliff
     {
     	driveWheels(0, 0);                            // then interrupt motion
