@@ -441,6 +441,8 @@ int main(int argc, char *argv[])
 		obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 		history[(iteration % S_DEPTH)] = obsv;
 
+
+		printf("Observation: %d\n", obsv);
 		hSum = 0;
 		for (i=0; i< S_DEPTH; i++)
 		{
