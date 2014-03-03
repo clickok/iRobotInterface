@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 	int p;									// Byte tracking variable
 	int iteration = 0;                      // Control loop counter
 	int maxIterations = INT_MAX;            // Limit for number of iterations
-	int history[S_DEPTH];                   // State history
+	int history[S_DEPTH] = {0};             // Observation history
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
 	double alpha = 0.2;						// Stepsize (alpha) parameter
@@ -363,7 +363,7 @@ int main(int argc, char *argv[])
 		++iteration;
 		for (i = 0; i < S_DEPTH; i ++)
 		{
-			history[i] = 
+			printf("h[%d] = %d\n",i, history[i]);
 		}
 
 		// for (i = 0; i < N_STATES; i++)
