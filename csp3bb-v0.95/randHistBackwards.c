@@ -49,7 +49,7 @@ typedef unsigned char ubyte;
  *                        State Space Parameters
  *****************************************************************************/
 
-#define S_DEPTH   2
+#define S_DEPTH   1
 #define H_RAND    0.9
 #define N_STATES  256
 #define N_ACTS    4
