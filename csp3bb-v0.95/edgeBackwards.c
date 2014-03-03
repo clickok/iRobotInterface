@@ -50,7 +50,7 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 #define N_STATES  16
-#define N_ACTS 8
+#define N_ACTS 4
 
 /*****************************************************************************
  *                                Macros
@@ -404,6 +404,12 @@ int main(int argc, char *argv[])
 			{
 				endProgram();
 			}
+		}
+
+		// Weaken negative reward for going forward
+		if (reward < -5)
+		{
+			reward = -5;
 		}
 
 		/* Apply "bonuses" for other sensory data */
