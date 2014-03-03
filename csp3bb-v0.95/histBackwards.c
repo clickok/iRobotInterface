@@ -442,6 +442,7 @@ int main(int argc, char *argv[])
 		/* Get next state, choose action based on it */
 		p = (myPktNum + M - 1) % M;
 		obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
+		history[(iteration % S_DEPTH)] = obsv;
 		sprime = obsv;
 		aprime = epsilonGreedy(Q, sprime, epsilon);
 
