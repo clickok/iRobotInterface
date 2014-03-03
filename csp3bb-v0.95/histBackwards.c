@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
 		}
 		printf("hSum: %d\n", hSum);
 
-		sprime = (hSum % N_STATES);
+		sprime = (hSum>>4) + obsv;
 		aprime = epsilonGreedy(Q, sprime, epsilon);
 
 		takeAction(aprime);
@@ -663,6 +663,9 @@ void reflexes()
 	pthread_mutex_lock( &lastActionMutex );
 	a = lastAction;
 	pthread_mutex_unlock( &lastActionMutex );
+	// Determine if robot is trying to go off in such a way that NO 
+	// sensors would be left behind...
+
 	if ((((a % 4) ==0) && (sCliffFLB[p] && sCliffFRB[p])) ||   // attempt to go forward over cliff
        (((a % 4) ==3)  && (sCliffLB[p]  && sCliffRB[p])))      // attempt to go backward over cliff
     {
