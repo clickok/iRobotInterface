@@ -107,7 +107,6 @@ int fd = 0;                   // file descriptor for serial port
 #define B 20                  // number of bytes in a packet
 ubyte packet[B];              // packet is constructed here
 
-int history[S_DEPTH];         // State history
 
 /* Sensor Data Arrays */
 #define M 1000                /* The ring buffer size */
@@ -161,6 +160,7 @@ int main(int argc, char *argv[])
 	int p;									// Byte tracking variable
 	int iteration = 0;                      // Control loop counter
 	int maxIterations = INT_MAX;            // Limit for number of iterations
+	int history[S_DEPTH];                   // State history
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
 	double alpha = 0.2;						// Stepsize (alpha) parameter
@@ -168,6 +168,7 @@ int main(int argc, char *argv[])
 	double lambda = 0.9;					// Trace decay parameter
 	double epsilon = 0.01;                  // Exploration parameter
 	int timestep = 100000;                  // Timestep in microseconds
+	int obsv;                               // Observation
 	int a, aprime;                          // Action
 	int s, sprime;                          // State
 	int reward;                             // Reward
@@ -321,7 +322,8 @@ int main(int argc, char *argv[])
 	gettimeofday(&timeStart, NULL);
 	myPktNum = getPktNum();
 	p = (myPktNum + M - 1) % M;
-	s = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
+	obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
+	s = obsv;
 	a = epsilonGreedy(Q, s, epsilon);
 	takeAction(a);
 	ensureTransmitted();
@@ -359,6 +361,11 @@ int main(int argc, char *argv[])
 			printf("action: %d\n", a);
 		}
 		++iteration;
+		for (i = 0; i < S_DEPTH; i ++)
+		{
+			history[i] = 
+		}
+
 		// for (i = 0; i < N_STATES; i++)
 		// {
 		// 	for (j = 0; j < N_ACTS; j++)
@@ -434,7 +441,8 @@ int main(int argc, char *argv[])
 
 		/* Get next state, choose action based on it */
 		p = (myPktNum + M - 1) % M;
-		sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
+		obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
+		sprime = obsv;
 		aprime = epsilonGreedy(Q, sprime, epsilon);
 
 		takeAction(aprime);
