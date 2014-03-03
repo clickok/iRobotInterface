@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
 	int maxIterations = INT_MAX;            // Limit for number of iterations
 	int history[S_DEPTH] = {0};             // Observation history
 	int hSum, hIndex;						// For computing state via history
+	int hOffset = 0;						// For keeping track of history array
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
 	double alpha = 0.2;						// Stepsize (alpha) parameter
@@ -443,7 +444,8 @@ int main(int argc, char *argv[])
 		
 		if ((rand()/(double) RAND_MAX) < H_RAND)
 		{
-			history[(iteration % S_DEPTH)] = obsv;
+			history[(hOffset % S_DEPTH)] = obsv;
+			hOffset += 1;
 		}
 
 
@@ -451,7 +453,7 @@ int main(int argc, char *argv[])
 		hSum = 0;
 		for (i=1; i< S_DEPTH; i++)
 		{
-			hIndex = (iteration - i + S_DEPTH) % S_DEPTH;
+			hIndex = (hOffset - i + S_DEPTH) % S_DEPTH;
 			printf("history[%d] = %d --> %d\n", hIndex, history[hIndex], ((history[hIndex]) << (4*i)));
 			hSum   += ((history[hIndex]) << (4*i));
 		}
@@ -748,42 +750,6 @@ int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
     return max;
 }
 
-// Old Epsilon Greedy Code
-// int epsilonGreedy(double Q[N_STATES][N_ACTS], int s, double epsilon)
-// {
-// 	int max, i;
-// 	int myPktNum, p;
-// 	int firstAction, lastAction;
-
-// 	myPktNum = getPktNum();
-// 	//TODO Ensure that this is getting the right packet number
-// 	p = (myPktNum + M - 1) % M;
-
-// 	//TODO Shouldn't this be handled by reflexes() instead?
-// 	firstAction = sCliffFLB[p] || sCliffFRB[p];
-// 	if (sCliffLB[p] || sCliffRB[p])
-// 	{
-// 		lastAction = 2;
-// 	}
-// 	else
-// 	{
-// 		lastAction = 3;
-// 	}
-
-// 	if (rand()/((double)RAND_MAX+1) < epsilon)
-// 	{
-// 		return firstAction + rand()%(lastAction + 1 - firstAction);
-// 	}
-// 	else
-// 	{
-// 		max = lastAction;
-// 		for (i = firstAction; i < lastAction; i++)
-// 		{
-// 			if (Q[s][i] > Q[s][max]) max = i;
-// 		}
-//     return max;
-//   }
-// }
 
 void csp3(void *arg)
 {
