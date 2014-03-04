@@ -435,10 +435,7 @@ int main(int argc, char *argv[])
 		{
 			reward += 10;
 		}
-		else
-		{
-			reward -= 10;
-		}
+
 
 
 
