@@ -439,7 +439,7 @@ int main(int argc, char *argv[])
 		}
 
 		// Punish the robot for having no sensors on the world
-		if ((sCliffLB[p] && sCliffRB[p] && sCliffFLB[p] && sCliffFRB[p]))
+		if ((sCliffLB[p] && sCliffRB[p]) && (sCliffFLB[p] || sCliffFRB[p]))
 		{
 			reward -= 20;
 			printf("Not on world!\n");
