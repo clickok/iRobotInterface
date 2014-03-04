@@ -49,8 +49,8 @@ typedef unsigned char ubyte;
  *                        State Space Parameters
  *****************************************************************************/
 
-#define S_DEPTH   1
-#define N_STATES  256
+#define S_DEPTH   2
+#define N_STATES  4096
 #define N_ACTS    4
 
 /*****************************************************************************
