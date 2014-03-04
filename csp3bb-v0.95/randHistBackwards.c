@@ -431,14 +431,14 @@ int main(int argc, char *argv[])
 
 		/* Apply "bonuses" for other sensory data */
 		//If one of the front sensors is off, but not both
-		p = (myPktNum + M - 1) % M;
-		if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
-		{
-			reward += 5;
-			printf("Sensor bonus\n");
-		}
+		// p = (myPktNum + M - 1) % M;
+		// if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
+		// {
+		// 	reward += 5;
+		// 	printf("Sensor bonus\n");
+		// }
 
-		// Punish the robot for having no sensors on the world
+		// Punish the robot for having most sensors off the world
 		if ((sCliffLB[p] && sCliffRB[p]) && (sCliffFLB[p] || sCliffFRB[p]))
 		{
 			reward -= 20;
