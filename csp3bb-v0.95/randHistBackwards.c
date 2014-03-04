@@ -210,6 +210,7 @@ int main(int argc, char *argv[])
 			{"lambda",          required_argument,   0, 'l'},
 			{"timestep",        required_argument,   0, 't'},
 			{"iterations",      required_argument,   0, 'i'},
+			{"chance", 			required_argument,   0, 'c'},
 			{"help",            no_argument,         0, 'h'},
 			{0, 0, 0, 0}
 		};
@@ -238,6 +239,13 @@ int main(int argc, char *argv[])
 				exit(EXIT_FAILURE);
 			}
 			break;
+		case 'c':
+			hRand = strtod(optarg, NULL);
+			if ((hRand < 0) || (hRand > 1))
+			{
+				fprintf(stderr, "ERROR: Invalid value for chance, choose within [0,1]\n");
+				exit(EXIT_FAILURE)
+			}
 		case 'b':
 			beta = strtod(optarg, NULL);
 			if ((beta > 1 ) || (beta < 0))
