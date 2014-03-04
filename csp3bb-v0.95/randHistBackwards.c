@@ -436,6 +436,11 @@ int main(int argc, char *argv[])
 		{
 			reward += 5;
 		}
+		// Reward the robot for having at least one bumper "on" the world..
+		if !(sCliffLB[p] || sCliffRB[p])
+		{
+			reward += 10;
+		}
 
 
 
