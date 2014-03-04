@@ -431,9 +431,10 @@ int main(int argc, char *argv[])
 
 		/* Apply "bonuses" for other sensory data */
 		//If one of the front sensors is off, but not both
+		p = (myPktNum + M - 1) % M;
 		if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
 		{
-			reward += 10;
+			reward += 5;
 		}
 
 
