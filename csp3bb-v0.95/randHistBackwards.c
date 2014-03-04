@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
 			if ((hRand < 0) || (hRand > 1))
 			{
 				fprintf(stderr, "ERROR: Invalid value for chance, choose within [0,1]\n");
-				exit(EXIT_FAILURE)
+				exit(EXIT_FAILURE);
 			}
 		case 'b':
 			beta = strtod(optarg, NULL);
@@ -459,7 +459,6 @@ int main(int argc, char *argv[])
 		{
 			history[(hOffset % S_DEPTH)] = obsv;
 			hOffset += 1;
-			printf("\nUpdated history!\n");
 		}
 
 
