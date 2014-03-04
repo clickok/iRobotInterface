@@ -456,12 +456,13 @@ int main(int argc, char *argv[])
 
 
 		printf("Observation: %d\n", obsv);
+		printf("hOffset: %d\n", hOffset);
 		hSum = 0;
 		for (i=0; i< S_DEPTH; i++)
 		{
 			hIndex = (hOffset - i + S_DEPTH) % S_DEPTH;
 			printf("history[%d] = %d --> %d\n", hIndex, history[hIndex], ((history[hIndex]) << (4*i)));
-			hSum   += ((history[hIndex]) << (4*i));
+			hSum   += ((history[hIndex]) << (4*(i+1)));
 		}
 		printf("hSum: %d\n", hSum);
 
