@@ -447,7 +447,7 @@ int main(int argc, char *argv[])
 		p = (myPktNum + M - 1) % M;
 		obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 		
-		if ((rand()/(double) RAND_MAX) < hRand)
+		if (((double)rand())/ ((double)RAND_MAX)) < hRand)
 		{
 			history[(hOffset % S_DEPTH)] = obsv;
 			hOffset += 1;
