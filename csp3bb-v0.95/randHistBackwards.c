@@ -416,11 +416,16 @@ int main(int argc, char *argv[])
 		reward = 0;
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
-			reward += sDistance[p%M];
+			reward -= sDistance[p%M];
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
 			}
+		}
+		// Weaken the negativity associated with going forward
+		if (reward < 0)
+		{
+			reward = -1;
 		}
 
 
