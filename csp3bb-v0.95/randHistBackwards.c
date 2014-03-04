@@ -430,15 +430,15 @@ int main(int argc, char *argv[])
 
 
 		/* Apply "bonuses" for other sensory data */
-		// If one of the front sensors is off, but not both
-		// if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
-		// {
-		// 	reward += 10;
-		// }
-		// else
-		// {
-		// 	reward -= 10;
-		// }
+		//If one of the front sensors is off, but not both
+		if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
+		{
+			reward += 10;
+		}
+		else
+		{
+			reward -= 10;
+		}
 
 
 
