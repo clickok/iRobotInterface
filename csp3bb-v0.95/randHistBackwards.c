@@ -435,15 +435,15 @@ int main(int argc, char *argv[])
 		if ((sCliffFLB[p] || sCliffFRB[p]) && !(sCliffFLB[p] && sCliffFRB[p]))
 		{
 			reward += 5;
+			printf("Sensor bonus\n");
 		}
 
 		// Punish the robot for having no sensors on the world
 		if ((sCliffLB[p] && sCliffRB[p] && sCliffFLB[p] && sCliffFRB[p])
 		{
 			reward -= 20;
+			printf("Not on world!\n");
 		}
-
-
 
 
 		/* Sing a song upon accumulating enough reward */
