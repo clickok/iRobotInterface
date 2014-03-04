@@ -416,12 +416,13 @@ int main(int argc, char *argv[])
 		reward = 0;
 		for (p = prevPktNum; p < myPktNum; p++)
 		{
-			reward -= sDistance[p%M];
+			reward += sDistance[p%M];
 			if (sIRbyte[p%M]==137)
 			{
 				endProgram();
 			}
 		}
+
 
 		/* Apply "bonuses" for other sensory data */
 		// If one of the front sensors is off, but not both
