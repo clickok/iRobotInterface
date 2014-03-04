@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 		int option_index = 0;
 
 		//TODO Alphabetize the command line arguments
-		c = getopt_long(argc, argv, "p:a:b:t:i:e:l:",long_options, &option_index);
+		c = getopt_long(argc, argv, "p:a:b:t:i:e:l:c:",long_options, &option_index);
 		/* Detect end of options */
 		if (c == -1) break;
 
