@@ -50,7 +50,6 @@ typedef unsigned char ubyte;
  *****************************************************************************/
 
 #define S_DEPTH   1
-#define H_RAND    0.9
 #define N_STATES  256
 #define N_ACTS    4
 
@@ -163,6 +162,7 @@ int main(int argc, char *argv[])
 	int maxIterations = INT_MAX;            // Limit for number of iterations
 	int history[S_DEPTH] = {0};             // Observation history
 	int hSum, hIndex;						// For computing state via history
+	int hRand = 0.9;						// Odds of including obsv in history
 	int hOffset = 0;						// For keeping track of history array
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
@@ -447,7 +447,7 @@ int main(int argc, char *argv[])
 		p = (myPktNum + M - 1) % M;
 		obsv = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 		
-		if ((rand()/(double) RAND_MAX) < H_RAND)
+		if ((rand()/(double) RAND_MAX) < hRand)
 		{
 			history[(hOffset % S_DEPTH)] = obsv;
 			hOffset += 1;
@@ -461,7 +461,7 @@ int main(int argc, char *argv[])
 		for (i=0; i< S_DEPTH; i++)
 		{
 			hIndex = (hOffset - i + S_DEPTH) % S_DEPTH;
-			printf("history[%d] = %d --> %d\n", hIndex, history[hIndex], ((history[hIndex]) << (4*i)));
+			printf("history[%d] = %d --> %d\n", hIndex, history[hIndex], ((history[hIndex]) << (4*(i+1)));
 			hSum   += ((history[hIndex]) << (4*(i+1)));
 		}
 		printf("hSum: %d\n", hSum);
