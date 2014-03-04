@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
 	int maxIterations = INT_MAX;            // Limit for number of iterations
 	int history[S_DEPTH] = {0};             // Observation history
 	int hSum, hIndex;						// For computing state via history
-	int hRand = 0.9;						// Odds of including obsv in history
+	double hRand = 0.9;						// Odds of including obsv in history
 	int hOffset = 0;						// For keeping track of history array
 	double Q[N_STATES][N_ACTS];				// State-Action value array
 	double e[N_STATES][N_ACTS];				// Eligibility trace array
