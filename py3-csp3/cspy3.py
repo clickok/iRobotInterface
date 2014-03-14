@@ -82,9 +82,12 @@ def pauseStream(ser):
 	return ret
 
 def setLEDs(ser, playOn=False, advOn=False, powColor=0, powIntensity=0):
+	# Set the Advance and Play LEDs
 	tmp = 0
-	if playOn    = True: tmp += 1
-	if advOn     = True: tmp += 8
+	if playOn: tmp += 1
+	if advOn:  tmp += 8
+
+	# Set the power LED intensities
 	powIntensity = max(0, min(powIntensity, 255))
 	powColor     = max(0, min(powColor, 255))
 	cmdLst = [OP_LEDS, tmp, powColor, powIntensity] 
