@@ -74,11 +74,21 @@ def setModePassive(ser):
 	return ret
 
 def setModeFull(ser):
-	ret = sendCmd(ser, [OP_FULL])
+	ret  = sendCmd(ser, [OP_FULL])
 	return ret
 
 def pauseStream(ser):
-	ret = sendCmd(ser, [OP_PAUSE, 0])
+	ret  = sendCmd(ser, [OP_PAUSE, 0])
+	return ret
+
+def setLEDs(ser, playOn=False, advOn=False, powColor=0, powIntensity=0):
+	tmp = 0
+	if playOn    = True: tmp += 1
+	if advOn     = True: tmp += 8
+	powIntensity = max(0, min(powIntensity, 255))
+	powColor     = max(0, min(powColor, 255))
+	cmdLst = [OP_LEDS, tmp, powColor, powIntensity] 
+	ret = sendCmd(ser, cmdLst)
 	return ret
 
 def requestStream(ser, sensorLst):
@@ -301,11 +311,15 @@ def main():
 		on_a_press  = lambda : drive(ser,  SPEED_LEFT, -SPEED_RIGHT)
 		on_d_press  = lambda : drive(ser, -SPEED_LEFT,  SPEED_RIGHT)
 		on_x_press  = lambda : drive(ser,    0,    0)
+		on_l_press  = lambda : setLEDs(ser, playOn=True,  advOn=True,  0, 0)
+		on_o_press  = lambda : setLEDs(ser, playOn=False, advOn=False, 0, 0)
 		keymap = {"w": on_w_press, 
 				  "s": on_s_press,
 				  "a": on_a_press,
 				  "d": on_d_press,
-				  "x": on_x_press}
+				  "x": on_x_press,
+				  "l": on_l_press,
+				  "o": on_o_press}
 
 		# Where we're going, we don't need line buffering
 		old_stdin_settings = termios.tcgetattr(sys.stdin) 
