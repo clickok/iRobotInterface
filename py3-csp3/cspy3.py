@@ -107,6 +107,7 @@ with open("SensorPackets.json", "r") as f:
 
 class csp3():
 	def __init__(self, sensorLst):
+		print("[DEBUG] csp3 initialized")
 		self.numSensors  = len(sensorLst)
 		self.packetInfo  = [PacketDct[i] for i in sensorLst]
 		self.packetNames = [i["name"]  for i in self.packetInfo]
@@ -256,7 +257,8 @@ def main():
 	port = sys.argv[1]  
 	ser  = openPort(port, SERIAL_PARAMS)
 	fd   = ser.fileno()
-	print(port)
+	print("[DEBUG]: connecting to port: {}".format(port))
+
 	try:
 		# Set up the robot
 		setModePassive(ser)
@@ -266,6 +268,7 @@ def main():
 		requestStream(ser, packets)
 
 		tick = time.time()
+		print("[DEBUG]: about to begin loop")
 		while True:
 			# Set up the select
 			sel = select.select([fd], [], [], 0)
