@@ -1,6 +1,7 @@
 import array
 import json
 import numpy as np 
+import os
 import select
 import serial
 import struct
