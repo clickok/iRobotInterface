@@ -269,7 +269,7 @@ def main():
 		packets = [24, 25, 26]  # Arbitrary choices of packets
 
 	oldCWD = os.getcwd()
-	os.chdir(os.chdir(sys.argv[0]))
+	os.chdir(os.chdir(os.path.dirname(sys.argv[0])))
 	with open("SensorPackets.json", "r") as f:
 		tmpDct = json.load(f)
 		# Handle the fact that JSON cannot have integer keys
