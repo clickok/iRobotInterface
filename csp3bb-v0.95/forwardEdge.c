@@ -1,6 +1,5 @@
 /*
-Implementation of SARSA algorithm, but with modifications to allow 
-the robot to follow the edge going backwards.
+Implementation of a forward edge following deterministic policy.
 */
 
 #include <stdio.h>

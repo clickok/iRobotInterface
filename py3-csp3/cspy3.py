@@ -336,12 +336,13 @@ def main():
 
 	# Ensure that the robot is shut down properly
 	finally:
+		# Restore the terminal
+		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_stdin_settings)
+
+		# Shutdown the robot
 		shutdownRobot(ser)
 		ser.close()
 		sleep(0.5) # Superstition, because OS X serial hangs require a reboot 
-
-		# Restore the terminal
-		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_stdin_settings)
 
 
 
