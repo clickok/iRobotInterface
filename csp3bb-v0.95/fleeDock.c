@@ -292,8 +292,7 @@ int customPolicy(double Q[16][4], int s)
   // Store the values for the bumpers, whether on (1) or off (0)
   int p;
   int customAction;
-  int LB_ON, FLB_ON, FRB_ON, RB_ON;
-  int LB_OFF, FLB_OFF, FRB_OFF, RB_OFF;
+  int FORCE_FIELD, GREEN_BUOY, RED_BUOY;
 
   int FORWARD = 0, LEFT = 1, RIGHT = 2, BACKWARD = 3, STOP =4;
 
@@ -301,88 +300,16 @@ int customPolicy(double Q[16][4], int s)
   // Possibly would prefer to have state information in terms of a struct...
   p = ((getPktNum() + M - 1) % M);
 
-  // Determine whether the bumpers are "on" the allowed terrain or "off"
-  /*LB_ON   = (sCliffLB[p]  == 0);
-  FLB_ON  = (sCliffFLB[p] == 0);
-  FRB_ON  = (sCliffFRB[p] == 0);
-  RB_ON   = (sCliffRB[p]  == 0);
+  int tmp = sIRbyte[p] - 240;
 
-  LB_OFF  = (sCliffLB[p]  != 0);
-  FLB_OFF = (sCliffFLB[p] != 0);
-  FRB_OFF = (sCliffFRB[p] != 0);
-  RB_OFF  = (sCliffRB[p]  != 0);*/
+  FORCE_FIELD = CHECK_BIT(tmp, 1);
+  GREEN_BUOY  = CHECK_BIT(tmp, 2);
+  RED_BUOY    = CHECK_BIT(tmp, 3);
 
-  int tmp = 0;
-  tmp = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
 
-  LB_ON   = CHECK_BIT(tmp, 3);
-  FLB_ON  = CHECK_BIT(tmp, 2);
-  FRB_ON  = CHECK_BIT(tmp, 1);
-  RB_ON   = CHECK_BIT(tmp, 0);
-
-  LB_OFF  = (LB_ON  == FALSE);
-  FLB_OFF = (FLB_ON == FALSE);
-  FRB_OFF = (FRB_ON == FALSE);
-  RB_OFF  = (RB_ON  == FALSE);
-
-  printf("ON:  \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_ON, FLB_ON, FRB_ON, RB_ON);
-  printf("OFF: \tLB: %d \t FLB: %d \t FRB: %d \t RB: %d \n", LB_OFF, FLB_OFF, FRB_OFF, RB_OFF);
+  printf("tmp: %d \t FF: %d \t GB: %d \t RB: %d \n", tmp, FORCE_FIELD, GREEN_BUOY, RED_BUOY);
   
-  // Find the edge
-  if (FLB_ON && FRB_ON)
-  {
-    customAction = STOP;
-  }
-  // If the front is completely off the terrain
-  else if (FLB_OFF && FRB_OFF)
-  {
-    // If all sensors are off the terrain
-    if (LB_OFF && RB_OFF)
-    {
-      customAction = STOP;
-    }
-    // If only the left, left front, and right front are off
-    else if (LB_OFF)
-    {
-      customAction = STOP;
-    }
-    else
-    {
-      customAction = STOP;
-    }
-  }
-  // If the robot is half on edge and half not...
-  else if (FLB_OFF && FRB_ON)
-  {
-    if (LB_OFF && RB_OFF)
-    {
-      customAction = STOP;
-    }
-    else if (LB_OFF)
-    {
-      customAction = STOP;
-    }
-    else
-    {
-      customAction = STOP;
-    }
-  }
-  else if (FLB_ON && FRB_OFF)
-  {
-    if (LB_OFF && RB_OFF)
-    {
-      customAction = STOP;
-    }
-    else if (LB_OFF)
-    {
-      customAction = STOP;
-    }
-    else
-    {
-      customAction = STOP;
-    }
-  }
-
+  customAction = STOP;
   printf("customAction: %d\n", customAction);
   return customAction;
   
@@ -391,7 +318,6 @@ int customPolicy(double Q[16][4], int s)
 }
 
 void takeAction(int action) {
-    printf("takeAction: %d\n", action);
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
     case 1  : driveWheels(-SPEED, SPEED); break;   // left
