@@ -308,8 +308,24 @@ int customPolicy(double Q[16][4], int s)
 
 
   printf("tmp: %d \t FF: %d \t GB: %d \t RB: %d \n", tmp, FORCE_FIELD, GREEN_BUOY, RED_BUOY);
-  
-  customAction = STOP;
+  // If we're in the force field
+  if (FORCE_FIELD) 
+  {
+    if !(GREEN_BUOY | RED_BUOY) // if we see NEITHER buoy
+    {
+      customAction = STOP;
+    }
+    else
+    {
+      customAction = BACKWARD;
+    }
+  } // If not in forcefield
+  else
+  {
+    customAction = STOP;
+  }
+
+
   printf("customAction: %d\n", customAction);
   return customAction;
   
