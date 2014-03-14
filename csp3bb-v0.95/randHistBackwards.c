@@ -706,9 +706,6 @@ void reflexes()
     	driveWheels(0, 0);                            // then interrupt motion
   	}
 
-  	// Consider adding something to tell if to go the opposite way if it  
-  	// turns completely off the edge
-
   	// Consider adding something to protect it if wheel drop sensors activate
 
 	ubyte bytes[2];

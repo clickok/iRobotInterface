@@ -1,29 +1,3 @@
-"""
-*Not a polished release*
-A minimal csp3-like program for communicating with the iRobot Create. Specify
-a serial port that the Create can communicate over, as well as the packet numbers
-of the packets you want to receive, and the Create will stream the data requested!
-
-This is accomplished with such pythonic panache and elan because the packet 
-parser is somewhat reconfigurable. In response to the command line argument,
-it looks up the relevant data (stored as a .json file, but you could move it
-into the code as a dict if you wanted) and determines what the packet should 
-look like based on that. 
-
-It should be easily extendable; the next iteration might refact so that
-opcodes are stored in a separate file as well, to accompodate different iRobot
-models. Other extensions might be an ncurses style display (which would make
-commanding the robot pretty convenient, too) or a live-plot of various statistics,
-because I literally cannot find a good program that does that for me for more
-than one plot at a time...
-
-Usage Example:
-
-Watching battery statistics
-cspy-v0.1.py /dev/tty.usbserial 24 25 26
-"""
-
-
 import array
 import json
 import numpy as np 
@@ -212,7 +186,7 @@ class csp3():
 				# If the count corresponds to an index packet, perform a check
 				""" Although I haven't extensively tested, I find that
 					we don't have to check all the check bytes in order to 
-					ensure the packet is properly aligned. Next part may be unneeded"""
+					ensure the packet is properly aligned """
 				if self.count in self.idIx:
 					if b != self.packetCheck[self.count]:
 						print("\nPacket out of alignment:")
@@ -322,7 +296,7 @@ def main():
 	finally:
 		shutdownRobot(ser)
 		ser.close()
-		sleep(0.5) # Superstition, but worthwhile because OS X serial hangs require a reboot 
+		sleep(0.5) # Superstition, because OS X serial hangs require a reboot 
 
 
 
