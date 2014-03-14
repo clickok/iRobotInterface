@@ -148,11 +148,11 @@ class csp3():
 		self.state      = WAIT_HEADER
 
 		# Timing the packets
-		# self.tick = 0
-		# self.tock = time.time()
-		# self.packetCount = 0
-		# self.avgTime = 0
-		# self.totalTime = 0
+		self.tick = 0
+		self.tock = time.time()
+		self.packetCount = 0
+		self.avgTime = 0
+		self.totalTime = 0
 
 		print("[DEBUG]: csp3() finished initializing")
 
