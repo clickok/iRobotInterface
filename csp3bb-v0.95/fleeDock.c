@@ -84,7 +84,7 @@ void setupSerialPort(char serialPortName[]);
 void* csp3(void *arg);void loadCliffThresholds();
 void takeAction(int action);
 int epsilonGreedy(double Q[16][4], int s, double epsilon);
-int customPolicy(double Q[16][4], int s);
+int fleeingPolicy();
 int randomAction(int defaultAction, double randProb);
 void endProgram();
 void driveWheels(int left, int right);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
   //a = epsilonGreedy(Q, s, epsilon);
 
   // Perform action according to custom policy instead
-  a = customPolicy(Q, s); 
+  a = fleeingPolicy(); 
 
   pthread_mutex_lock( &actionMutex );
   action = a; // sets up action to be taken by csp thread
@@ -204,7 +204,7 @@ int main(int argc, char *argv[]) {
     p = (myPktNum - 1) % M;
     sprime = (sCliffLB[p]<<3) | (sCliffFLB[p]<<2) | (sCliffFRB[p]<<1) | sCliffRB[p];
     //aprime = epsilonGreedy(Q, sprime, epsilon);
-    aprime = customPolicy(Q, sprime);
+    aprime = fleeingPolicy();
 
     pthread_mutex_lock( &actionMutex );
     action = aprime; // sets up action to be taken by csp thread
@@ -274,6 +274,9 @@ int epsilonGreedy(double Q[16][4], int s, double epsilon)
 
 int randomAction(int defaultAction, double randProb)
 {
+  /* Choose an action randomly with probability "randProb",
+     or return a default "defaultAction"
+  */
   if (rand() / (double)(RAND_MAX+1) < randProb)
   {
     return (rand() % 4);
@@ -286,9 +289,9 @@ int randomAction(int defaultAction, double randProb)
   return -1;
 }
 
-int customPolicy(double Q[16][4], int s)
+int fleeingPolicy()
 {
-
+  printf("[DEBUG]: selecting action from fleeingPolicy\n");
   // Store the values for the bumpers, whether on (1) or off (0)
   int p;
   int customAction;
@@ -323,23 +326,31 @@ int customPolicy(double Q[16][4], int s)
   {
     if (!(GREEN_BUOY || RED_BUOY)) // if we see NEITHER buoy
     {
+      // Placeholder, may want to NOT stop
       customAction = STOP;
+      // Will now be inside the forcefield,
+      // and not seeing either buoy.
+      // You may wish to change the mode, but if this breaks 
+      // the contract, then we can modify the code e.g.
+      // customAction = randomAction(FORWARD, 0.1)
     }
     else
     {
+      // If we're in the forcefield, go backwards
       customAction = BACKWARD;
     }
   } // If not in forcefield
   else
   {
     customAction = STOP;
+    // Change the mode in whatever way you prefer
   }
 
 
-  printf("customAction: %d\n", customAction);
+  printf("[DEBUG]: customAction: %d\n", customAction);
   return customAction;
   
-  printf("ERROR: SHOULDN'T BE ABLE TO REACH HERE\n");
+  fprintf(stderr, "[ERROR]: SHOULDN'T BE ABLE TO REACH HERE\n");
   return STOP;
 }
 
