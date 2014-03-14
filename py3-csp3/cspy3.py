@@ -111,7 +111,6 @@ with open("SensorPackets.json", "r") as f:
 
 class csp3():
 	def __init__(self, sensorLst):
-		print("hello")
 		self.numSensors  = len(sensorLst)
 		self.packetInfo  = [PacketDct[i] for i in sensorLst]
 		self.packetNames = [i["name"]  for i in self.packetInfo]
