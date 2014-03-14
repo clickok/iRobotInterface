@@ -120,9 +120,10 @@ def pwmLowSideDrivers(ser, pct0=0, pct1=0, pct2=0):
 	d0 = max(0, min(int(128 * pct0), 128))
 	d1 = max(0, min(int(128 * pct1), 128))
 	d2 = max(0, min(int(128 * pct2), 128))
+	
 	# Send the command 
 	cmdLst = [OP_PWM_LSD, d0, d1, d2]
-	print(cmdLst)
+	print("[DEBUG]: pwmLowSideDrivers:", cmdLst)
 	ret = sendCmd(ser, cmdLst)
 	return ret
 
@@ -350,7 +351,7 @@ def main():
 		on_l_press  = lambda : setLEDs(ser, playOn=True,  advOn=True,  powIntensity=0, powColor=0)
 		on_o_press  = lambda : setLEDs(ser, playOn=False, advOn=False, powIntensity=0, powColor=0)
 		on_p_press  = lambda : pwmLowSideDrivers(ser, 1, 0, 0)
-		on_k_press  = lambda : pwnLowSideDrivers(ser, 0, 0 ,0)
+		on_k_press  = lambda : pwmLowSideDrivers(ser, 0, 0 ,0)
 
 		# The keymap
 		keymap = {"w": on_w_press, 
