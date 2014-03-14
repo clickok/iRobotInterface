@@ -350,7 +350,7 @@ def main():
 		on_x_press  = lambda : drive(ser,    0,    0)
 		on_l_press  = lambda : setLEDs(ser, playOn=True,  advOn=True,  powIntensity=0, powColor=0)
 		on_o_press  = lambda : setLEDs(ser, playOn=False, advOn=False, powIntensity=0, powColor=0)
-		on_p_press  = lambda : pwmLowSideDrivers(ser, 1, 0, 0)
+		on_p_press  = lambda : pwmLowSideDrivers(ser, 1, 1, 1)
 		on_k_press  = lambda : pwmLowSideDrivers(ser, 0, 0 ,0)
 
 		# The keymap
