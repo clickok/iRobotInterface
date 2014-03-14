@@ -17,7 +17,7 @@ Implementation of a forward edge following deterministic policy.
 
 #define FALSE 0
 #define TRUE 1
-#define CHECK_BIT(var, pos) (((var) & (1 <<(pos))) == 0)
+#define CHECK_BIT(var, pos) (((var) & (1 <<(pos))) == 1)
 #define MAX(a,b) (a > b?a:b)
 #define MIN(a,b) (a < b?a:b)
 
