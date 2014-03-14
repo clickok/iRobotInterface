@@ -236,7 +236,7 @@ class csp3():
 		self.totalTime += tmpTime
 		self.avgTime = self.totalTime/self.packetCount
 		self.tock = self.tick
-		print("{0:2.8f} {1:2.8f}".format(self.avgTime, tmpTime))
+		print("Last Packet Time: {1:2.8f} \t Avg Time: {0:2.8f}".format(self.avgTime, tmpTime))
 		
 		tmp = struct.pack("B"*self.numBytes, *tmp)
 		ret = struct.unpack(self.dataFormat, tmp)
