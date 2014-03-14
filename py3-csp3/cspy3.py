@@ -19,6 +19,8 @@ OP_FULL = 132
 OP_DRIVE = 145
 
 OP_LEDS  = 139
+OP_LSD   = 138
+
 
 OP_BAUD = 129
 
@@ -84,15 +86,28 @@ def pauseStream(ser):
 	return ret
 
 def setLEDs(ser, playOn=False, advOn=False, powColor=0, powIntensity=0):
-	# Set the Advance and Play LEDs
+	# Set up byte for the Advance and Play LEDs
 	tmp = 0
 	if playOn: tmp += 1
 	if advOn:  tmp += 8
-
-	# Set the power LED intensities
+	# Limit the power LED intensities
 	powIntensity = max(0, min(powIntensity, 255))
 	powColor     = max(0, min(powColor, 255))
+	# Build list and send the commands
 	cmdLst = [OP_LEDS, tmp, powColor, powIntensity] 
+	ret = sendCmd(ser, cmdLst)
+	return ret
+
+def lowSideDrivers(ser, d0=False, d1=False, d2=False):
+	""" Set the low side drivers to be on (True) or off (False)
+		d0 and d1 (corresponding to pins 22 & 23) have a maximum current
+		of 0.5 A, d2 (pin 24) has a maximum current of 1.5 """
+	# Build the byte to be sent to the Create
+	tmp = 0
+	if d0: tmp += 1
+	if d1: tmp += 2
+	if d2: tmp += 4
+	cmdLst = [OP_LSD, tmp]
 	ret = sendCmd(ser, cmdLst)
 	return ret
 
@@ -318,13 +333,17 @@ def main():
 		on_x_press  = lambda : drive(ser,    0,    0)
 		on_l_press  = lambda : setLEDs(ser, playOn=True,  advOn=True,  powIntensity=0, powColor=0)
 		on_o_press  = lambda : setLEDs(ser, playOn=False, advOn=False, powIntensity=0, powColor=0)
+		on_p_press  = lambda : lowSideDrivers(ser, d0=True, d1=False, d2= False)
+
+		# The keymap
 		keymap = {"w": on_w_press, 
 				  "s": on_s_press,
 				  "a": on_a_press,
 				  "d": on_d_press,
 				  "x": on_x_press,
 				  "l": on_l_press,
-				  "o": on_o_press}
+				  "o": on_o_press,
+				  "p": on_p_press}
 
 		# Where we're going, we don't need line buffering
 		old_stdin_settings = termios.tcgetattr(sys.stdin) 
