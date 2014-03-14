@@ -5,13 +5,17 @@ import select
 import serial
 import struct
 import sys
+import termios
 import time
+import tty
 
 from time import sleep
 
 OP_PASSIVE = 128
 OP_CONTROL = 130
 OP_FULL = 132
+
+OP_DRIVE = 145
 
 OP_BAUD = 129
 
@@ -54,6 +58,15 @@ def sendCmd(ser, cmdLst):
 		return sent
 	except Exception as e:
 		print(e)
+
+def drive(ser, left, right):
+	""" Drive a robot's (w/ pyserial object "ser") individual wheels """
+	print("[DEBUG]: drive() called: {0} {1}".format(left, right))
+	lval  = max(min(left,  500), -500)
+	rval  = max(min(right, 500), -500)
+	bytes = struct.unpack('4B',struct.pack('>2h', lval, rval))
+	ret   = sendCmd(ser, [OP_DRIVE] + list(bytes))
+	return ret
 
 def setModePassive(ser):
 	ret = sendCmd(ser, [OP_PASSIVE])
@@ -236,7 +249,7 @@ class csp3():
 		self.totalTime += tmpTime
 		self.avgTime = self.totalTime/self.packetCount
 		self.tock = self.tick
-		print("Last Packet Time: {1:2.8f} \t Avg Time: {0:2.8f}".format(self.avgTime, tmpTime))
+		#print("Last Packet Time: {1:2.8f} \t Avg Time: {0:2.8f}".format(self.avgTime, tmpTime))
 		
 		tmp = struct.pack("B"*self.numBytes, *tmp)
 		ret = struct.unpack(self.dataFormat, tmp)
@@ -258,9 +271,10 @@ def main():
 	else:
 		packets = [24, 25, 26]  # Arbitrary choices of packets
 
-	port = sys.argv[1]  
-	ser  = openPort(port, SERIAL_PARAMS)
-	fd   = ser.fileno()
+	port  = sys.argv[1]  
+	ser   = openPort(port, SERIAL_PARAMS)
+	serfd = ser.fileno()
+	iofd  = sys.stdin.fileno()
 	print("[DEBUG]: connecting to port: {}".format(port))
 
 	try:
@@ -272,12 +286,30 @@ def main():
 		requestStream(ser, packets)
 
 		tick = time.time()
+
+		SPEED_LEFT  = 200
+		SPEED_RIGHT = 200
+		on_w_press  = lambda : drive(ser,  SPEED_LEFT,  SPEED_RIGHT)
+		on_s_press  = lambda : drive(ser, -SPEED_LEFT, -SPEED_RIGHT)
+		on_a_press  = lambda : drive(ser,  SPEED_LEFT, -SPEED_RIGHT)
+		on_d_press  = lambda : drive(ser, -SPEED_LEFT,  SPEED_RIGHT)
+		on_x_press  = lambda : drive(ser,    0,    0)
+		keymap = {"w": on_w_press, 
+				  "s": on_s_press,
+				  "a": on_a_press,
+				  "d": on_d_press,
+				  "x": on_x_press}
+
+		# Where we're going, we don't need line buffering
+		old_stdin_settings = termios.tcgetattr(sys.stdin) 
+		tty.setcbreak(sys.stdin.fileno())
+
+
 		print("[DEBUG]: about to begin loop")
 		while True:
 			# Set up the select
-			sel = select.select([fd], [], [], 0)
-			if fd in sel[0]:
-				# print(fd)
+			sel = select.select([serfd, iofd], [], [], 0)
+			if serfd in sel[0]:
 				# Essentially, wait and read. 
 				numWait = ser.inWaiting()
 				data    = ser.read(numWait)
@@ -285,6 +317,14 @@ def main():
 				tock = time.time()
 				#print(tock - tick)
 				tick = tock
+			if iofd in sel[0]:
+				key = sys.stdin.read(1) # Read the key
+				key = key[0]      # Truncate it
+				
+				
+				if key in keymap:
+					keymap[key]()
+					print(key)
 			else:
 				pass
 
@@ -299,6 +339,9 @@ def main():
 		shutdownRobot(ser)
 		ser.close()
 		sleep(0.5) # Superstition, because OS X serial hangs require a reboot 
+
+		# Restore the terminal
+		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_stdin_settings)
 
 
 
