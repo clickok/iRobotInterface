@@ -273,6 +273,7 @@ def main():
 	with open("SensorPackets.json", "r") as f:
 		tmpDct = json.load(f)
 		# Handle the fact that JSON cannot have integer keys
+		global PacketDct
 		PacketDct = {int(k):v for k, v in tmpDct.items()}
 	#os.chdir(oldCWD)
 
