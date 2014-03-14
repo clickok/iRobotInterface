@@ -113,6 +113,7 @@ class csp3():
 		self.packetNames = [i["name"]  for i in self.packetInfo]
 		self.packetTypes = [i["dtype"] for i in self.packetInfo]
 		self.sizeLst     = np.array([i["size"] for i in self.packetInfo])
+		print("[DEBUG]: Relevant sensor data loaded")
 		
 		# Formatter for converting bytes to different data types
 		self.dataFormat  = ">" + "".join(self.packetTypes)
@@ -152,6 +153,8 @@ class csp3():
 		# self.packetCount = 0
 		# self.avgTime = 0
 		# self.totalTime = 0
+
+		print("[DEBUG]: csp3() finished initializing")
 
 	def printParams(self):
 		""" Print parameters (and much else) for the csp3 packet handler """
