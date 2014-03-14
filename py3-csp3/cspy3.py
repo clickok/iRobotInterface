@@ -314,8 +314,8 @@ def main():
 		on_a_press  = lambda : drive(ser,  SPEED_LEFT, -SPEED_RIGHT)
 		on_d_press  = lambda : drive(ser, -SPEED_LEFT,  SPEED_RIGHT)
 		on_x_press  = lambda : drive(ser,    0,    0)
-		on_l_press  = lambda : setLEDs(ser, playOn=True,  advOn=True,  0, 0)
-		on_o_press  = lambda : setLEDs(ser, playOn=False, advOn=False, 0, 0)
+		on_l_press  = lambda : setLEDs(ser, playOn=True,  advOn=True,  powIntensity=0, powColor=0)
+		on_o_press  = lambda : setLEDs(ser, playOn=False, advOn=False, powIntensity=0, powColor=0)
 		keymap = {"w": on_w_press, 
 				  "s": on_s_press,
 				  "a": on_a_press,
