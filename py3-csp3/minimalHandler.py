@@ -193,7 +193,7 @@ class csp3():
 				# Condition for complete packet
 				if ((self.checksum % 256) == 0):
 					print("\nPacket:", self.wrapper(self.curPacket))
-					self.lastPacket = self.curPacket.copy() # Improve this
+					self.lastPacket = list(self.curPacket) # Improve this
 				else:
 					print("Misaligned packet:", self.curPacket)
 				

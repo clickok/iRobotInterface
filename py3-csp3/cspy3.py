@@ -9,10 +9,6 @@ import time
 
 from time import sleep
 
-# Neat idea: specify the opcode followed by the keyword arguments
-# needed so that a function factory can make easily used functions
-# for each command that you want to send to the Create
-
 OP_PASSIVE = 128
 OP_CONTROL = 130
 OP_FULL = 132
@@ -207,7 +203,7 @@ class csp3():
 				if ((self.checksum % 256) == 0): # Success!
 					#print("Packet:", self.decoder(self.curPacket))
 					print("\r", self.wrapper(self.decoder(self.curPacket)), end = "")
-					self.lastPacket = self.curPacket.copy() # Improve this
+					self.lastPacket = list(self.curPacket) # Improve this
 				else:
 					print("Misaligned packet:", self.curPacket)
 				
