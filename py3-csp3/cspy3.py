@@ -112,10 +112,6 @@ def makeBytes(lst):
 
 (WAIT_HEADER, IN_MSG) = range(2)
 
-with open("SensorPackets.json", "r") as f:
-	tmpDct = json.load(f)
-	# Handle the fact that JSON cannot have integer keys
-	PacketDct = {int(k):v for k, v in tmpDct.items()}
 
 
 class csp3():
@@ -270,6 +266,15 @@ def main():
 		packets = [int(i) for i in sys.argv[2:]]
 	else:
 		packets = [24, 25, 26]  # Arbitrary choices of packets
+
+	oldCWD = os.getcwd()
+	os.chdir(os.chdir(sys.argv[0]))
+	with open("SensorPackets.json", "r") as f:
+		tmpDct = json.load(f)
+		# Handle the fact that JSON cannot have integer keys
+		PacketDct = {int(k):v for k, v in tmpDct.items()}
+	os.chdir(oldCWD)
+
 
 	port  = sys.argv[1]  
 	ser   = openPort(port, SERIAL_PARAMS)

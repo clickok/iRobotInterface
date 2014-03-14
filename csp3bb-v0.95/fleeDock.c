@@ -302,12 +302,22 @@ int customPolicy(double Q[16][4], int s)
 
   int tmp = sIRbyte[p] - 240;
 
+  // Truly, making bit-checking macros is the Sport of Kings.
   FORCE_FIELD = CHECK_BIT(tmp, 1);
   GREEN_BUOY  = CHECK_BIT(tmp, 2);
   RED_BUOY    = CHECK_BIT(tmp, 3);
 
 
   printf("tmp: %d \t FF: %d \t GB: %d \t RB: %d \n", tmp, FORCE_FIELD, GREEN_BUOY, RED_BUOY);
+  // Optionally, could add some slight randomness to the actions taken
+  // Further, could be calculating the inverse of the actions and use 
+  // that in case the environment changes somewhat
+
+  // Also, reflex level code might need to account for when the robot is in
+  // a weird place in its environment... like if there is a wall right
+  // behind the dock.
+
+
   // If we're in the force field
   if (FORCE_FIELD) 
   {
