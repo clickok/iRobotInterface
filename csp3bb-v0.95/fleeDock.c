@@ -339,7 +339,7 @@ int customPolicy(double Q[16][4], int s)
     // If all sensors are off the terrain
     if (LB_OFF && RB_OFF)
     {
-      customAction = randomAction(BACKWARD, 0.1);
+      customAction = STOP;
     }
     // If only the left, left front, and right front are off
     else if (LB_OFF)
@@ -391,6 +391,7 @@ int customPolicy(double Q[16][4], int s)
 }
 
 void takeAction(int action) {
+    printf("takeAction: %d\n", action);
     switch (action) {
     case 0  : driveWheels(SPEED, SPEED); break;    // forward
     case 1  : driveWheels(-SPEED, SPEED); break;   // left
