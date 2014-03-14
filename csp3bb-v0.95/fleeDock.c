@@ -311,7 +311,7 @@ int customPolicy(double Q[16][4], int s)
   // If we're in the force field
   if (FORCE_FIELD) 
   {
-    if !(GREEN_BUOY | RED_BUOY) // if we see NEITHER buoy
+    if (!(GREEN_BUOY || RED_BUOY)) // if we see NEITHER buoy
     {
       customAction = STOP;
     }
