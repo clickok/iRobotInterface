@@ -107,7 +107,7 @@ with open("SensorPackets.json", "r") as f:
 
 class csp3():
 	def __init__(self, sensorLst):
-		print("[DEBUG] csp3 initialized")
+		print("[DEBUG]: csp3.__init__() called")
 		self.numSensors  = len(sensorLst)
 		self.packetInfo  = [PacketDct[i] for i in sensorLst]
 		self.packetNames = [i["name"]  for i in self.packetInfo]
@@ -229,13 +229,13 @@ class csp3():
 		#print(tmp)
 
 		# Timing for comparison
-		# self.packetCount += 1
-		# self.tick = time.time()
-		# tmpTime = (self.tick - self.tock)
-		# self.totalTime += tmpTime
-		# self.avgTime = self.totalTime/self.packetCount
-		# self.tock = self.tick
-		# print("{0:2.6f} {1:2.6f}".format(self.avgTime, tmpTime))
+		self.packetCount += 1
+		self.tick = time.time()
+		tmpTime = (self.tick - self.tock)
+		self.totalTime += tmpTime
+		self.avgTime = self.totalTime/self.packetCount
+		self.tock = self.tick
+		print("{0:2.8f} {1:2.8f}".format(self.avgTime, tmpTime))
 		
 		tmp = struct.pack("B"*self.numBytes, *tmp)
 		ret = struct.unpack(self.dataFormat, tmp)
